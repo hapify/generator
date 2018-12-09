@@ -405,7 +405,7 @@ export class GeneratorService {
 
           return field;
         })
-        .filter((f) => f);
+        .filter((f: any) => f);
 
       // Add to object
       m.fields.references = references;

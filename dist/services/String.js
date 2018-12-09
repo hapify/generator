@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const typedi_1 = require("typedi");
-const enum_1 = require("../enum");
+const _1 = require("./");
 /** @todo use npm lib 'case' */
 let StringService = class StringService {
     /**
@@ -284,19 +284,19 @@ let StringService = class StringService {
         // Trim
         value = value.trim();
         // If original, returns name
-        if (format === enum_1.SentenceFormat.Original) {
+        if (format === _1.SentenceFormat.Original) {
             return value;
         }
         // Pre-convert name
         value = this.removeDiacritics(value);
         // Split camel cases
         value = this.splitCamelCase(value);
-        if (format === enum_1.SentenceFormat.SlugUnderscore || format === enum_1.SentenceFormat.SlugUnderscoreUpperCase) {
+        if (format === _1.SentenceFormat.SlugUnderscore || format === _1.SentenceFormat.SlugUnderscoreUpperCase) {
             // Use only spaces
             value = this.replaceNonAlphaNumericCharsButUnderscore(value);
             // Replace double spaces
             value = this.removeMultipleSpaces(value).trim().toLowerCase();
-            return format === enum_1.SentenceFormat.SlugUnderscore ?
+            return format === _1.SentenceFormat.SlugUnderscore ?
                 value.split(' ').join('_') :
                 value.split(' ').join('_').toUpperCase();
         }
@@ -306,29 +306,29 @@ let StringService = class StringService {
         value = this.removeMultipleSpaces(value).trim();
         // Lowercase
         value = value.toLowerCase();
-        if (format === enum_1.SentenceFormat.WordsLowerCase) {
+        if (format === _1.SentenceFormat.WordsLowerCase) {
             return value;
         }
         // Uppercase words
         value = this.upperCaseWords(value);
-        if (format === enum_1.SentenceFormat.WordsUpperCase) {
+        if (format === _1.SentenceFormat.WordsUpperCase) {
             return value;
         }
         const camel = this.removeSpaces(value);
-        if (format === enum_1.SentenceFormat.UpperCamelCase) {
+        if (format === _1.SentenceFormat.UpperCamelCase) {
             return camel;
         }
-        if (format === enum_1.SentenceFormat.LowerCamelCase) {
+        if (format === _1.SentenceFormat.LowerCamelCase) {
             return this.lowerCaseFirstLetter(camel);
         }
         const lower = value.toLowerCase();
-        if (format === enum_1.SentenceFormat.SlugHyphen) {
+        if (format === _1.SentenceFormat.SlugHyphen) {
             return lower.split(' ').join('-');
         }
-        if (format === enum_1.SentenceFormat.SlugHyphenUpperCase) {
+        if (format === _1.SentenceFormat.SlugHyphenUpperCase) {
             return lower.split(' ').join('-').toUpperCase();
         }
-        if (format === enum_1.SentenceFormat.SlugOneWord) {
+        if (format === _1.SentenceFormat.SlugOneWord) {
             return lower.split(' ').join('');
         }
         throw new Error(`Format ${format} is unknown`);
@@ -341,16 +341,16 @@ let StringService = class StringService {
      */
     formatSentences(value) {
         return {
-            raw: this.format(value, enum_1.SentenceFormat.Original),
-            hyphen: this.format(value, enum_1.SentenceFormat.SlugHyphen),
-            hyphenUpper: this.format(value, enum_1.SentenceFormat.SlugHyphenUpperCase),
-            underscore: this.format(value, enum_1.SentenceFormat.SlugUnderscore),
-            underscoreUpper: this.format(value, enum_1.SentenceFormat.SlugUnderscoreUpperCase),
-            oneWord: this.format(value, enum_1.SentenceFormat.SlugOneWord),
-            wordsUpper: this.format(value, enum_1.SentenceFormat.WordsUpperCase),
-            wordsLower: this.format(value, enum_1.SentenceFormat.WordsLowerCase),
-            upperCamel: this.format(value, enum_1.SentenceFormat.UpperCamelCase),
-            lowerCamel: this.format(value, enum_1.SentenceFormat.LowerCamelCase)
+            raw: this.format(value, _1.SentenceFormat.Original),
+            hyphen: this.format(value, _1.SentenceFormat.SlugHyphen),
+            hyphenUpper: this.format(value, _1.SentenceFormat.SlugHyphenUpperCase),
+            underscore: this.format(value, _1.SentenceFormat.SlugUnderscore),
+            underscoreUpper: this.format(value, _1.SentenceFormat.SlugUnderscoreUpperCase),
+            oneWord: this.format(value, _1.SentenceFormat.SlugOneWord),
+            wordsUpper: this.format(value, _1.SentenceFormat.WordsUpperCase),
+            wordsLower: this.format(value, _1.SentenceFormat.WordsLowerCase),
+            upperCamel: this.format(value, _1.SentenceFormat.UpperCamelCase),
+            lowerCamel: this.format(value, _1.SentenceFormat.LowerCamelCase)
         };
     }
     /**
