@@ -2,11 +2,11 @@
   "name": "hapify-generator",
   "version": "0.4.0",
   "description": "Generator backend for Hapify server",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node build/index.js",
-    "watch": "rm -rf build && tsc -w",
-    "build": "rm -rf build && ./node_modules/.bin/tsc -p .",
+    "start": "node dist/index.js",
+    "watch": "rm -rf dist && tsc -w",
+    "build": "rm -rf dist && ./node_modules/.bin/tsc -p .",
     "test": "./node_modules/.bin/lab tests/api",
     "lint": "./node_modules/.bin/prettier --write '**/*{.js,.ts}'"
   },
@@ -35,6 +35,9 @@
   },
   "dependencies": {
     "boom": "^7.3.0",
+    "good": "^8.1.1",
+    "good-console": "^7.1.0",
+    "good-squeeze": "^5.1.0",
     "hapi": "^17.8.1",
     "joi": "^14.3.0"
   },
