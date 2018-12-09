@@ -1,0 +1,21 @@
+{
+  "name": "hapify-generator",
+  "version": "0.4.0",
+  "description": "Generator backend for Hapify server",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/tractrs/hapify-generator.git"
+  },
+  "keywords": [
+    "hapify",
+    "generator",
+    "backend"
+  ],
+  "author": "Edouard Demotes-Mainard<edouard@tractr.net>",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme"
+}
