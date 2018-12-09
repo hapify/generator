@@ -202,8 +202,7 @@ let GeneratorService = class GeneratorService {
         const ownership = fields.filter((f) => f.ownership);
         // Create filter function
         const filter = (func = null) => {
-            return typeof func === 'function' ?
-                fields.filter(func) : fields;
+            return typeof func === 'function' ? fields.filter(func) : fields;
         };
         // Set fields to model
         m.fields = {
@@ -259,7 +258,7 @@ let GeneratorService = class GeneratorService {
             isGeolocated: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
                 fields.filter((f) => f.type === 'number' && f.subtype === 'longitude').length > 0,
             isGeoSearchable: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
-                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
+                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0
         };
         // ==========================================
         // ACCESSES
@@ -272,7 +271,7 @@ let GeneratorService = class GeneratorService {
             admin: ordered.indexOf(__1.Access.ADMIN),
             owner: ordered.indexOf(__1.Access.OWNER),
             auth: ordered.indexOf(__1.Access.AUTHENTICATED),
-            guest: ordered.indexOf(__1.Access.GUEST),
+            guest: ordered.indexOf(__1.Access.GUEST)
         };
         for (const action in model.accesses) {
             const accessIndex = ordered.indexOf(model.accesses[action]);
@@ -289,7 +288,7 @@ let GeneratorService = class GeneratorService {
                 lteAdmin: accessIndex <= indexes.admin,
                 lteOwner: accessIndex <= indexes.owner,
                 lteAuth: accessIndex <= indexes.auth,
-                lteGuest: accessIndex <= indexes.guest,
+                lteGuest: accessIndex <= indexes.guest
             };
             accesses.push(description);
         }
@@ -325,12 +324,11 @@ let GeneratorService = class GeneratorService {
             hasAdmin: admin.length > 0,
             hasOwner: owner.length > 0,
             hasAuth: auth.length > 0,
-            hasGuest: guest.length > 0,
+            hasGuest: guest.length > 0
         };
         // Create filter function
         const filterAccess = (func = null) => {
-            return typeof func === 'function' ?
-                accesses.filter(func) : accesses;
+            return typeof func === 'function' ? accesses.filter(func) : accesses;
         };
         m.accesses = {
             list: accesses,
@@ -360,7 +358,7 @@ let GeneratorService = class GeneratorService {
             search: actionSearch,
             s: actionSearch,
             count: actionCount,
-            n: actionCount,
+            n: actionCount
         };
         // Add references and dependencies on first level
         if (depth === 0) {
@@ -370,7 +368,7 @@ let GeneratorService = class GeneratorService {
             // Get reference fields
             // Then explicit the reference. If no reference is found returns null (it will be filtered after)
             const references = fields
-                .filter((f) => (f.type === __1.FieldType.Entity) && f.reference)
+                .filter((f) => f.type === __1.FieldType.Entity && f.reference)
                 .map((field) => {
                 const reference = models.find((m) => m.id === field.reference);
                 // Nothing found
@@ -397,11 +395,11 @@ let GeneratorService = class GeneratorService {
             // If the second argument is false, keep the self dependency
             const dependencies = (customFilter = (f) => f, removeSelf = true) => {
                 const duplicates = {};
-                return references
+                return (references
                     // Apply custom filter
                     .filter(customFilter)
                     // Remove self
-                    .filter((ref) => removeSelf ? ref.model.id !== model.id : true)
+                    .filter((ref) => (removeSelf ? ref.model.id !== model.id : true))
                     // Remove duplicates
                     .filter((ref) => {
                     if (duplicates[ref.reference] === true) {
@@ -411,7 +409,7 @@ let GeneratorService = class GeneratorService {
                     return true;
                 })
                     // Extract models
-                    .map((ref) => ref.model);
+                    .map((ref) => ref.model));
             };
             // A boolean to determine if the model has a self dependency
             const selfDependency = !!references.find((ref) => ref.model.id === model.id);

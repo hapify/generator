@@ -1,4 +1,3 @@
-
 export * from './IObjects';
 export * from './IFormattedSentences';
 export * from './IGenerator';

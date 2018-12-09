@@ -1,496 +1,508 @@
 import { Service } from 'typedi';
-import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, SentenceFormat, TemplateEngine, JavaScriptGeneratorService, HpfGeneratorService, StringService } from '../';
+import {
+	TemplateInput,
+	ITemplate,
+	IModel,
+	IField,
+	IGeneratorResult,
+	Access,
+	FieldType,
+	SentenceFormat,
+	TemplateEngine,
+	JavaScriptGeneratorService,
+	HpfGeneratorService,
+	StringService
+} from '../';
 
 /** Define the restriction for an action */
-interface IActionAccesses { [s: string]: boolean|string; }
+interface IActionAccesses {
+	[s: string]: boolean | string;
+}
 
 @Service()
 export class GeneratorService {
+	/**
+	 * Constructor
+	 *
+	 * @param stringService
+	 * @param hpfGeneratorService
+	 * @param javaScriptGeneratorService
+	 */
+	constructor(
+		private stringService: StringService,
+		private hpfGeneratorService: HpfGeneratorService,
+		private javaScriptGeneratorService: JavaScriptGeneratorService
+	) {}
 
-  /**
-   * Constructor
-   *
-   * @param stringService
-   * @param hpfGeneratorService
-   * @param javaScriptGeneratorService
-   */
-  constructor(private stringService: StringService,
-              private hpfGeneratorService: HpfGeneratorService,
-              private javaScriptGeneratorService: JavaScriptGeneratorService) {
-  }
-  
-  /**
-   * Run generation process for one model
-   *
-   * @param {ITemplate[]} templates
-   * @param {IModel[]} models
-   * @param {string[]} forIds
-   *  A list of models ids to restrict generation to
-   * @returns {Promise<IGeneratorResult>}
-   * @throws {Error}
-   *  If the template needs a model and no model is passed
-   */
-  async run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]> {
-    // Create results stack
-    const output: IGeneratorResult[] = [];
-    // Get all models
-    // For each template, run sub process
-    for (const template of templates) {
-      if (template.input === TemplateInput.One) {
-        for (const model of models) {
-          if (forIds && !forIds.find(id => id === model.id)) {
-            continue;
-          }
-          output.push(await this._one(template, models, model));
-        }
-      } else {
-        output.push(await this._all(template, models));
-      }
-    }
-    return output;
-  }
+	/**
+	 * Run generation process for one model
+	 *
+	 * @param {ITemplate[]} templates
+	 * @param {IModel[]} models
+	 * @param {string[]} forIds
+	 *  A list of models ids to restrict generation to
+	 * @returns {Promise<IGeneratorResult>}
+	 * @throws {Error}
+	 *  If the template needs a model and no model is passed
+	 */
+	async run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]> {
+		// Create results stack
+		const output: IGeneratorResult[] = [];
+		// Get all models
+		// For each template, run sub process
+		for (const template of templates) {
+			if (template.input === TemplateInput.One) {
+				for (const model of models) {
+					if (forIds && !forIds.find(id => id === model.id)) {
+						continue;
+					}
+					output.push(await this._one(template, models, model));
+				}
+			} else {
+				output.push(await this._all(template, models));
+			}
+		}
+		return output;
+	}
 
-  /**
-   * Only process the path
-   *
-   * @param {string} path
-   * @param {string} modelName
-   * @returns {string}
-   */
-  path(path: string, modelName?: string): string {
-    
-    // Quick exit
-    if (!modelName) {
-      return path;
-    }
+	/**
+	 * Only process the path
+	 *
+	 * @param {string} path
+	 * @param {string} modelName
+	 * @returns {string}
+	 */
+	path(path: string, modelName?: string): string {
+		// Quick exit
+		if (!modelName) {
+			return path;
+		}
 
-    // Apply replacements
-    path = path.replace(/{model\.hyphen}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphen));
-    path = path.replace(/{model\.hyphenUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphenUpperCase));
-    path = path.replace(/{model\.underscore}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscore));
-    path = path.replace(/{model\.underscoreUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscoreUpperCase));
-    path = path.replace(/{model\.oneWord}/g, this.stringService.format(modelName, SentenceFormat.SlugOneWord));
-    path = path.replace(/{model\.upperCamel}/g, this.stringService.format(modelName, SentenceFormat.UpperCamelCase));
-    path = path.replace(/{model\.lowerCamel}/g, this.stringService.format(modelName, SentenceFormat.LowerCamelCase));
+		// Apply replacements
+		path = path.replace(/{model\.hyphen}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphen));
+		path = path.replace(/{model\.hyphenUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphenUpperCase));
+		path = path.replace(/{model\.underscore}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscore));
+		path = path.replace(/{model\.underscoreUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscoreUpperCase));
+		path = path.replace(/{model\.oneWord}/g, this.stringService.format(modelName, SentenceFormat.SlugOneWord));
+		path = path.replace(/{model\.upperCamel}/g, this.stringService.format(modelName, SentenceFormat.UpperCamelCase));
+		path = path.replace(/{model\.lowerCamel}/g, this.stringService.format(modelName, SentenceFormat.LowerCamelCase));
 
-    return path;
-  }
+		return path;
+	}
 
-  /**
-   * Run generation process for one model and one template
-   *
-   * @param {ITemplate} template
-   * @param {IModel[]} models
-   * @param {IModel} model
-   * @returns {Promise<IGeneratorResult>}
-   * @throws {Error}
-   *  If the template rendering engine is unknown
-   * @private
-   */
-  private async _one(template: ITemplate, models: IModel[], model: IModel): Promise<IGeneratorResult> {
+	/**
+	 * Run generation process for one model and one template
+	 *
+	 * @param {ITemplate} template
+	 * @param {IModel[]} models
+	 * @param {IModel} model
+	 * @returns {Promise<IGeneratorResult>}
+	 * @throws {Error}
+	 *  If the template rendering engine is unknown
+	 * @private
+	 */
+	private async _one(template: ITemplate, models: IModel[], model: IModel): Promise<IGeneratorResult> {
+		// Compute path
+		const path = this.path(template.path, model.name);
+		// Get full model description
+		const input = this._explicitModel(models, model);
 
-    // Compute path
-    const path = this.path(template.path, model.name);
-    // Get full model description
-    const input = this._explicitModel(models, model);
+		// Compute content
+		let content;
+		if (template.engine === TemplateEngine.Hpf) {
+			content = await this.hpfGeneratorService.one(input, template);
+		} else if (template.engine === TemplateEngine.JavaScript) {
+			content = await this.javaScriptGeneratorService.one(input, template);
+		} else {
+			throw new Error('Unknown engine');
+		}
 
-    // Compute content
-    let content;
-    if (template.engine === TemplateEngine.Hpf) {
-      content = await this.hpfGeneratorService.one(input, template);
-    } else if (template.engine === TemplateEngine.JavaScript) {
-      content = await this.javaScriptGeneratorService.one(input, template);
-    } else {
-      throw new Error('Unknown engine');
-    }
+		return {
+			content,
+			path
+		};
+	}
 
-    return {
-      content,
-      path
-    };
-  }
+	/**
+	 * Run generation process for all models and one template
+	 *
+	 * @param {ITemplate} template
+	 * @param {IModel[]} models
+	 * @returns {Promise<IGeneratorResult>}
+	 * @throws {Error}
+	 *  If the template rendering engine is unknowns
+	 * @private
+	 */
+	private async _all(template: ITemplate, models: IModel[]): Promise<IGeneratorResult> {
+		// Compute path
+		const path = this.path(template.path);
+		// Get full models description
+		const input = this._explicitAllModels(models);
 
-  /**
-   * Run generation process for all models and one template
-   *
-   * @param {ITemplate} template
-   * @param {IModel[]} models
-   * @returns {Promise<IGeneratorResult>}
-   * @throws {Error}
-   *  If the template rendering engine is unknowns
-   * @private
-   */
-  private async _all(template: ITemplate, models: IModel[]): Promise<IGeneratorResult> {
+		// Compute content
+		let content;
+		if (template.engine === TemplateEngine.Hpf) {
+			content = await this.hpfGeneratorService.all(input, template);
+		} else if (template.engine === TemplateEngine.JavaScript) {
+			content = await this.javaScriptGeneratorService.all(input, template);
+		} else {
+			throw new Error('Unknown engine');
+		}
 
-    // Compute path
-    const path = this.path(template.path);
-    // Get full models description
-    const input = this._explicitAllModels(models);
+		return {
+			content,
+			path
+		};
+	}
 
-    // Compute content
-    let content;
-    if (template.engine === TemplateEngine.Hpf) {
-      content = await this.hpfGeneratorService.all(input, template);
-    } else if (template.engine === TemplateEngine.JavaScript) {
-      content = await this.javaScriptGeneratorService.all(input, template);
-    } else {
-      throw new Error('Unknown engine');
-    }
+	/**
+	 * Convert the model to an object containing all its properties
+	 *
+	 * @todo Use caching for this method
+	 * @param {IModel[]} models
+	 * @param {IModel} model
+	 * @param {number} depth
+	 * @return {any}
+	 * @private
+	 */
+	private _explicitModel(models: IModel[], model: IModel, depth = 0): any {
+		// Create object
+		const m: any = Object.assign({}, model);
 
-    return {
-      content,
-      path
-    };
-  }
+		// Convert names
+		(<any>m).names = this.stringService.formatSentences(m.name);
 
-  /**
-   * Convert the model to an object containing all its properties
-   *
-   * @todo Use caching for this method
-   * @param {IModel[]} models
-   * @param {IModel} model
-   * @param {number} depth
-   * @return {any}
-   * @private
-   */
-  private _explicitModel(models: IModel[], model: IModel, depth = 0): any {
+		// Get and format fields
+		const fields = m.fields.map((f: IField) => {
+			(<any>f).names = this.stringService.formatSentences(f.name);
+			return f;
+		});
 
-    // Create object
-    const m: any = Object.assign({}, model);
+		// Get primary field
+		const primary = fields.find((f: IField) => f.primary);
 
-    // Convert names
-    (<any>m).names = this.stringService.formatSentences(m.name);
+		// Get unique fields
+		const unique = fields.filter((f: IField) => f.unique);
 
-    // Get and format fields
-    const fields = m.fields.map((f: IField) => {
-      (<any>f).names = this.stringService.formatSentences(f.name);
-      return f;
-    });
+		// Get label fields
+		const label = fields.filter((f: IField) => f.label);
 
-    // Get primary field
-    const primary = fields.find((f: IField) => f.primary);
+		// Get label and searchable fields
+		const searchableLabel = fields.filter((f: IField) => f.label && f.searchable);
 
-    // Get unique fields
-    const unique = fields.filter((f: IField) => f.unique);
+		// Get nullable fields
+		const nullable = fields.filter((f: IField) => f.nullable);
 
-    // Get label fields
-    const label = fields.filter((f: IField) => f.label);
+		// Get multiple fields
+		const multiple = fields.filter((f: IField) => f.multiple);
 
-    // Get label and searchable fields
-    const searchableLabel = fields.filter((f: IField) => f.label && f.searchable);
+		// Get important fields
+		const important = fields.filter((f: IField) => f.important);
 
-    // Get nullable fields
-    const nullable = fields.filter((f: IField) => f.nullable);
+		// Get searchable fields
+		const searchable = fields.filter((f: IField) => f.searchable);
 
-    // Get multiple fields
-    const multiple = fields.filter((f: IField) => f.multiple);
+		// Get sortable fields
+		const sortable = fields.filter((f: IField) => f.sortable);
 
-    // Get important fields
-    const important = fields.filter((f: IField) => f.important);
+		// Get private fields
+		const isPrivate = fields.filter((f: IField) => f.isPrivate);
 
-    // Get searchable fields
-    const searchable = fields.filter((f: IField) => f.searchable);
+		// Get internal fields
+		const internal = fields.filter((f: IField) => f.internal);
 
-    // Get sortable fields
-    const sortable = fields.filter((f: IField) => f.sortable);
+		// Get restricted fields
+		const restricted = fields.filter((f: IField) => f.restricted);
 
-    // Get private fields
-    const isPrivate = fields.filter((f: IField) => f.isPrivate);
+		// Get ownership fields
+		const ownership = fields.filter((f: IField) => f.ownership);
 
-    // Get internal fields
-    const internal = fields.filter((f: IField) => f.internal);
+		// Create filter function
+		const filter = (func: (f: IField) => boolean = null) => {
+			return typeof func === 'function' ? fields.filter(func) : fields;
+		};
 
-    // Get restricted fields
-    const restricted = fields.filter((f: IField) => f.restricted);
+		// Set fields to model
+		m.fields = {
+			list: fields,
+			l: fields,
+			f: filter,
+			filter,
+			primary,
+			p: primary,
+			unique,
+			u: unique,
+			label,
+			lb: label,
+			nullable,
+			n: nullable,
+			multiple,
+			m: multiple,
+			important,
+			im: important,
+			searchable,
+			se: searchable,
+			sortable,
+			so: sortable,
+			isPrivate,
+			ip: isPrivate,
+			internal,
+			i: internal,
+			restricted,
+			r: restricted,
+			ownership,
+			o: ownership,
+			searchableLabel,
+			sl: searchableLabel
+		};
 
-    // Get ownership fields
-    const ownership = fields.filter((f: IField) => f.ownership);
+		// Pre-compute properties
+		m.properties = {
+			fieldsCount: fields.length,
+			hasPrimary: !!primary,
+			hasUnique: unique.length > 0,
+			hasLabel: label.length > 0,
+			hasNullable: nullable.length > 0,
+			hasMultiple: multiple.length > 0,
+			hasImportant: important.length > 0,
+			hasSearchable: searchable.length > 0,
+			hasSortable: sortable.length > 0,
+			hasPrivate: isPrivate.length > 0,
+			hasInternal: internal.length > 0,
+			hasRestricted: restricted.length > 0,
+			hasOwnership: ownership.length > 0,
+			hasSearchableLabel: searchableLabel.length > 0,
+			mainlyPrivate: fields.length < 2 * isPrivate.length,
+			mainlyInternal: fields.length < 2 * internal.length,
+			isGeolocated:
+				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
+				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'longitude').length > 0,
+			isGeoSearchable:
+				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
+				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0
+		};
 
-    // Create filter function
-    const filter = (func: (f: IField) => boolean = null) => {
-      return typeof func === 'function' ?
-        fields.filter(func) : fields;
-    };
+		// ==========================================
+		// ACCESSES
+		// ==========================================
+		// Compute accesses sub-object for each action
+		// For each action, add a boolean for each access that denote if the access type is granted
+		const accesses: IActionAccesses[] = [];
+		const ordered = Access.list();
+		const indexes = {
+			admin: ordered.indexOf(Access.ADMIN),
+			owner: ordered.indexOf(Access.OWNER),
+			auth: ordered.indexOf(Access.AUTHENTICATED),
+			guest: ordered.indexOf(Access.GUEST)
+		};
+		for (const action in model.accesses) {
+			const accessIndex = ordered.indexOf(model.accesses[action]);
+			const description: IActionAccesses = {
+				action: action,
+				admin: accessIndex === indexes.admin,
+				owner: accessIndex === indexes.owner,
+				auth: accessIndex === indexes.auth,
+				guest: accessIndex === indexes.guest,
 
-    // Set fields to model
-    m.fields = {
-      list: fields,
-      l: fields,
-      f: filter,
-      filter,
-      primary,
-      p: primary,
-      unique,
-      u: unique,
-      label,
-      lb: label,
-      nullable,
-      n: nullable,
-      multiple,
-      m: multiple,
-      important,
-      im: important,
-      searchable,
-      se: searchable,
-      sortable,
-      so: sortable,
-      isPrivate,
-      ip: isPrivate,
-      internal,
-      i: internal,
-      restricted,
-      r: restricted,
-      ownership,
-      o: ownership,
-      searchableLabel,
-      sl: searchableLabel
-    };
+				gteAdmin: accessIndex >= indexes.admin,
+				gteOwner: accessIndex >= indexes.owner,
+				gteAuth: accessIndex >= indexes.auth,
+				gteGuest: accessIndex >= indexes.guest,
 
-    // Pre-compute properties
-    m.properties = {
-      fieldsCount: fields.length,
-      hasPrimary: !!primary,
-      hasUnique: unique.length > 0,
-      hasLabel: label.length > 0,
-      hasNullable: nullable.length > 0,
-      hasMultiple: multiple.length > 0,
-      hasImportant: important.length > 0,
-      hasSearchable: searchable.length > 0,
-      hasSortable: sortable.length > 0,
-      hasPrivate: isPrivate.length > 0,
-      hasInternal: internal.length > 0,
-      hasRestricted: restricted.length > 0,
-      hasOwnership: ownership.length > 0,
-      hasSearchableLabel: searchableLabel.length > 0,
-      mainlyPrivate: fields.length < 2 * isPrivate.length,
-      mainlyInternal: fields.length < 2 * internal.length,
-      isGeolocated: fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
-                    fields.filter((f: IField) => f.type === 'number' && f.subtype === 'longitude').length > 0,
-      isGeoSearchable: fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
-                       fields.filter((f: IField) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
-    };
+				lteAdmin: accessIndex <= indexes.admin,
+				lteOwner: accessIndex <= indexes.owner,
+				lteAuth: accessIndex <= indexes.auth,
+				lteGuest: accessIndex <= indexes.guest
+			};
+			accesses.push(description);
+		}
 
-    // ==========================================
-    // ACCESSES
-    // ==========================================
-    // Compute accesses sub-object for each action
-    // For each action, add a boolean for each access that denote if the access type is granted
-    const accesses: IActionAccesses[] = [];
-    const ordered = Access.list();
-    const indexes = {
-      admin: ordered.indexOf(Access.ADMIN),
-      owner: ordered.indexOf(Access.OWNER),
-      auth: ordered.indexOf(Access.AUTHENTICATED),
-      guest: ordered.indexOf(Access.GUEST),
-    };
-    for (const action in model.accesses) {
-      const accessIndex = ordered.indexOf(model.accesses[action]);
-      const description: IActionAccesses = {
-        action: action,
-        admin: accessIndex === indexes.admin,
-        owner: accessIndex === indexes.owner,
-        auth: accessIndex === indexes.auth,
-        guest: accessIndex === indexes.guest,
+		// Get admin actions
+		const admin = accesses.filter((a: IActionAccesses) => a.admin);
 
-        gteAdmin: accessIndex >= indexes.admin,
-        gteOwner: accessIndex >= indexes.owner,
-        gteAuth: accessIndex >= indexes.auth,
-        gteGuest: accessIndex >= indexes.guest,
+		// Get owner actions
+		const owner = accesses.filter((a: IActionAccesses) => a.owner);
 
-        lteAdmin: accessIndex <= indexes.admin,
-        lteOwner: accessIndex <= indexes.owner,
-        lteAuth: accessIndex <= indexes.auth,
-        lteGuest: accessIndex <= indexes.guest,
-      };
-      accesses.push(description);
-    }
+		// Get auth actions
+		const auth = accesses.filter((a: IActionAccesses) => a.auth);
 
-    // Get admin actions
-    const admin = accesses.filter((a: IActionAccesses) => a.admin);
+		// Get guest actions
+		const guest = accesses.filter((a: IActionAccesses) => a.guest);
 
-    // Get owner actions
-    const owner = accesses.filter((a: IActionAccesses) => a.owner);
+		// Get actions
+		const actionCreate = accesses.find((a: IActionAccesses) => a.action === 'create');
+		const actionRead = accesses.find((a: IActionAccesses) => a.action === 'read');
+		const actionUpdate = accesses.find((a: IActionAccesses) => a.action === 'update');
+		const actionRemove = accesses.find((a: IActionAccesses) => a.action === 'remove');
+		const actionSearch = accesses.find((a: IActionAccesses) => a.action === 'search');
+		const actionCount = accesses.find((a: IActionAccesses) => a.action === 'count');
 
-    // Get auth actions
-    const auth = accesses.filter((a: IActionAccesses) => a.auth);
+		// Pre-computed properties
+		const propertiesAccess = {
+			onlyAdmin: admin.length === accesses.length,
+			onlyOwner: owner.length === accesses.length,
+			onlyAuth: auth.length === accesses.length,
+			onlyGuest: guest.length === accesses.length,
+			maxAdmin: admin.length > 0 && owner.length === 0 && auth.length === 0 && guest.length === 0,
+			maxOwner: owner.length > 0 && auth.length === 0 && guest.length === 0,
+			maxAuth: auth.length > 0 && guest.length === 0,
+			maxGuest: guest.length > 0,
+			noAdmin: admin.length === 0,
+			noOwner: owner.length === 0,
+			noAuth: auth.length === 0,
+			noGuest: guest.length === 0,
+			hasAdmin: admin.length > 0,
+			hasOwner: owner.length > 0,
+			hasAuth: auth.length > 0,
+			hasGuest: guest.length > 0
+		};
 
-    // Get guest actions
-    const guest = accesses.filter((a: IActionAccesses) => a.guest);
+		// Create filter function
+		const filterAccess = (func: (a: IActionAccesses) => boolean = null) => {
+			return typeof func === 'function' ? accesses.filter(func) : accesses;
+		};
+		m.accesses = {
+			list: accesses,
+			l: accesses,
+			filter: filterAccess,
+			f: filterAccess,
+			properties: propertiesAccess,
+			p: propertiesAccess,
+			// By access
+			admin,
+			ad: admin,
+			owner,
+			ow: owner,
+			auth,
+			au: auth,
+			guest,
+			gs: guest,
+			// By actions
+			create: actionCreate,
+			c: actionCreate,
+			read: actionRead,
+			r: actionRead,
+			update: actionUpdate,
+			u: actionUpdate,
+			remove: actionRemove,
+			d: actionRemove,
+			search: actionSearch,
+			s: actionSearch,
+			count: actionCount,
+			n: actionCount
+		};
 
-    // Get actions
-    const actionCreate = accesses.find((a: IActionAccesses) => a.action === 'create');
-    const actionRead = accesses.find((a: IActionAccesses) => a.action === 'read');
-    const actionUpdate = accesses.find((a: IActionAccesses) => a.action === 'update');
-    const actionRemove = accesses.find((a: IActionAccesses) => a.action === 'remove');
-    const actionSearch = accesses.find((a: IActionAccesses) => a.action === 'search');
-    const actionCount = accesses.find((a: IActionAccesses) => a.action === 'count');
+		// Add references and dependencies on first level
+		if (depth === 0) {
+			// ==========================================
+			// REFERENCES
+			// ==========================================
+			// Get reference fields
+			// Then explicit the reference. If no reference is found returns null (it will be filtered after)
+			const references = fields
+				.filter((f: IField) => f.type === FieldType.Entity && f.reference)
+				.map((field: any) => {
+					const reference = models.find((m: IModel) => m.id === field.reference);
 
-    // Pre-computed properties
-    const propertiesAccess = {
-      onlyAdmin: admin.length === accesses.length,
-      onlyOwner: owner.length === accesses.length,
-      onlyAuth: auth.length === accesses.length,
-      onlyGuest: guest.length === accesses.length,
-      maxAdmin: admin.length > 0 && owner.length === 0 && auth.length === 0 && guest.length === 0,
-      maxOwner: owner.length > 0 && auth.length === 0 && guest.length === 0,
-      maxAuth: auth.length > 0 && guest.length === 0,
-      maxGuest: guest.length > 0,
-      noAdmin: admin.length === 0,
-      noOwner: owner.length === 0,
-      noAuth: auth.length === 0,
-      noGuest: guest.length === 0,
-      hasAdmin: admin.length > 0,
-      hasOwner: owner.length > 0,
-      hasAuth: auth.length > 0,
-      hasGuest: guest.length > 0,
-    };
+					// Nothing found
+					if (!reference) {
+						return null;
+					}
+					// Add reference to object
+					const subField = this._explicitModel(models, reference, depth + 1);
+					field.model = subField;
+					field.m = subField;
 
-    // Create filter function
-    const filterAccess = (func: (a: IActionAccesses) => boolean = null) => {
-      return typeof func === 'function' ?
-        accesses.filter(func) : accesses;
-    };
-    m.accesses = {
-      list: accesses,
-      l: accesses,
-      filter: filterAccess,
-      f: filterAccess,
-      properties: propertiesAccess,
-      p: propertiesAccess,
-      // By access
-      admin,
-      ad: admin,
-      owner,
-      ow: owner,
-      auth,
-      au: auth,
-      guest,
-      gs: guest,
-      // By actions
-      create: actionCreate,
-      c: actionCreate,
-      read: actionRead,
-      r: actionRead,
-      update: actionUpdate,
-      u: actionUpdate,
-      remove: actionRemove,
-      d: actionRemove,
-      search: actionSearch,
-      s: actionSearch,
-      count: actionCount,
-      n: actionCount,
-    };
+					return field;
+				})
+				.filter((f: any) => f);
 
-    // Add references and dependencies on first level
-    if (depth === 0) {
+			// Add to object
+			m.fields.references = references;
+			m.fields.references.f = m.fields.references.filter;
+			m.fields.r = references;
+			m.fields.r.f = m.fields.r.filter;
 
-      // ==========================================
-      // REFERENCES
-      // ==========================================
-      // Get reference fields
-      // Then explicit the reference. If no reference is found returns null (it will be filtered after)
-      const references = fields
-        .filter((f: IField) => (f.type === FieldType.Entity) && f.reference)
-        .map((field: any) => {
-          const reference = models.find((m: IModel) => m.id === field.reference);
+			// ==========================================
+			// DEPENDENCIES
+			// ==========================================
+			// Create method to reduce references to dependencies
+			// A custom filter can be passed
+			// If the second argument is false, keep the self dependency
+			const dependencies = (customFilter = (f: any) => f, removeSelf: boolean = true) => {
+				const duplicates: any = {};
+				return (
+					references
+						// Apply custom filter
+						.filter(customFilter)
+						// Remove self
+						.filter((ref: any) => (removeSelf ? ref.model.id !== model.id : true))
+						// Remove duplicates
+						.filter((ref: any) => {
+							if (duplicates[ref.reference] === true) {
+								return false;
+							}
+							duplicates[ref.reference] = true;
+							return true;
+						})
+						// Extract models
+						.map((ref: any) => ref.model)
+				);
+			};
 
-          // Nothing found
-          if (!reference) {
-            return null;
-          }
-          // Add reference to object
-          const subField = this._explicitModel(models, reference, depth + 1);
-          field.model = subField;
-          field.m = subField;
+			// A boolean to determine if the model has a self dependency
+			const selfDependency = !!references.find((ref: any) => ref.model.id === model.id);
 
-          return field;
-        })
-        .filter((f: any) => f);
+			const allDependencies = dependencies();
+			m.dependencies = {
+				list: allDependencies,
+				l: allDependencies,
+				filter: dependencies,
+				f: dependencies,
+				self: selfDependency,
+				s: selfDependency
+			};
+			m.d = m.dependencies;
+			m.properties.hasDependencies = allDependencies.length > 0;
 
-      // Add to object
-      m.fields.references = references;
-      m.fields.references.f = m.fields.references.filter;
-      m.fields.r = references;
-      m.fields.r.f = m.fields.r.filter;
+			// ==========================================
+			// REFERENCED IN
+			// ==========================================
+			// Filter referencing models
+			const extractReferencingFields = (f: IField) => f.type === FieldType.Entity && f.reference === model.id;
+			const referencedIn = models
+				.filter((m: IModel) => !!m.fields.find(extractReferencingFields))
+				.map((m: IModel) => {
+					// Get model description (first level) and remove non referencing fields
+					const explicited = this._explicitModel(models, m, depth + 1);
+					explicited.fields = explicited.fields.list.filter(extractReferencingFields);
+					explicited.fields.f = explicited.fields.filter;
+					explicited.f = explicited.fields;
+					return explicited;
+				});
+			// Get all results
+			m.referencedIn = referencedIn;
+			m.referencedIn.f = m.referencedIn.filter;
+			m.ri = referencedIn;
+			m.properties.isReferenced = referencedIn.length > 0;
+		}
 
-      // ==========================================
-      // DEPENDENCIES
-      // ==========================================
-      // Create method to reduce references to dependencies
-      // A custom filter can be passed
-      // If the second argument is false, keep the self dependency
-      const dependencies = (customFilter = (f: any) => f, removeSelf: boolean = true) => {
-        const duplicates: any = {};
-        return references
-          // Apply custom filter
-          .filter(customFilter)
-          // Remove self
-          .filter((ref: any) => removeSelf ? ref.model.id !== model.id : true)
-          // Remove duplicates
-          .filter((ref: any) => {
-            if (duplicates[ref.reference] === true) {
-              return false;
-            }
-            duplicates[ref.reference] = true;
-            return true;
-          })
-          // Extract models
-          .map((ref: any) => ref.model);
-      };
+		// Add short name
+		m.f = m.fields;
+		m.p = m.properties;
+		m.a = m.accesses;
 
-      // A boolean to determine if the model has a self dependency
-      const selfDependency = !!references.find((ref: any) => ref.model.id === model.id);
+		return m;
+	}
 
-      const allDependencies = dependencies();
-      m.dependencies = {
-        list: allDependencies,
-        l: allDependencies,
-        filter: dependencies,
-        f: dependencies,
-        self: selfDependency,
-        s: selfDependency
-      };
-      m.d = m.dependencies;
-      m.properties.hasDependencies = allDependencies.length > 0;
-
-      // ==========================================
-      // REFERENCED IN
-      // ==========================================
-      // Filter referencing models
-      const extractReferencingFields = (f: IField) => f.type === FieldType.Entity && f.reference === model.id;
-      const referencedIn = models
-        .filter((m: IModel) => !!m.fields.find(extractReferencingFields))
-        .map((m: IModel) => {
-          // Get model description (first level) and remove non referencing fields
-          const explicited = this._explicitModel(models, m, depth + 1);
-          explicited.fields = explicited.fields.list.filter(extractReferencingFields);
-          explicited.fields.f = explicited.fields.filter;
-          explicited.f = explicited.fields;
-          return explicited;
-        });
-      // Get all results
-      m.referencedIn = referencedIn;
-      m.referencedIn.f = m.referencedIn.filter;
-      m.ri = referencedIn;
-      m.properties.isReferenced = referencedIn.length > 0;
-    }
-
-    // Add short name
-    m.f = m.fields;
-    m.p = m.properties;
-    m.a = m.accesses;
-
-    return m;
-  }
-
-  /**
-   * Convert all the models to an array of objects containing all its properties
-   *
-   * @param {IModel[]} models
-   * @return {any[]}
-   * @private
-   */
-  private _explicitAllModels(models: IModel[]): any[] {
-    return models.map((mod: IModel) => this._explicitModel(models, mod));
-  }
+	/**
+	 * Convert all the models to an array of objects containing all its properties
+	 *
+	 * @param {IModel[]} models
+	 * @return {any[]}
+	 * @private
+	 */
+	private _explicitAllModels(models: IModel[]): any[] {
+		return models.map((mod: IModel) => this._explicitModel(models, mod));
+	}
 }

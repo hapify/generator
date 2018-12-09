@@ -23,8 +23,7 @@ let JavaScriptGeneratorService = class JavaScriptGeneratorService {
     /**
      * Constructor
      */
-    constructor() {
-    }
+    constructor() { }
     /**
      * @inheritDoc
      */
