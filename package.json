@@ -4,7 +4,11 @@
   "description": "Generator backend for Hapify server",
   "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node build/index.js",
+    "watch": "rm -rf build && tsc -w",
+    "build": "rm -rf build && ./node_modules/.bin/tsc -p .",
+    "test": "./node_modules/.bin/lab tests/api",
+    "lint": "./node_modules/.bin/prettier --write '**/*{.js,.ts}'"
   },
   "repository": {
     "type": "git",
@@ -15,7 +19,26 @@
     "generator",
     "backend"
   ],
-  "author": "Edouard Demotes-Mainard<edouard@tractr.net>",
+  "author": "Edouard Demotes-Mainard <edouard@tractr.net>",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme"
+  "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme",
+  "devDependencies": {
+    "@types/boom": "^7.2.1",
+    "@types/hapi": "^17.8.0",
+    "@types/joi": "^14.0.0",
+    "code": "^5.2.4",
+    "lab": "^18.0.0",
+    "prettier": "^1.15.3",
+    "reflect-metadata": "^0.1.12",
+    "typedi": "^0.8.0",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "boom": "^7.3.0",
+    "hapi": "^17.8.1",
+    "joi": "^14.3.0"
+  },
+  "engines": {
+    "node": ">=9.2.0"
+  }
 }
