@@ -1,18 +1,7 @@
 import { Service } from 'typedi';
-import {
-	TemplateInput,
-	ITemplate,
-	IModel,
-	IField,
-	IGeneratorResult,
-	Access,
-	FieldType,
-	SentenceFormat,
-	TemplateEngine,
-	JavaScriptGeneratorService,
-	HpfGeneratorService,
-	StringService
-} from '../';
+import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, SentenceFormat, TemplateEngine } from '../interfaces';
+import { JavaScriptGeneratorService, HpfGeneratorService } from './';
+import { StringService } from '../String';
 
 /** Define the restriction for an action */
 interface IActionAccesses {

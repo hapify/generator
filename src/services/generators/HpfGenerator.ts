@@ -1,4 +1,4 @@
-import { IGenerator, ITemplate } from '../';
+import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
 import HapifySyntax from 'hapify-syntax';
 

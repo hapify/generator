@@ -1,4 +1,4 @@
-import { IGenerator, ITemplate } from '../';
+import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
 const SafeEval = require('safe-eval');
 

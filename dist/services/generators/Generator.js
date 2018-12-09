@@ -18,7 +18,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typedi_1 = require("typedi");
-const __1 = require("../");
+const interfaces_1 = require("../interfaces");
+const _1 = require("./");
+const String_1 = require("../String");
 let GeneratorService = class GeneratorService {
     /**
      * Constructor
@@ -50,7 +52,7 @@ let GeneratorService = class GeneratorService {
             // Get all models
             // For each template, run sub process
             for (const template of templates) {
-                if (template.input === __1.TemplateInput.One) {
+                if (template.input === interfaces_1.TemplateInput.One) {
                     for (const model of models) {
                         if (forIds && !forIds.find(id => id === model.id)) {
                             continue;
@@ -78,13 +80,13 @@ let GeneratorService = class GeneratorService {
             return path;
         }
         // Apply replacements
-        path = path.replace(/{model\.hyphen}/g, this.stringService.format(modelName, __1.SentenceFormat.SlugHyphen));
-        path = path.replace(/{model\.hyphenUpper}/g, this.stringService.format(modelName, __1.SentenceFormat.SlugHyphenUpperCase));
-        path = path.replace(/{model\.underscore}/g, this.stringService.format(modelName, __1.SentenceFormat.SlugUnderscore));
-        path = path.replace(/{model\.underscoreUpper}/g, this.stringService.format(modelName, __1.SentenceFormat.SlugUnderscoreUpperCase));
-        path = path.replace(/{model\.oneWord}/g, this.stringService.format(modelName, __1.SentenceFormat.SlugOneWord));
-        path = path.replace(/{model\.upperCamel}/g, this.stringService.format(modelName, __1.SentenceFormat.UpperCamelCase));
-        path = path.replace(/{model\.lowerCamel}/g, this.stringService.format(modelName, __1.SentenceFormat.LowerCamelCase));
+        path = path.replace(/{model\.hyphen}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.SlugHyphen));
+        path = path.replace(/{model\.hyphenUpper}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.SlugHyphenUpperCase));
+        path = path.replace(/{model\.underscore}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.SlugUnderscore));
+        path = path.replace(/{model\.underscoreUpper}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.SlugUnderscoreUpperCase));
+        path = path.replace(/{model\.oneWord}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.SlugOneWord));
+        path = path.replace(/{model\.upperCamel}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.UpperCamelCase));
+        path = path.replace(/{model\.lowerCamel}/g, this.stringService.format(modelName, interfaces_1.SentenceFormat.LowerCamelCase));
         return path;
     }
     /**
@@ -106,10 +108,10 @@ let GeneratorService = class GeneratorService {
             const input = this._explicitModel(models, model);
             // Compute content
             let content;
-            if (template.engine === __1.TemplateEngine.Hpf) {
+            if (template.engine === interfaces_1.TemplateEngine.Hpf) {
                 content = yield this.hpfGeneratorService.one(input, template);
             }
-            else if (template.engine === __1.TemplateEngine.JavaScript) {
+            else if (template.engine === interfaces_1.TemplateEngine.JavaScript) {
                 content = yield this.javaScriptGeneratorService.one(input, template);
             }
             else {
@@ -139,10 +141,10 @@ let GeneratorService = class GeneratorService {
             const input = this._explicitAllModels(models);
             // Compute content
             let content;
-            if (template.engine === __1.TemplateEngine.Hpf) {
+            if (template.engine === interfaces_1.TemplateEngine.Hpf) {
                 content = yield this.hpfGeneratorService.all(input, template);
             }
-            else if (template.engine === __1.TemplateEngine.JavaScript) {
+            else if (template.engine === interfaces_1.TemplateEngine.JavaScript) {
                 content = yield this.javaScriptGeneratorService.all(input, template);
             }
             else {
@@ -266,12 +268,12 @@ let GeneratorService = class GeneratorService {
         // Compute accesses sub-object for each action
         // For each action, add a boolean for each access that denote if the access type is granted
         const accesses = [];
-        const ordered = __1.Access.list();
+        const ordered = interfaces_1.Access.list();
         const indexes = {
-            admin: ordered.indexOf(__1.Access.ADMIN),
-            owner: ordered.indexOf(__1.Access.OWNER),
-            auth: ordered.indexOf(__1.Access.AUTHENTICATED),
-            guest: ordered.indexOf(__1.Access.GUEST)
+            admin: ordered.indexOf(interfaces_1.Access.ADMIN),
+            owner: ordered.indexOf(interfaces_1.Access.OWNER),
+            auth: ordered.indexOf(interfaces_1.Access.AUTHENTICATED),
+            guest: ordered.indexOf(interfaces_1.Access.GUEST)
         };
         for (const action in model.accesses) {
             const accessIndex = ordered.indexOf(model.accesses[action]);
@@ -368,7 +370,7 @@ let GeneratorService = class GeneratorService {
             // Get reference fields
             // Then explicit the reference. If no reference is found returns null (it will be filtered after)
             const references = fields
-                .filter((f) => f.type === __1.FieldType.Entity && f.reference)
+                .filter((f) => f.type === interfaces_1.FieldType.Entity && f.reference)
                 .map((field) => {
                 const reference = models.find((m) => m.id === field.reference);
                 // Nothing found
@@ -428,7 +430,7 @@ let GeneratorService = class GeneratorService {
             // REFERENCED IN
             // ==========================================
             // Filter referencing models
-            const extractReferencingFields = (f) => f.type === __1.FieldType.Entity && f.reference === model.id;
+            const extractReferencingFields = (f) => f.type === interfaces_1.FieldType.Entity && f.reference === model.id;
             const referencedIn = models
                 .filter((m) => !!m.fields.find(extractReferencingFields))
                 .map((m) => {
@@ -464,9 +466,9 @@ let GeneratorService = class GeneratorService {
 };
 GeneratorService = __decorate([
     typedi_1.Service(),
-    __metadata("design:paramtypes", [__1.StringService,
-        __1.HpfGeneratorService,
-        __1.JavaScriptGeneratorService])
+    __metadata("design:paramtypes", [String_1.StringService,
+        _1.HpfGeneratorService,
+        _1.JavaScriptGeneratorService])
 ], GeneratorService);
 exports.GeneratorService = GeneratorService;
 //# sourceMappingURL=Generator.js.map

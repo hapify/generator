@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { IFormattedSentences, SentenceFormat } from './';
+import { IFormattedSentences, SentenceFormat } from './interfaces';
 
 /** @todo use npm lib 'case' */
 
