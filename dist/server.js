@@ -24,7 +24,7 @@ function init(config) {
             server.realm.modifiers.route.prefix = config.Server.app.routePrefix;
         }
         // Register Hapi Plugins
-        const plugins = { plugin: require('good'), options: config.Good };
+        const plugins = [{ plugin: require('good'), options: config.Good }];
         yield server.register(plugins);
         server.log(['booting'], 'All plugins registered successfully.');
         // Register Routes

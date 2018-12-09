@@ -10,7 +10,7 @@ export async function init(config: IConfig): Promise<Hapi.Server> {
 	}
 
 	// Register Hapi Plugins
-	const plugins = { plugin: require('good'), options: config.Good };
+	const plugins = [{ plugin: require('good'), options: config.Good }];
 	await server.register(plugins);
 	server.log(['booting'], 'All plugins registered successfully.');
 

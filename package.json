@@ -31,7 +31,8 @@
     "prettier": "^1.15.3",
     "reflect-metadata": "^0.1.12",
     "typedi": "^0.8.0",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "hapify-syntax": "file:./packages/hapify-syntax"
   },
   "dependencies": {
     "boom": "^7.3.0",
@@ -39,7 +40,8 @@
     "good-console": "^7.1.0",
     "good-squeeze": "^5.1.0",
     "hapi": "^17.8.1",
-    "joi": "^14.3.0"
+    "joi": "^14.3.0",
+    "safe-eval": "^0.4.1"
   },
   "engines": {
     "node": ">=9.2.0"
