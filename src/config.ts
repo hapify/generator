@@ -1,3 +1,5 @@
+import * as Hapi from 'hapi';
+
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 
@@ -21,7 +23,17 @@ export const Config: IConfig = {
 			},
 			cors: {
 				origin: ['*']
-			}
+			},
+      validate: {
+        options: { abortEarly: false },
+        failAction: (request: Hapi.Request, h: Hapi.ResponseToolkit, error: Error) => {
+          if (error) {
+            request.log(['error', 'validation'], error.toString());
+            throw error;
+          }
+          return h.continue;
+        }
+      }
 		},
 		debug: { request: ['error'] },
 		app: {

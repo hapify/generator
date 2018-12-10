@@ -18,6 +18,16 @@ exports.Config = {
             },
             cors: {
                 origin: ['*']
+            },
+            validate: {
+                options: { abortEarly: false },
+                failAction: (request, h, error) => {
+                    if (error) {
+                        request.log(['error', 'validation'], error.toString());
+                        throw error;
+                    }
+                    return h.continue;
+                }
             }
         },
         debug: { request: ['error'] },
