@@ -4,10 +4,10 @@
   "description": "Generator backend for Hapify server",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "watch": "rm -rf dist && tsc -w",
     "build": "npm run lint && rm -rf dist && ./node_modules/.bin/tsc -p .",
-    "test": "./node_modules/.bin/lab tests/api",
+    "test": "./node_modules/.bin/lab dist/tests/api",
     "lint": "./node_modules/.bin/prettier --write '**/*{.js,.ts}'"
   },
   "repository": {
@@ -24,15 +24,20 @@
   "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme",
   "devDependencies": {
     "@types/boom": "^7.2.1",
+    "@types/code": "^4.0.5",
     "@types/hapi": "^17.8.0",
     "@types/joi": "^14.0.0",
+    "@types/lab": "^11.1.0",
+    "@types/request-promise-native": "^1.0.15",
     "code": "^5.2.4",
+    "hapify-syntax": "file:./packages/hapify-syntax",
     "lab": "^18.0.0",
     "prettier": "^1.15.3",
     "reflect-metadata": "^0.1.12",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
     "typedi": "^0.8.0",
-    "typescript": "^3.2.2",
-    "hapify-syntax": "file:./packages/hapify-syntax"
+    "typescript": "^3.2.2"
   },
   "dependencies": {
     "boom": "^7.3.0",
