@@ -2,9 +2,9 @@ import requestPromise from 'request-promise-native';
 import { Config } from './config';
 
 interface ApiResponse {
-  statusCode: number;
+	statusCode: number;
 	body: any;
-  headers: any;
+	headers: any;
 }
 
 /**
@@ -30,7 +30,14 @@ let _jar = requestPromise.jar();
  * @param {boolean} json
  * @return {Promise<ApiResponse>}
  */
-const call = async (method: string, path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => {
+const call = async (
+	method: string,
+	path: string,
+	payload: object = null,
+	query: object = null,
+	headers: object = null,
+	json: boolean = true
+): Promise<ApiResponse> => {
 	const base = Config.apiUrl;
 
 	const request: any = {
@@ -83,7 +90,8 @@ const Api = {
 	 * @param {boolean} json
 	 * @return {Promise.<ApiResponse>}
 	 */
-	get: (path: string, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => call('get', path, null, query, headers, json),
+	get: (path: string, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> =>
+		call('get', path, null, query, headers, json),
 
 	/**
 	 * Post a resource to API
@@ -95,7 +103,8 @@ const Api = {
 	 * @param {boolean} json
 	 * @return {Promise.<ApiResponse>}
 	 */
-	post: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => call('post', path, payload, query, headers, json),
+	post: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> =>
+		call('post', path, payload, query, headers, json),
 
 	/**
 	 * Patch a resource to API
@@ -107,7 +116,8 @@ const Api = {
 	 * @param {boolean} json
 	 * @return {Promise.<ApiResponse>}
 	 */
-	patch: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => call('patch', path, payload, query, headers, json),
+	patch: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> =>
+		call('patch', path, payload, query, headers, json),
 
 	/**
 	 * Put a resource to API
@@ -119,7 +129,8 @@ const Api = {
 	 * @param {boolean} json
 	 * @return {Promise.<ApiResponse>}
 	 */
-	put: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => call('put', path, payload, query, headers, json),
+	put: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> =>
+		call('put', path, payload, query, headers, json),
 
 	/**
 	 * Delete a resource from API
@@ -131,7 +142,8 @@ const Api = {
 	 * @param {boolean} json
 	 * @return {Promise.<ApiResponse>}
 	 */
-	delete: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> => call('delete', path, payload, query, headers, json),
+	delete: (path: string, payload: object = null, query: object = null, headers: object = null, json: boolean = true): Promise<ApiResponse> =>
+		call('delete', path, payload, query, headers, json),
 
 	/**
 	 * Flush the cookies

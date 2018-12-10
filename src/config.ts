@@ -23,17 +23,7 @@ export const Config: IConfig = {
 			},
 			cors: {
 				origin: ['*']
-			},
-      validate: {
-        options: { abortEarly: false },
-        failAction: (request: Hapi.Request, h: Hapi.ResponseToolkit, error: Error) => {
-          if (error) {
-            request.log(['error', 'validation'], error.toString());
-            throw error;
-          }
-          return h.continue;
-        }
-      }
+			}
 		},
 		debug: { request: ['error'] },
 		app: {

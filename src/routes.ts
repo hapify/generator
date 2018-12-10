@@ -1,6 +1,6 @@
 import * as Hapi from 'hapi';
 import * as Joi from 'joi';
-import * as Boom from 'boom';
+import Boom from 'boom';
 import { Access, TemplateEngine, TemplateInput, GeneratorService } from './services';
 import { Container } from 'typedi';
 import { IModel, ITemplate } from './services/interfaces/IObjects';
@@ -60,7 +60,7 @@ const modelSchema = Joi.object({
 		count: Joi.string()
 			.valid(accesses)
 			.required()
-	})
+	}).required()
 });
 const engines = [TemplateEngine.Hpf, TemplateEngine.JavaScript];
 const inputs = [TemplateInput.One, TemplateInput.All];
@@ -128,7 +128,7 @@ export const Routes: any[] = [
 		handler: async (request: any): Promise<Hapi.ResponseValue> => {
 			return {
 				result: await Generator.path(<string>request.payload.path, <string>request.payload.model)
-      };
+			};
 		}
 	}
 ];

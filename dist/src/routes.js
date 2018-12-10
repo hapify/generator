@@ -14,9 +14,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = __importStar(require("joi"));
-const Boom = __importStar(require("boom"));
+const boom_1 = __importDefault(require("boom"));
 const services_1 = require("./services");
 const typedi_1 = require("typedi");
 const Generator = typedi_1.Container.get(services_1.GeneratorService);
@@ -71,7 +74,7 @@ const modelSchema = Joi.object({
         count: Joi.string()
             .valid(accesses)
             .required()
-    })
+    }).required()
 });
 const engines = [services_1.TemplateEngine.Hpf, services_1.TemplateEngine.JavaScript];
 const inputs = [services_1.TemplateInput.One, services_1.TemplateInput.All];
@@ -117,7 +120,7 @@ exports.Routes = [
                 return yield Generator.run(request.payload.templates, request.payload.models, request.payload.ids);
             }
             catch (error) {
-                throw Boom.boomify(error, { statusCode: 422 });
+                throw boom_1.default.boomify(error, { statusCode: 422 });
             }
         })
     },
