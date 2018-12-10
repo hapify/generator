@@ -7,6 +7,12 @@ import { StringService } from '../String';
 interface IActionAccesses {
 	[s: string]: boolean | string;
 }
+/** Define the cache structure */
+interface ICache {
+	[s: string]: any;
+}
+
+const CACHE_ENABLED = true;
 
 @Service()
 export class GeneratorService {
@@ -37,7 +43,8 @@ export class GeneratorService {
 	async run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]> {
 		// Create results stack
 		const output: IGeneratorResult[] = [];
-		// Get all models
+		// Create a new cache context
+		const cache: ICache = {};
 		// For each template, run sub process
 		for (const template of templates) {
 			if (template.input === TemplateInput.One) {
@@ -45,10 +52,10 @@ export class GeneratorService {
 					if (forIds && !forIds.find(id => id === model.id)) {
 						continue;
 					}
-					output.push(await this._one(template, models, model));
+					output.push(await this._one(template, models, model, cache));
 				}
 			} else {
-				output.push(await this._all(template, models));
+				output.push(await this._all(template, models, cache));
 			}
 		}
 		return output;
@@ -85,16 +92,17 @@ export class GeneratorService {
 	 * @param {ITemplate} template
 	 * @param {IModel[]} models
 	 * @param {IModel} model
+	 * @param {ICache} cache
 	 * @returns {Promise<IGeneratorResult>}
 	 * @throws {Error}
 	 *  If the template rendering engine is unknown
 	 * @private
 	 */
-	private async _one(template: ITemplate, models: IModel[], model: IModel): Promise<IGeneratorResult> {
+	private async _one(template: ITemplate, models: IModel[], model: IModel, cache: ICache): Promise<IGeneratorResult> {
 		// Compute path
 		const path = this.path(template.path, model.name);
 		// Get full model description
-		const input = this._explicitModel(models, model);
+		const input = this._explicitModel(models, model, cache);
 
 		// Compute content
 		let content;
@@ -117,16 +125,17 @@ export class GeneratorService {
 	 *
 	 * @param {ITemplate} template
 	 * @param {IModel[]} models
+	 * @param {ICache} cache
 	 * @returns {Promise<IGeneratorResult>}
 	 * @throws {Error}
 	 *  If the template rendering engine is unknowns
 	 * @private
 	 */
-	private async _all(template: ITemplate, models: IModel[]): Promise<IGeneratorResult> {
+	private async _all(template: ITemplate, models: IModel[], cache: ICache): Promise<IGeneratorResult> {
 		// Compute path
 		const path = this.path(template.path);
 		// Get full models description
-		const input = this._explicitAllModels(models);
+		const input = this._explicitAllModels(models, cache);
 
 		// Compute content
 		let content;
@@ -150,11 +159,17 @@ export class GeneratorService {
 	 * @todo Use caching for this method
 	 * @param {IModel[]} models
 	 * @param {IModel} model
+	 * @param {ICache} cache
 	 * @param {number} depth
 	 * @return {any}
 	 * @private
 	 */
-	private _explicitModel(models: IModel[], model: IModel, depth = 0): any {
+	private _explicitModel(models: IModel[], model: IModel, cache: ICache, depth = 0): any {
+		// Return cache value if any
+		if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
+			return cache[model.id];
+		}
+
 		// Create object
 		const m: any = Object.assign({}, model);
 
@@ -398,7 +413,7 @@ export class GeneratorService {
 						return null;
 					}
 					// Add reference to object
-					const subField = this._explicitModel(models, reference, depth + 1);
+					const subField = this._explicitModel(models, reference, cache, depth + 1);
 					field.model = subField;
 					field.m = subField;
 
@@ -463,7 +478,7 @@ export class GeneratorService {
 				.filter((m: IModel) => !!m.fields.find(extractReferencingFields))
 				.map((m: IModel) => {
 					// Get model description (first level) and remove non referencing fields
-					const explicited = this._explicitModel(models, m, depth + 1);
+					const explicited = this._explicitModel(models, m, cache, depth + 1);
 					explicited.fields = explicited.fields.list.filter(extractReferencingFields);
 					explicited.fields.f = explicited.fields.filter;
 					explicited.f = explicited.fields;
@@ -481,6 +496,11 @@ export class GeneratorService {
 		m.p = m.properties;
 		m.a = m.accesses;
 
+		// Store cache
+		if (CACHE_ENABLED && depth === 0) {
+			cache[model.id] = m;
+		}
+
 		return m;
 	}
 
@@ -488,10 +508,11 @@ export class GeneratorService {
 	 * Convert all the models to an array of objects containing all its properties
 	 *
 	 * @param {IModel[]} models
+	 * @param {ICache} cache
 	 * @return {any[]}
 	 * @private
 	 */
-	private _explicitAllModels(models: IModel[]): any[] {
-		return models.map((mod: IModel) => this._explicitModel(models, mod));
+	private _explicitAllModels(models: IModel[], cache: ICache): any[] {
+		return models.map((mod: IModel) => this._explicitModel(models, mod, cache));
 	}
 }
