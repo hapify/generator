@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/src/index.js",
     "watch": "rm -rf dist && tsc -w",
-    "build": "npm run lint && rm -rf dist && ./node_modules/.bin/tsc -p .",
+    "build": "rm -rf dist && ./node_modules/.bin/tsc -p .",
     "test": "./node_modules/.bin/lab dist/tests/api",
     "lint": "./node_modules/.bin/prettier --write '**/*{.js,.ts}'"
   },
@@ -30,14 +30,10 @@
     "@types/lab": "^11.1.0",
     "@types/request-promise-native": "^1.0.15",
     "code": "^5.2.4",
-    "hapify-syntax": "file:./packages/hapify-syntax",
     "lab": "^18.0.0",
     "prettier": "^1.15.3",
-    "reflect-metadata": "^0.1.12",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5",
-    "typedi": "^0.8.0",
-    "typescript": "^3.2.2"
+    "request-promise-native": "^1.0.5"
   },
   "dependencies": {
     "boom": "^7.3.0",
@@ -45,8 +41,12 @@
     "good-console": "^7.1.0",
     "good-squeeze": "^5.1.0",
     "hapi": "^17.8.1",
+    "hapify-syntax": "file:./packages/hapify-syntax",
     "joi": "^14.3.0",
-    "safe-eval": "^0.4.1"
+    "reflect-metadata": "^0.1.12",
+    "safe-eval": "^0.4.1",
+    "typedi": "^0.8.0",
+    "typescript": "^3.2.2"
   },
   "engines": {
     "node": ">=9.2.0"
