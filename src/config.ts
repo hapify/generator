@@ -4,6 +4,8 @@ const MINUTE = 60 * SECOND;
 const KILOBYTE = 1024;
 const MEGABYTE = 1024 * KILOBYTE;
 
+const EnableLogging = Boolean(process.env.ENABLE_LOGGING || true);
+
 export interface IConfig {
 	Good: any;
 	Server: any;
@@ -40,7 +42,7 @@ export const Config: IConfig = {
 	},
 	Good: {
 		ops: false,
-		reporters: {
+		reporters: EnableLogging ? {
 			console: [
 				{
 					module: 'good-squeeze',
@@ -66,6 +68,6 @@ export const Config: IConfig = {
 				},
 				'stdout'
 			]
-		}
+		} : {}
 	}
 };

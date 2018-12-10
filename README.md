@@ -14,6 +14,7 @@ You pass these environment variables to configure HapiJS:
 - `HEAP_SIZE`: for `server.load.maxHeapUsedBytes`, in bytes. Default `268435456` (256MB).
 - `RSS_SIZE`: for `server.load.maxRssBytes`, in bytes. Default `301989888` (288MB).
 - `CONCURRENT`: for `server.load.concurrent`. Default `20`.
+- `ENABLE_LOGGING`: dump logs in stdout. Default `true`.
 
 ## Endpoint
 
