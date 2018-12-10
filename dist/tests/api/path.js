@@ -22,9 +22,25 @@ const Api = __importStar(require("../inc/api"));
 lab.test('convert path with name', () => __awaiter(this, void 0, void 0, function* () {
     const response = yield Api.post('/path', {
         path: '/this/is/a/{model.hyphen}/test',
-        name: 'You video'
+        model: 'You video'
     });
     code_1.expect(response.statusCode).to.equal(200);
     code_1.expect(response.body.result).to.equal('/this/is/a/you-video/test');
+}));
+lab.test('convert path without name', () => __awaiter(this, void 0, void 0, function* () {
+    const response = yield Api.post('/path', {
+        path: '/this/is/a/test'
+    });
+    code_1.expect(response.statusCode).to.equal(200);
+    code_1.expect(response.body.result).to.equal('/this/is/a/test');
+}));
+lab.test('convert path without name', () => __awaiter(this, void 0, void 0, function* () {
+    const response = yield Api.post('/path', {
+        paths: '/this/is/a/test'
+    });
+    code_1.expect(response.statusCode).to.equal(400);
+    code_1.expect(response.body.error).to.equal('Bad Request');
+    code_1.expect(response.body.message).to.be.a.string();
+    code_1.expect(response.body.statusCode).to.equal(400);
 }));
 //# sourceMappingURL=path.js.map

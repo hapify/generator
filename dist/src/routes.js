@@ -135,7 +135,9 @@ exports.Routes = [
             tags: ['path']
         },
         handler: (request) => __awaiter(this, void 0, void 0, function* () {
-            return yield Generator.path(request.payload.path, request.payload.model);
+            return {
+                result: yield Generator.path(request.payload.path, request.payload.model)
+            };
         })
     }
 ];

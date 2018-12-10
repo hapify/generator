@@ -126,7 +126,9 @@ export const Routes: any[] = [
 			tags: ['path']
 		},
 		handler: async (request: any): Promise<Hapi.ResponseValue> => {
-			return await Generator.path(<string>request.payload.path, <string>request.payload.model);
+			return {
+				result: await Generator.path(<string>request.payload.path, <string>request.payload.model)
+      };
 		}
 	}
 ];
