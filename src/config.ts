@@ -4,7 +4,7 @@ const MINUTE = 60 * SECOND;
 const KILOBYTE = 1024;
 const MEGABYTE = 1024 * KILOBYTE;
 
-const EnableLogging = Boolean(process.env.ENABLE_LOGGING || true);
+const EnableLogging = (process.env.ENABLE_LOGGING || 'true') === 'true';
 
 export interface IConfig {
 	Good: any;
@@ -42,32 +42,34 @@ export const Config: IConfig = {
 	},
 	Good: {
 		ops: false,
-		reporters: EnableLogging ? {
-			console: [
-				{
-					module: 'good-squeeze',
-					name: 'Squeeze',
-					args: [
+		reporters: EnableLogging
+			? {
+					console: [
 						{
-							log: '*',
-							response: '*',
-							request: '*',
-							error: '*'
-						}
-					]
-				},
-				{
-					module: 'good-console',
-					args: [
+							module: 'good-squeeze',
+							name: 'Squeeze',
+							args: [
+								{
+									log: '*',
+									response: '*',
+									request: '*',
+									error: '*'
+								}
+							]
+						},
 						{
-							format: 'YYYY-MM-DD HH:mm:ss:SSS',
-							utc: true,
-							color: true
-						}
+							module: 'good-console',
+							args: [
+								{
+									format: 'YYYY-MM-DD HH:mm:ss:SSS',
+									utc: true,
+									color: true
+								}
+							]
+						},
+						'stdout'
 					]
-				},
-				'stdout'
-			]
-		} : {}
+			  }
+			: {}
 	}
 };
