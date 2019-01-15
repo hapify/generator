@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 import Boom from 'boom';
 import { Access, TemplateEngine, TemplateInput, GeneratorService } from './services';
 import { Container } from 'typedi';
-import { IModel, ITemplate } from './services/interfaces/IObjects';
+import { IModel, ITemplate } from './services/interfaces';
 
 const Generator = Container.get(GeneratorService);
 
@@ -108,7 +108,12 @@ export const Routes: any[] = [
 			try {
 				return await Generator.run(<ITemplate[]>request.payload.templates, <IModel[]>request.payload.models, <string[]>request.payload.ids);
 			} catch (error) {
-				throw Boom.boomify(error, { statusCode: 422 });
+				throw Boom.badData(error.message, {
+					type: error.constructor.name,
+					stack: error.stack,
+					lineNumber: error.lineNumber,
+					columnNumber: error.columnNumber
+				});
 			}
 		}
 	},
