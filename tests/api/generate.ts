@@ -90,6 +90,31 @@ lab.test('generate without models', async () => {
 	expect(response.body.statusCode).to.equal(400);
 });
 
+
+lab.test('generate with empty template', async () => {
+  const response = await Api.post('/generate', {
+    templates: [{
+      name: 'Routes - Create',
+      path: 'src/routes/{model.hyphen}/create.js',
+      engine: 'hpf',
+      input: 'one',
+      content: ''
+    }],
+    models: models,
+    ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
+  });
+  expect(response.statusCode).to.equal(200);
+  expect(response.body).to.be.an.array();
+
+  // Test length
+  expect(response.body.length).to.equal(1);
+
+  // Test bookmark create
+  expect(response.body[0].path).to.be.a.string();
+  expect(response.body[0].content).to.be.a.string();
+  expect(response.body[0].content).to.equal('');
+});
+
 lab.test('generate with malformed models', async () => {
 	const response = await Api.post('/generate', {
 		templates: templates,

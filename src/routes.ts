@@ -73,7 +73,7 @@ const templateSchema = Joi.object({
 	input: Joi.string()
 		.valid(inputs)
 		.required(),
-	content: Joi.string().required()
+	content: Joi.string().allow('').required()
 });
 
 const generateSchema = Joi.object({
