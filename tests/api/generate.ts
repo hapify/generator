@@ -139,4 +139,10 @@ lab.test('generate with broken template', async () => {
 	expect(response.body.error).to.equal('Unprocessable Entity');
 	expect(response.body.message).to.be.a.string();
 	expect(response.body.statusCode).to.equal(422);
+	expect(response.body.data).to.be.an.object();
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.stack).to.be.a.string();
+	expect(response.body.data.lineNumber).to.be.a.number();
+	expect(response.body.data.columnNumber).to.be.a.number();
 });
