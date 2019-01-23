@@ -2,6 +2,7 @@ import * as Hapi from 'hapi';
 import { IConfig } from './config';
 import { Routes } from './routes';
 import * as Boom from 'boom';
+import { InternalError, RequestError, RouteError } from './services/Errors';
 
 export async function init(config: IConfig): Promise<Hapi.Server> {
 	const server = new Hapi.Server(config.Server);
@@ -22,11 +23,33 @@ export async function init(config: IConfig): Promise<Hapi.Server> {
 		if (!response.isBoom) {
 			return h.continue;
 		}
+		
+		// Get status code
+		const status = response.output.statusCode;
+		const payload = response.output.payload as any;
 
-		const is4xx = response.output.statusCode >= 400 && response.output.statusCode < 500;
-		if (is4xx && response.data) {
-			(response.output.payload as any).data = response.data;
+		// Already formatted errors
+		// Copy data in case of badData
+		if (status === 422 && response.data) {
+			payload.data = response.data;
+			return h.continue;
 		}
+
+		// Un-formatted errors
+		// Wrap generic errors into boom
+		let error: InternalError | RequestError;
+		if (response.isServer) {
+			error = new InternalError(response.message);
+		} else if (status === 400) {
+			error = new RequestError(response.message);
+		} else {
+			error = new RouteError(response.message);
+		}
+		// Add data to boom
+		payload.data = {
+			type: error.name,
+			code: error.code,
+		};
 
 		return h.continue;
 	});

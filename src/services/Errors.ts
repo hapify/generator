@@ -7,13 +7,17 @@ export class RequestError extends Error {
 	code = 2002;
 	name = 'GeneratorRequestError';
 }
-export class EvaluationError extends Error {
+export class RouteError extends Error {
 	code = 2003;
+	name = 'GeneratorRouteError';
+}
+export class EvaluationError extends Error {
+	code = 2004;
 	name = 'GeneratorEvaluationError';
 	lineNumber: number = null;
 	columnNumber: number = null;
 }
 export class TimeoutError extends Error {
-	code = 2004;
+	code = 2005;
 	name = 'GeneratorTimeoutError';
 }

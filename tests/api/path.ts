@@ -34,4 +34,7 @@ lab.test('convert path without name', async () => {
 	expect(response.body.error).to.equal('Bad Request');
 	expect(response.body.message).to.be.a.string();
 	expect(response.body.statusCode).to.equal(400);
+	expect(response.body.data).to.be.an.object();
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.code).to.be.a.number();
 });
