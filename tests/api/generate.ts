@@ -26,6 +26,13 @@ const templates: any[] = [
 		engine: 'hpf',
 		input: 'all',
 		content: get('templates/index.js.hpf')
+	},
+	{
+		name: 'Models - List',
+		path: 'src/list.json',
+		engine: 'js',
+		input: 'all',
+		content: get('templates/list.json.js')
 	}
 ];
 
@@ -41,7 +48,7 @@ lab.test('generate files', async () => {
 	expect(response.body.results).to.be.an.array();
 
 	// Test length
-	expect(response.body.results.length).to.equal(models.length + 1);
+	expect(response.body.results.length).to.equal(models.length + 2);
 
 	// Test all returned files
 	for (const output of response.body.results) {
@@ -63,6 +70,11 @@ lab.test('generate files', async () => {
 	const bookmarkFile = response.body.results.find((f: any) => f.path === 'src/routes/bookmark/create.js');
 	expect(bookmarkFile).to.exists();
 	expect(bookmarkFile.content).to.equal(get('output/bookmark/create.js'));
+
+	// Test model list
+	const listFile = response.body.results.find((f: any) => f.path === 'src/list.json');
+	expect(listFile).to.exists();
+	expect(listFile.content).to.equal(get('output/list.json').trim());
 });
 
 lab.test('generate one file for one model', async () => {
@@ -140,9 +152,28 @@ lab.test('generate with malformed models', async () => {
 	expect(response.body.statusCode).to.equal(400);
 });
 
-lab.test('generate with broken template', async () => {
+lab.test('generate with broken hpf template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [Object.assign({}, templates[0], { content: get('templates/error.js.hpf') })],
+		models: models
+	});
+	expect(response.statusCode).to.equal(422);
+	expect(response.body.error).to.equal('Unprocessable Entity');
+	expect(response.body.message).to.be.a.string();
+	expect(response.body.statusCode).to.equal(422);
+	expect(response.body.data).to.be.an.object();
+	expect(response.body.data.duration).to.be.a.number();
+	expect(response.body.data.duration).to.be.at.least(0);
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.code).to.be.a.number();
+	expect(response.body.data.stack).to.be.a.string();
+	expect(response.body.data.lineNumber).to.be.a.number();
+	expect(response.body.data.columnNumber).to.be.a.number();
+});
+
+lab.test('generate with broken js template', async () => {
+	const response = await Api.post('/generate', {
+		templates: [Object.assign({}, templates[2], { content: get('templates/error.js.js') })],
 		models: models
 	});
 	expect(response.statusCode).to.equal(422);
