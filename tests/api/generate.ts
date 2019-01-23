@@ -35,29 +35,32 @@ lab.test('generate files', async () => {
 		models: models
 	});
 	expect(response.statusCode).to.equal(200);
-	expect(response.body).to.be.an.array();
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
+  expect(response.body.results).to.be.an.array();
 
 	// Test length
-	expect(response.body.length).to.equal(models.length + 1);
+	expect(response.body.results.length).to.equal(models.length + 1);
 
 	// Test all returned files
-	for (const output of response.body) {
+	for (const output of response.body.results) {
 		expect(output.path).to.be.a.string();
 		expect(output.content).to.be.a.string();
 	}
 
 	// Test index file
-	const indexFile = response.body.find((f: any) => f.path === 'src/routes/index.js');
+	const indexFile = response.body.results.find((f: any) => f.path === 'src/routes/index.js');
 	expect(indexFile).to.exists();
 	expect(indexFile.content).to.equal(get('output/index.js'));
 
 	// Test user create
-	const userFile = response.body.find((f: any) => f.path === 'src/routes/user/create.js');
+	const userFile = response.body.results.find((f: any) => f.path === 'src/routes/user/create.js');
 	expect(userFile).to.exists();
 	expect(userFile.content).to.equal(get('output/user/create.js'));
 
 	// Test bookmark create
-	const bookmarkFile = response.body.find((f: any) => f.path === 'src/routes/bookmark/create.js');
+	const bookmarkFile = response.body.results.find((f: any) => f.path === 'src/routes/bookmark/create.js');
 	expect(bookmarkFile).to.exists();
 	expect(bookmarkFile.content).to.equal(get('output/bookmark/create.js'));
 });
@@ -69,15 +72,18 @@ lab.test('generate one file for one model', async () => {
 		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
 	});
 	expect(response.statusCode).to.equal(200);
-	expect(response.body).to.be.an.array();
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
+  expect(response.body.results).to.be.an.array();
 
 	// Test length
-	expect(response.body.length).to.equal(1);
+	expect(response.body.results.length).to.equal(1);
 
 	// Test bookmark create
-	expect(response.body[0].path).to.be.a.string();
-	expect(response.body[0].content).to.be.a.string();
-	expect(response.body[0].content).to.equal(get('output/bookmark/create.js'));
+	expect(response.body.results[0].path).to.be.a.string();
+	expect(response.body.results[0].content).to.be.a.string();
+	expect(response.body.results[0].content).to.equal(get('output/bookmark/create.js'));
 });
 
 lab.test('generate without models', async () => {
@@ -104,15 +110,18 @@ lab.test('generate with empty template', async () => {
     ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
   });
   expect(response.statusCode).to.equal(200);
-  expect(response.body).to.be.an.array();
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
+  expect(response.body.results).to.be.an.array();
 
   // Test length
-  expect(response.body.length).to.equal(1);
+  expect(response.body.results.length).to.equal(1);
 
   // Test bookmark create
-  expect(response.body[0].path).to.be.a.string();
-  expect(response.body[0].content).to.be.a.string();
-  expect(response.body[0].content).to.equal('');
+  expect(response.body.results[0].path).to.be.a.string();
+  expect(response.body.results[0].content).to.be.a.string();
+  expect(response.body.results[0].content).to.equal('');
 });
 
 lab.test('generate with malformed models', async () => {
@@ -140,6 +149,8 @@ lab.test('generate with broken template', async () => {
 	expect(response.body.message).to.be.a.string();
 	expect(response.body.statusCode).to.equal(422);
 	expect(response.body.data).to.be.an.object();
+  expect(response.body.data.duration).to.be.a.number();
+  expect(response.body.data.duration).to.be.at.least(0);
   expect(response.body.data.type).to.be.a.string();
   expect(response.body.data.code).to.be.a.number();
 	expect(response.body.data.stack).to.be.a.string();

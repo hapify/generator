@@ -9,6 +9,9 @@ lab.test('convert path with name', async () => {
 		model: 'You video'
 	});
 	expect(response.statusCode).to.equal(200);
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
 	expect(response.body.result).to.equal('/this/is/a/you-video/test');
 });
 
@@ -17,6 +20,9 @@ lab.test('convert path without name', async () => {
 		path: '/this/is/a/test'
 	});
 	expect(response.statusCode).to.equal(200);
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
 	expect(response.body.result).to.equal('/this/is/a/test');
 });
 

@@ -105,10 +105,16 @@ export const Routes: any[] = [
 			tags: ['generate']
 		},
 		handler: async (request: any): Promise<Hapi.ResponseValue> => {
+			const start = Date.now();
 			try {
-				return await Generator.run(<ITemplate[]>request.payload.templates, <IModel[]>request.payload.models, <string[]>request.payload.ids);
+				const results = await Generator.run(<ITemplate[]>request.payload.templates, <IModel[]>request.payload.models, <string[]>request.payload.ids);
+				return {
+          duration: Date.now() - start,
+          results
+				}
 			} catch (error) {
 				throw Boom.badData(error.message, {
+					duration: Date.now() - start,
 					type: error.name,
           code: error.code,
           stack: error.stack,
@@ -132,9 +138,20 @@ export const Routes: any[] = [
 			tags: ['path']
 		},
 		handler: async (request: any): Promise<Hapi.ResponseValue> => {
-			return {
-				result: await Generator.path(<string>request.payload.path, <string>request.payload.model)
-			};
+      const start = Date.now();
+      try {
+        const result = await Generator.path(<string>request.payload.path, <string>request.payload.model);
+        return {
+          duration: Date.now() - start,
+          result
+        }
+      } catch (error) {
+        throw Boom.badData(error.message, {
+          duration: Date.now() - start,
+          type: error.name,
+          code: error.code,
+        });
+      }
 		}
 	}
 ];
