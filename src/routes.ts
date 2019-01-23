@@ -109,8 +109,9 @@ export const Routes: any[] = [
 				return await Generator.run(<ITemplate[]>request.payload.templates, <IModel[]>request.payload.models, <string[]>request.payload.ids);
 			} catch (error) {
 				throw Boom.badData(error.message, {
-					type: error.constructor.name,
-					stack: error.stack,
+					type: error.name,
+          code: error.code,
+          stack: error.stack,
 					lineNumber: error.lineNumber,
 					columnNumber: error.columnNumber
 				});
