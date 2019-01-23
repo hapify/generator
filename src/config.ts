@@ -8,6 +8,7 @@ const EnableLogging = (process.env.ENABLE_LOGGING || 'true') === 'true';
 
 export interface IConfig {
 	Good: any;
+	Generator: any;
 	Server: any;
 }
 export const Config: IConfig = {
@@ -39,6 +40,9 @@ export const Config: IConfig = {
 		app: {
 			routePrefix: ''
 		}
+	},
+	Generator: {
+		timeout: 1000
 	},
 	Good: {
 		ops: false,

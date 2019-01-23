@@ -35,10 +35,10 @@ lab.test('generate files', async () => {
 		models: models
 	});
 	expect(response.statusCode).to.equal(200);
-  expect(response.body).to.be.an.object();
-  expect(response.body.duration).to.be.a.number();
-  expect(response.body.duration).to.be.at.least(0);
-  expect(response.body.results).to.be.an.array();
+	expect(response.body).to.be.an.object();
+	expect(response.body.duration).to.be.a.number();
+	expect(response.body.duration).to.be.at.least(0);
+	expect(response.body.results).to.be.an.array();
 
 	// Test length
 	expect(response.body.results.length).to.equal(models.length + 1);
@@ -72,10 +72,10 @@ lab.test('generate one file for one model', async () => {
 		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
 	});
 	expect(response.statusCode).to.equal(200);
-  expect(response.body).to.be.an.object();
-  expect(response.body.duration).to.be.a.number();
-  expect(response.body.duration).to.be.at.least(0);
-  expect(response.body.results).to.be.an.array();
+	expect(response.body).to.be.an.object();
+	expect(response.body.duration).to.be.a.number();
+	expect(response.body.duration).to.be.at.least(0);
+	expect(response.body.results).to.be.an.array();
 
 	// Test length
 	expect(response.body.results.length).to.equal(1);
@@ -96,32 +96,33 @@ lab.test('generate without models', async () => {
 	expect(response.body.statusCode).to.equal(400);
 });
 
-
 lab.test('generate with empty template', async () => {
-  const response = await Api.post('/generate', {
-    templates: [{
-      name: 'Routes - Create',
-      path: 'src/routes/{model.hyphen}/create.js',
-      engine: 'hpf',
-      input: 'one',
-      content: ''
-    }],
-    models: models,
-    ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
-  });
-  expect(response.statusCode).to.equal(200);
-  expect(response.body).to.be.an.object();
-  expect(response.body.duration).to.be.a.number();
-  expect(response.body.duration).to.be.at.least(0);
-  expect(response.body.results).to.be.an.array();
+	const response = await Api.post('/generate', {
+		templates: [
+			{
+				name: 'Routes - Create',
+				path: 'src/routes/{model.hyphen}/create.js',
+				engine: 'hpf',
+				input: 'one',
+				content: ''
+			}
+		],
+		models: models,
+		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
+	});
+	expect(response.statusCode).to.equal(200);
+	expect(response.body).to.be.an.object();
+	expect(response.body.duration).to.be.a.number();
+	expect(response.body.duration).to.be.at.least(0);
+	expect(response.body.results).to.be.an.array();
 
-  // Test length
-  expect(response.body.results.length).to.equal(1);
+	// Test length
+	expect(response.body.results.length).to.equal(1);
 
-  // Test bookmark create
-  expect(response.body.results[0].path).to.be.a.string();
-  expect(response.body.results[0].content).to.be.a.string();
-  expect(response.body.results[0].content).to.equal('');
+	// Test bookmark create
+	expect(response.body.results[0].path).to.be.a.string();
+	expect(response.body.results[0].content).to.be.a.string();
+	expect(response.body.results[0].content).to.equal('');
 });
 
 lab.test('generate with malformed models', async () => {
@@ -149,10 +150,10 @@ lab.test('generate with broken template', async () => {
 	expect(response.body.message).to.be.a.string();
 	expect(response.body.statusCode).to.equal(422);
 	expect(response.body.data).to.be.an.object();
-  expect(response.body.data.duration).to.be.a.number();
-  expect(response.body.data.duration).to.be.at.least(0);
-  expect(response.body.data.type).to.be.a.string();
-  expect(response.body.data.code).to.be.a.number();
+	expect(response.body.data.duration).to.be.a.number();
+	expect(response.body.data.duration).to.be.at.least(0);
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.code).to.be.a.number();
 	expect(response.body.data.stack).to.be.a.string();
 	expect(response.body.data.lineNumber).to.be.a.number();
 	expect(response.body.data.columnNumber).to.be.a.number();

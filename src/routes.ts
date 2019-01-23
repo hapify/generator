@@ -73,7 +73,9 @@ const templateSchema = Joi.object({
 	input: Joi.string()
 		.valid(inputs)
 		.required(),
-	content: Joi.string().allow('').required()
+	content: Joi.string()
+		.allow('')
+		.required()
 });
 
 const generateSchema = Joi.object({
@@ -109,15 +111,15 @@ export const Routes: any[] = [
 			try {
 				const results = await Generator.run(<ITemplate[]>request.payload.templates, <IModel[]>request.payload.models, <string[]>request.payload.ids);
 				return {
-          duration: Date.now() - start,
-          results
-				}
+					duration: Date.now() - start,
+					results
+				};
 			} catch (error) {
 				throw Boom.badData(error.message, {
 					duration: Date.now() - start,
 					type: error.name,
-          code: error.code,
-          stack: error.stack,
+					code: error.code,
+					stack: error.stack,
 					lineNumber: error.lineNumber,
 					columnNumber: error.columnNumber
 				});
@@ -138,20 +140,20 @@ export const Routes: any[] = [
 			tags: ['path']
 		},
 		handler: async (request: any): Promise<Hapi.ResponseValue> => {
-      const start = Date.now();
-      try {
-        const result = await Generator.path(<string>request.payload.path, <string>request.payload.model);
-        return {
-          duration: Date.now() - start,
-          result
-        }
-      } catch (error) {
-        throw Boom.badData(error.message, {
-          duration: Date.now() - start,
-          type: error.name,
-          code: error.code,
-        });
-      }
+			const start = Date.now();
+			try {
+				const result = await Generator.path(<string>request.payload.path, <string>request.payload.model);
+				return {
+					duration: Date.now() - start,
+					result
+				};
+			} catch (error) {
+				throw Boom.badData(error.message, {
+					duration: Date.now() - start,
+					type: error.name,
+					code: error.code
+				});
+			}
 		}
 	}
 ];

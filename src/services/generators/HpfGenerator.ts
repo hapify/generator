@@ -1,6 +1,9 @@
 import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
 import HapifySyntax from 'hapify-syntax';
+import { Config } from '../../config';
+
+const HpfOptions = { timeout: Config.Generator.timeout };
 
 @Service()
 export class HpfGeneratorService implements IGenerator {
@@ -15,7 +18,7 @@ export class HpfGeneratorService implements IGenerator {
 	async one(model: any, template: ITemplate): Promise<string> {
 		// Create template function
 		const cleanedContent = await this._preProcess(template.content);
-		const content = HapifySyntax.run(cleanedContent, model);
+		const content = HapifySyntax.run(cleanedContent, model, HpfOptions);
 		return await this._postProcess(content);
 	}
 
@@ -25,7 +28,7 @@ export class HpfGeneratorService implements IGenerator {
 	async all(models: any[], template: ITemplate): Promise<string> {
 		// Create template function
 		const cleanedContent = await this._preProcess(template.content);
-		const content = HapifySyntax.run(cleanedContent, models);
+		const content = HapifySyntax.run(cleanedContent, models, HpfOptions);
 		return await this._postProcess(content);
 	}
 
