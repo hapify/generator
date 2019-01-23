@@ -34,6 +34,18 @@ export const Config: IConfig = {
 			},
 			cors: {
 				origin: ['*']
+			},
+			validate: {
+				failAction: function(request: any, h: any, error: any) {
+					if (error) {
+						if (error.details && error.details.length) {
+							error.output.payload.message = error.details.map((d: any) => `${d.message} (${d.path.join('.')})`).join('. ');
+							delete error.output.payload.validation;
+						}
+						return error;
+					}
+					return h.continue;
+				}
 			}
 		},
 		debug: { request: ['error'] },
