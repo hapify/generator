@@ -172,7 +172,7 @@ lab.test('generate with broken hpf template', async () => {
 	expect(response.body.data.duration).to.be.at.least(0);
 	expect(response.body.data.type).to.be.a.string();
 	expect(response.body.data.code).to.be.a.number();
-	expect(response.body.data.stack).to.be.a.string();
+	expect(response.body.data.details).to.be.a.string();
 	expect(response.body.data.lineNumber).to.be.a.number();
 	expect(response.body.data.columnNumber).to.be.a.number();
 });
@@ -191,7 +191,26 @@ lab.test('generate with broken js template', async () => {
 	expect(response.body.data.duration).to.be.at.least(0);
 	expect(response.body.data.type).to.be.a.string();
 	expect(response.body.data.code).to.be.a.number();
-	expect(response.body.data.stack).to.be.a.string();
+	expect(response.body.data.details).to.be.a.string();
 	expect(response.body.data.lineNumber).to.be.a.number();
 	expect(response.body.data.columnNumber).to.be.a.number();
+});
+
+lab.test('generate with timeout js template', async () => {
+	const response = await Api.post('/generate', {
+		templates: [Object.assign({}, templates[2], { content: 'while(true) {}' })],
+		models: models
+	});
+	expect(response.statusCode).to.equal(422);
+	expect(response.body.error).to.equal('Unprocessable Entity');
+	expect(response.body.message).to.be.a.string();
+	expect(response.body.statusCode).to.equal(422);
+	expect(response.body.data).to.be.an.object();
+	expect(response.body.data.duration).to.be.a.number();
+	expect(response.body.data.duration).to.be.at.least(0);
+	expect(response.body.data.type).to.be.a.string();
+	expect(response.body.data.code).to.be.a.number();
+	expect(response.body.data.details).to.be.undefined();
+	expect(response.body.data.lineNumber).to.be.undefined();
+	expect(response.body.data.columnNumber).to.be.undefined();
 });

@@ -53,7 +53,7 @@ export class JavaScriptGeneratorService implements IGenerator {
 			// Format error
 			const { lineNumber, columnNumber } = ErrorStackParser.parse(error)[0];
 			const evalError = new EvaluationError(error.message);
-			evalError.stack = `Error: ${evalError.message}. Line: ${lineNumber}, Column: ${columnNumber}`;
+			evalError.details = `Error: ${evalError.message}. Line: ${lineNumber}, Column: ${columnNumber}`;
 			evalError.lineNumber = lineNumber;
 			evalError.columnNumber = columnNumber;
 			throw evalError;

@@ -16,6 +16,7 @@ export class EvaluationError extends Error {
 	name = 'GeneratorEvaluationError';
 	lineNumber: number = null;
 	columnNumber: number = null;
+	details: string = null;
 }
 export class TimeoutError extends Error {
 	code = 2005;

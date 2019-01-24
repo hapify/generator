@@ -119,7 +119,7 @@ export const Routes: any[] = [
 					duration: Date.now() - start,
 					type: error.name,
 					code: error.code,
-					stack: error.stack,
+					details: error.details,
 					lineNumber: error.lineNumber,
 					columnNumber: error.columnNumber
 				});
