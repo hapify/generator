@@ -77,8 +77,6 @@ export interface IModel {
 }
 
 export interface ITemplate {
-	/** @type {string} The template's name */
-	name: string;
 	/** @type {string} The template's path */
 	path: string;
 	/** @type {string} The template's type */

@@ -65,7 +65,6 @@ const modelSchema = Joi.object({
 const engines = [TemplateEngine.Hpf, TemplateEngine.JavaScript];
 const inputs = [TemplateInput.One, TemplateInput.All];
 const templateSchema = Joi.object({
-	name: Joi.string().required(),
 	path: Joi.string().required(),
 	engine: Joi.string()
 		.valid(engines)
