@@ -111,6 +111,33 @@ lab.test('generate without models', async () => {
 	expect(response.body.data.code).to.be.a.number();
 });
 
+lab.test('generate files without fields', async () => {
+  const response = await Api.post('/generate', {
+    templates: [{
+      name: 'No field',
+      path: 'src/routes/{model.hyphen}/no-field.js',
+      engine: 'hpf',
+      input: 'one',
+      content: '<<@ F f>><<f a-a>><<@>>END'
+    }],
+    ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1'],
+    models: models.map(m => Object.assign({}, m, { fields: [] }))
+  });
+  expect(response.statusCode).to.equal(200);
+  expect(response.body).to.be.an.object();
+  expect(response.body.duration).to.be.a.number();
+  expect(response.body.duration).to.be.at.least(0);
+  expect(response.body.results).to.be.an.array();
+
+  // Test length
+  expect(response.body.results.length).to.equal(1);
+
+  // Test bookmark create
+  expect(response.body.results[0].path).to.be.a.string();
+  expect(response.body.results[0].content).to.be.a.string();
+  expect(response.body.results[0].content).to.equal('END');
+});
+
 lab.test('generate with empty template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [

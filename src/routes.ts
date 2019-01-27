@@ -40,7 +40,7 @@ const modelSchema = Joi.object({
 			})
 		)
 		.required()
-		.min(1),
+		.min(0),
 	accesses: Joi.object({
 		create: Joi.string()
 			.valid(accesses)
