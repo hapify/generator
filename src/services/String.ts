@@ -25,11 +25,11 @@ export class StringService {
 			snake: Case.snake(value),
 			header: Case.header(value),
 			constant: Case.constant(value),
-			big: Case.constant(value, '-'),
+			big: Case.constant(value).replace(/_/g, '-'),
 			capital: Case.capital(value),
 			lower: Case.lower(value),
 			upper: Case.upper(value),
-			compact: Case.snake(value, null),
+			compact: Case.snake(value).replace(/_/g, ''),
 			pascal: Case.pascal(value),
 			camel: Case.camel(value)
 		};
