@@ -210,7 +210,7 @@ export class GeneratorService {
 		const sortable = fields.filter((f: IField) => f.sortable);
 
 		// Get private fields
-		const isPrivate = fields.filter((f: IField) => f.isPrivate);
+		const hidden = fields.filter((f: IField) => f.hidden);
 
 		// Get internal fields
 		const internal = fields.filter((f: IField) => f.internal);
@@ -248,8 +248,8 @@ export class GeneratorService {
 			se: searchable,
 			sortable,
 			so: sortable,
-			isPrivate,
-			ip: isPrivate,
+			hidden,
+			ip: hidden,
 			internal,
 			i: internal,
 			restricted,
@@ -271,12 +271,12 @@ export class GeneratorService {
 			hasImportant: important.length > 0,
 			hasSearchable: searchable.length > 0,
 			hasSortable: sortable.length > 0,
-			hasPrivate: isPrivate.length > 0,
+			hasPrivate: hidden.length > 0,
 			hasInternal: internal.length > 0,
 			hasRestricted: restricted.length > 0,
 			hasOwnership: ownership.length > 0,
 			hasSearchableLabel: searchableLabel.length > 0,
-			mainlyPrivate: fields.length < 2 * isPrivate.length,
+			mainlyPrivate: fields.length < 2 * hidden.length,
 			mainlyInternal: fields.length < 2 * internal.length,
 			isGeolocated:
 				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&

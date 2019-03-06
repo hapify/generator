@@ -76,7 +76,7 @@ The following objects will be available in the template.
     - `important` - alias `im` (array): An array containing all fields flagged as `important`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
-    - `isPrivate` - alias `ip` (array): An array containing all fields flagged as `private`.
+    - `hidden` - alias `ip` (array): An array containing all fields flagged as `private`.
     - `internal` - alias `i` (array): An array containing all fields flagged as `internal`.
     - `restricted` - alias `rs` (array): An array containing all fields flagged as `restricted`.
     - `ownership` - alias `os` (array): An array containing all fields flagged as `ownership`.
@@ -166,7 +166,7 @@ The following objects will be available in the template.
 - `important` (boolean): Indicates if the field is flagged as `important`.
 - `searchable` (boolean): Indicates if the field is flagged as `searchable`.
 - `sortable` (boolean): Indicates if the field is flagged as `sortable`.
-- `isPrivate` (boolean): Indicates if the field is flagged as `private`.
+- `hidden` (boolean): Indicates if the field is flagged as `private`.
 - `internal` (boolean): Indicates if the field is flagged as `internal`.
 - `restricted` (boolean): Indicates if the field is flagged as `restricted`.
 - `ownership` (boolean): Indicates if the field is flagged as `ownership`.

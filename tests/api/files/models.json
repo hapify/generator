@@ -16,7 +16,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -34,7 +34,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -52,7 +52,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": true,
         "ownership": true
@@ -70,7 +70,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -102,7 +102,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -120,7 +120,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -138,7 +138,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -156,7 +156,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -188,7 +188,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -206,7 +206,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -224,7 +224,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -242,7 +242,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -260,7 +260,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -292,7 +292,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -310,7 +310,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -328,7 +328,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -346,7 +346,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -364,7 +364,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -396,7 +396,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -414,7 +414,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -432,7 +432,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -450,7 +450,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -468,7 +468,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -486,7 +486,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -504,7 +504,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -536,7 +536,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -554,7 +554,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -572,7 +572,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -590,7 +590,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -608,7 +608,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -626,7 +626,7 @@
         "important": true,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -644,7 +644,7 @@
         "important": true,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -662,7 +662,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -680,7 +680,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -698,7 +698,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -716,7 +716,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -734,7 +734,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -752,7 +752,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -770,7 +770,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -788,7 +788,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -806,7 +806,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -824,7 +824,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -842,7 +842,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -860,7 +860,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -878,7 +878,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -896,7 +896,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -914,7 +914,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -932,7 +932,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -964,7 +964,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -982,7 +982,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1000,7 +1000,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": true,
         "ownership": true
@@ -1018,7 +1018,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1036,7 +1036,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1054,7 +1054,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1086,7 +1086,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1104,7 +1104,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1122,7 +1122,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1140,7 +1140,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1158,7 +1158,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1190,7 +1190,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1208,7 +1208,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1226,7 +1226,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1244,7 +1244,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1262,7 +1262,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1280,7 +1280,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1312,7 +1312,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": true
@@ -1330,7 +1330,7 @@
         "important": false,
         "searchable": false,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1348,7 +1348,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1366,7 +1366,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1384,7 +1384,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1402,7 +1402,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": true,
+        "hidden": true,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1420,7 +1420,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": true,
         "ownership": false
@@ -1438,7 +1438,7 @@
         "important": false,
         "searchable": true,
         "sortable": true,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": false,
         "ownership": false
@@ -1456,7 +1456,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1474,7 +1474,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": true,
+        "hidden": true,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1492,7 +1492,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1510,7 +1510,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": true,
+        "hidden": true,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1528,7 +1528,7 @@
         "important": false,
         "searchable": false,
         "sortable": false,
-        "isPrivate": true,
+        "hidden": true,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1546,7 +1546,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": true,
         "ownership": false
@@ -1564,7 +1564,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": true,
         "restricted": false,
         "ownership": false
@@ -1582,7 +1582,7 @@
         "important": false,
         "searchable": true,
         "sortable": false,
-        "isPrivate": false,
+        "hidden": false,
         "internal": false,
         "restricted": true,
         "ownership": false
