@@ -14,21 +14,18 @@ const get = (file: string): string => {
 const models: any[] = JSON.parse(get('models.json'));
 const templates: any[] = [
 	{
-		name: 'Routes - Create',
 		path: 'src/routes/{model.hyphen}/create.js',
 		engine: 'hpf',
 		input: 'one',
 		content: get('templates/model/create.js.hpf')
 	},
 	{
-		name: 'Routes - Index All',
 		path: 'src/routes/index.js',
 		engine: 'hpf',
 		input: 'all',
 		content: get('templates/index.js.hpf')
 	},
 	{
-		name: 'Models - List',
 		path: 'src/list.json',
 		engine: 'js',
 		input: 'all',
@@ -114,7 +111,6 @@ lab.test('generate without models', async () => {
 lab.test('generate files without fields', async () => {
   const response = await Api.post('/generate', {
     templates: [{
-      name: 'No field',
       path: 'src/routes/{model.hyphen}/no-field.js',
       engine: 'hpf',
       input: 'one',
@@ -142,7 +138,6 @@ lab.test('generate with empty template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [
 			{
-				name: 'Routes - Create',
 				path: 'src/routes/{model.hyphen}/create.js',
 				engine: 'hpf',
 				input: 'one',
