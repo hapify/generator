@@ -172,13 +172,15 @@ The following objects will be available in the template.
 - `internal` (boolean): Indicates if the field is flagged as `internal`.
 - `restricted` (boolean): Indicates if the field is flagged as `restricted`.
 - `ownership` (boolean): Indicates if the field is flagged as `ownership`.
-- `type` (string): The type of the field. Can be `string`, `number`, `boolean`, `datetime` or `entity`.
+- `type` (string): The type of the field. Can be `string`, `number`, `boolean`, `datetime`, `entity`, `object` or `file`.
 - `subtype` (string): The subtype of the field. The available values depend on the `type`:
-    - `string`: Can be `null`, `email`, `password` `text` or `rich`.
+    - `string`: Can be `null`, `email`, `password`, `url`, `text` or `rich`.
     - `number`: Can be `null`, `integer`, `float`, `latitude` or `longitude`.
     - `boolean`: Is `null`.
     - `datetime`: Can be `null`, `date` or `time`.
     - `entity`: Is `null`.
+    - `object`: Is `null`.
+    - `file`: Can be `null`, `image`, `video`, `audio` or `document`.
 - `reference` (string): The id of the target model if the field is of type `entity`. `null` otherwise
 - `model` - alias `m` (object): The target model object if the field is of type `entity`. `null` otherwise
 
