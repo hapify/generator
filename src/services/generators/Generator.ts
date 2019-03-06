@@ -271,7 +271,7 @@ export class GeneratorService {
 			hasEmbedded: embedded.length > 0,
 			hasSearchable: searchable.length > 0,
 			hasSortable: sortable.length > 0,
-			hasPrivate: hidden.length > 0,
+			hasHidden: hidden.length > 0,
 			hasInternal: internal.length > 0,
 			hasRestricted: restricted.length > 0,
 			hasOwnership: ownership.length > 0,

@@ -102,7 +102,7 @@ The following objects will be available in the template.
     - `hasEmbedded` (boolean): Denotes if the model has at least one embedded field.
     - `hasSearchable` (boolean): Denotes if the model has at least one searchable field.
     - `hasSortable` (boolean): Denotes if the model has at least one sortable field.
-    - `hasPrivate` (boolean): Denotes if the model has at least one private field.
+    - `hasHidden` (boolean): Denotes if the model has at least one private field.
     - `hasInternal` (boolean): Denotes if the model has at least one internal field.
     - `hasRestricted` (boolean): Denotes if the model has at least one restricted field.
     - `hasOwnership` (boolean): Denotes if the model has at least one ownership field.
