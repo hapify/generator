@@ -243,7 +243,7 @@ export class GeneratorService {
 			multiple,
 			m: multiple,
 			embedded,
-			im: embedded,
+			em: embedded,
 			searchable,
 			se: searchable,
 			sortable,

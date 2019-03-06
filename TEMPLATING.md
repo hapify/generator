@@ -73,7 +73,7 @@ The following objects will be available in the template.
     - `label` - alias `lb` (array): An array containing all fields flagged as `label`.
     - `nullable` - alias `n` (array): An array containing all fields flagged as `nullable`.
     - `multiple` - alias `m` (array): An array containing all fields flagged as `multiple`.
-    - `embedded` - alias `im` (array): An array containing all fields flagged as `embedded`.
+    - `embedded` - alias `em` (array): An array containing all fields flagged as `embedded`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
     - `hidden` - alias `ip` (array): An array containing all fields flagged as `hidden`.
