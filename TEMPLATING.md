@@ -59,6 +59,7 @@ The following objects will be available in the template.
     - `raw` (string): The name of the model, as the user entered it. Example `Online item`.
     - `kebab` (string): The name with hyphens and lower case. Example `online-item`.
     - `big` (string): The name with hyphens and upper case. Example `ONLINE-ITEM`.
+    - `header` (string): The name with hyphens and first letters capitalized. Example `Online-Item`.
     - `snake` (string): The name with underscores and lower case. Example `online_item`.
     - `constant` (string): The name with underscores and upper case. Example `ONLINE_ITEM`.
     - `compact` (string): The name joined and lower case. Example `onlineitem`.
@@ -151,6 +152,7 @@ The following objects will be available in the template.
     - `raw` (string): The name of the field, as the user entered it. Example `first_name`.
     - `kebab` (string): The name with hyphens and lower case. Example `first-name`.
     - `big` (string): The name with hyphens and upper case. Example `FIRST-NAME`.
+    - `header` (string): The name with hyphens and first letters capitalized. Example `First-Name`.
     - `snake` (string): The name with underscores and lower case. Example `first_name`.
     - `constant` (string): The name with underscores and upper case. Example `FIRST_NAME`.
     - `compact` (string): The name joined and lower case. Example `firstname`.
