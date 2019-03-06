@@ -22,7 +22,7 @@ Those boolean properties are:
 - *Embedded*: Denotes if the field should always be detailed.
 - *Searchable*: Denotes if we can filter by this field.
 - *Sortable*: Denotes if we can sort by this field.
-- *Private*: Denotes if the field is readable by a user. This field is written *IsPrivate* to avoid conflict with reserved keywords.
+- *Private*: Denotes if the field is readable by a user. This field is written *Hidden* to avoid conflict with reserved keywords.
 - *Internal*: Denotes if the field is settable by a user, or this value is defined by the program.
 - *Restricted*: Denotes if the access to this field is restricted to someones.
 - *Ownership*: Denotes if the fields contains the identifier of entity's owner.
