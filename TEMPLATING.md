@@ -68,16 +68,16 @@ The following objects will be available in the template.
     - `wordsUpper` (string): The name as words with upper case on first letters. Example `Online Item`.
 - `fields` - alias `f` (object): An object containing all fields, grouped in different arrays.
     - `list` - alias `l` (array): An array containing all fields of the model.
-    - `primary` - alias `p` (Field): The primary field of the model. `null` if no primary field is defined.
-    - `unique` - alias `u` (array): An array containing all fields flagged as `unique`.
+    - `primary` - alias `pr` (Field): The primary field of the model. `null` if no primary field is defined.
+    - `unique` - alias `un` (array): An array containing all fields flagged as `unique`.
     - `label` - alias `lb` (array): An array containing all fields flagged as `label`.
-    - `nullable` - alias `n` (array): An array containing all fields flagged as `nullable`.
-    - `multiple` - alias `m` (array): An array containing all fields flagged as `multiple`.
+    - `nullable` - alias `nu` (array): An array containing all fields flagged as `nullable`.
+    - `multiple` - alias `ml` (array): An array containing all fields flagged as `multiple`.
     - `embedded` - alias `em` (array): An array containing all fields flagged as `embedded`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
     - `hidden` - alias `hd` (array): An array containing all fields flagged as `hidden`.
-    - `internal` - alias `i` (array): An array containing all fields flagged as `internal`.
+    - `internal` - alias `in` (array): An array containing all fields flagged as `internal`.
     - `restricted` - alias `rs` (array): An array containing all fields flagged as `restricted`.
     - `ownership` - alias `os` (array): An array containing all fields flagged as `ownership`.
     - `searchableLabel` - alias `sl` (array): An array containing all fields flagged as `label` and `searchable`. Useful for quick-search by label.
