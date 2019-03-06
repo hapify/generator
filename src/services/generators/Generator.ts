@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, NumberSubType, TemplateEngine } from '../interfaces';
+import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, FieldSubType, TemplateEngine } from '../interfaces';
 import { JavaScriptGeneratorService, HpfGeneratorService } from './';
 import { StringService } from '../String';
 
@@ -276,11 +276,11 @@ export class GeneratorService {
 			mainlyHidden: fields.length < 2 * hidden.length,
 			mainlyInternal: fields.length < 2 * internal.length,
 			isGeolocated:
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === NumberSubType.Latitude).length > 0 &&
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === NumberSubType.Longitude).length > 0,
+				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Latitude).length > 0 &&
+				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude).length > 0,
 			isGeoSearchable:
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === NumberSubType.Latitude && f.searchable).length > 0 &&
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === NumberSubType.Longitude && f.searchable).length > 0
+				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Latitude && f.searchable).length > 0 &&
+				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude && f.searchable).length > 0
 		};
 
 		// ==========================================
