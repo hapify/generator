@@ -5,3 +5,9 @@ export class FieldType {
 	static DateTime = 'datetime';
 	static Entity = 'entity';
 }
+export class NumberSubType {
+	static Integer = 'integer';
+	static Float = 'float';
+	static Latitude = 'latitude';
+	static Longitude = 'longitude';
+}
