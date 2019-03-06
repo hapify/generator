@@ -76,7 +76,7 @@ The following objects will be available in the template.
     - `embedded` - alias `em` (array): An array containing all fields flagged as `embedded`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
-    - `hidden` - alias `ip` (array): An array containing all fields flagged as `hidden`.
+    - `hidden` - alias `hd` (array): An array containing all fields flagged as `hidden`.
     - `internal` - alias `i` (array): An array containing all fields flagged as `internal`.
     - `restricted` - alias `rs` (array): An array containing all fields flagged as `restricted`.
     - `ownership` - alias `os` (array): An array containing all fields flagged as `ownership`.

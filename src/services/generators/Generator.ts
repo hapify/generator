@@ -249,7 +249,7 @@ export class GeneratorService {
 			sortable,
 			so: sortable,
 			hidden,
-			ip: hidden,
+			hd: hidden,
 			internal,
 			i: internal,
 			restricted,
