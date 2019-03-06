@@ -19,7 +19,7 @@ Those boolean properties are:
 - *Label*: Denotes if the field is human-readable identifier.
 - *Nullable*: Denotes if this field can be empty.
 - *Multiple*: Denotes if the field is a list of values.
-- *Important*: Denotes if the field should always be detailed.
+- *Embedded*: Denotes if the field should always be detailed.
 - *Searchable*: Denotes if we can filter by this field.
 - *Sortable*: Denotes if we can sort by this field.
 - *Private*: Denotes if the field is readable by a user. This field is written *IsPrivate* to avoid conflict with reserved keywords.
@@ -73,7 +73,7 @@ The following objects will be available in the template.
     - `label` - alias `lb` (array): An array containing all fields flagged as `label`.
     - `nullable` - alias `n` (array): An array containing all fields flagged as `nullable`.
     - `multiple` - alias `m` (array): An array containing all fields flagged as `multiple`.
-    - `important` - alias `im` (array): An array containing all fields flagged as `important`.
+    - `embedded` - alias `im` (array): An array containing all fields flagged as `embedded`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
     - `hidden` - alias `ip` (array): An array containing all fields flagged as `private`.
@@ -99,7 +99,7 @@ The following objects will be available in the template.
     - `hasLabel` (boolean): Denotes if the model has at least one label field.
     - `hasNullable` (boolean): Denotes if the model has at least one nullable field.
     - `hasMultiple` (boolean): Denotes if the model has at least one multiple field.
-    - `hasImportant` (boolean): Denotes if the model has at least one important field.
+    - `hasEmbedded` (boolean): Denotes if the model has at least one embedded field.
     - `hasSearchable` (boolean): Denotes if the model has at least one searchable field.
     - `hasSortable` (boolean): Denotes if the model has at least one sortable field.
     - `hasPrivate` (boolean): Denotes if the model has at least one private field.
@@ -163,7 +163,7 @@ The following objects will be available in the template.
 - `label` (boolean): Indicates if the field is flagged as `label`.
 - `nullable` (boolean): Indicates if the field is flagged as `nullable`.
 - `multiple` (boolean): Indicates if the field is flagged as `multiple`.
-- `important` (boolean): Indicates if the field is flagged as `important`.
+- `embedded` (boolean): Indicates if the field is flagged as `embedded`.
 - `searchable` (boolean): Indicates if the field is flagged as `searchable`.
 - `sortable` (boolean): Indicates if the field is flagged as `sortable`.
 - `hidden` (boolean): Indicates if the field is flagged as `private`.

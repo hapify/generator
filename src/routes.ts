@@ -30,7 +30,7 @@ const modelSchema = Joi.object({
 				label: Joi.boolean().required(),
 				nullable: Joi.boolean().required(),
 				multiple: Joi.boolean().required(),
-				important: Joi.boolean().required(),
+				embedded: Joi.boolean().required(),
 				searchable: Joi.boolean().required(),
 				sortable: Joi.boolean().required(),
 				hidden: Joi.boolean().required(),

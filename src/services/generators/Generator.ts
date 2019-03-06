@@ -200,8 +200,8 @@ export class GeneratorService {
 		// Get multiple fields
 		const multiple = fields.filter((f: IField) => f.multiple);
 
-		// Get important fields
-		const important = fields.filter((f: IField) => f.important);
+		// Get embedded fields
+		const embedded = fields.filter((f: IField) => f.embedded);
 
 		// Get searchable fields
 		const searchable = fields.filter((f: IField) => f.searchable);
@@ -242,8 +242,8 @@ export class GeneratorService {
 			n: nullable,
 			multiple,
 			m: multiple,
-			important,
-			im: important,
+			embedded,
+			im: embedded,
 			searchable,
 			se: searchable,
 			sortable,
@@ -268,7 +268,7 @@ export class GeneratorService {
 			hasLabel: label.length > 0,
 			hasNullable: nullable.length > 0,
 			hasMultiple: multiple.length > 0,
-			hasImportant: important.length > 0,
+			hasEmbedded: embedded.length > 0,
 			hasSearchable: searchable.length > 0,
 			hasSortable: sortable.length > 0,
 			hasPrivate: hidden.length > 0,
