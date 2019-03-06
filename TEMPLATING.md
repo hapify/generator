@@ -57,15 +57,15 @@ The following objects will be available in the template.
 - `name` (string): The name of the model, as the user entered it.
 - `names` (object): All names computed from the `name` property.
     - `raw` (string): The name of the model, as the user entered it. Example `Online item`.
-    - `hyphen` (string): The name with hyphens and lower case. Example `online-item`.
-    - `hyphenUpper` (string): The name with hyphens and upper case. Example `ONLINE-ITEM`.
-    - `underscore` (string): The name with underscores and lower case. Example `online_item`.
-    - `underscoreUpper` (string): The name with underscores and upper case. Example `ONLINE_ITEM`.
-    - `oneWord` (string): The name joined and lower case. Example `onlineitem`.
-    - `lowerCamel` (string): The name as lower camel case. Example `onlineItem`.
-    - `upperCamel` (string): The name as upper camel case. Example `OnlineItem`.
-    - `wordsLower` (string): The name as words in lower case. Example `online item`.
-    - `wordsUpper` (string): The name as words with upper case on first letters. Example `Online Item`.
+    - `kebab` (string): The name with hyphens and lower case. Example `online-item`.
+    - `big` (string): The name with hyphens and upper case. Example `ONLINE-ITEM`.
+    - `snake` (string): The name with underscores and lower case. Example `online_item`.
+    - `constant` (string): The name with underscores and upper case. Example `ONLINE_ITEM`.
+    - `compact` (string): The name joined and lower case. Example `onlineitem`.
+    - `camel` (string): The name as lower camel case. Example `onlineItem`.
+    - `pascal` (string): The name as upper camel case. Example `OnlineItem`.
+    - `lower` (string): The name as words in lower case. Example `online item`.
+    - `capital` (string): The name as words with upper case on first letters. Example `Online Item`.
 - `fields` - alias `f` (object): An object containing all fields, grouped in different arrays.
     - `list` - alias `l` (array): An array containing all fields of the model.
     - `primary` - alias `pr` (Field): The primary field of the model. `null` if no primary field is defined.
@@ -149,15 +149,15 @@ The following objects will be available in the template.
 - `name` (string): The name of the field, as the user entered it.
 - `names` (object): All names computed from the `name` property. As for the field object.
     - `raw` (string): The name of the field, as the user entered it. Example `first_name`.
-    - `hyphen` (string): The name with hyphens and lower case. Example `first-name`.
-    - `hyphenUpper` (string): The name with hyphens and upper case. Example `FIRST-NAME`.
-    - `underscore` (string): The name with underscores and lower case. Example `first_name`.
-    - `underscoreUpper` (string): The name with underscores and upper case. Example `FIRST_NAME`.
-    - `oneWord` (string): The name joined and lower case. Example `firstname`.
-    - `lowerCamel` (string): The name as lower camel case. Example `firstName`.
-    - `upperCamel` (string): The name as upper camel case. Example `FirstName`.
-    - `wordsLower` (string): The name as words in lower case. Example `first name`.
-    - `wordsUpper` (string): The name as words with upper case on first letters. Example `First Name`.
+    - `kebab` (string): The name with hyphens and lower case. Example `first-name`.
+    - `big` (string): The name with hyphens and upper case. Example `FIRST-NAME`.
+    - `snake` (string): The name with underscores and lower case. Example `first_name`.
+    - `constant` (string): The name with underscores and upper case. Example `FIRST_NAME`.
+    - `compact` (string): The name joined and lower case. Example `firstname`.
+    - `camel` (string): The name as lower camel case. Example `firstName`.
+    - `pascal` (string): The name as upper camel case. Example `FirstName`.
+    - `lower` (string): The name as words in lower case. Example `first name`.
+    - `capital` (string): The name as words with upper case on first letters. Example `First Name`.
 - `primary` (boolean): Indicates if the field is flagged as `primary`.
 - `unique` (boolean): Indicates if the field is flagged as `unique`.
 - `label` (boolean): Indicates if the field is flagged as `label`.
