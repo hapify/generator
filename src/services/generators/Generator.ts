@@ -276,7 +276,7 @@ export class GeneratorService {
 			hasRestricted: restricted.length > 0,
 			hasOwnership: ownership.length > 0,
 			hasSearchableLabel: searchableLabel.length > 0,
-			mainlyPrivate: fields.length < 2 * hidden.length,
+			mainlyHidden: fields.length < 2 * hidden.length,
 			mainlyInternal: fields.length < 2 * internal.length,
 			isGeolocated:
 				fields.filter((f: IField) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
