@@ -209,7 +209,7 @@ export class GeneratorService {
 		// Get sortable fields
 		const sortable = fields.filter((f: IField) => f.sortable);
 
-		// Get private fields
+		// Get hidden fields
 		const hidden = fields.filter((f: IField) => f.hidden);
 
 		// Get internal fields

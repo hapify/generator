@@ -78,7 +78,7 @@ const handler = async (request, h) => {
 
     // @hook create:after-insert:user
 
-    // Delete private properties
+    // Delete hidden properties
     delete user.password;
     delete user.last_connection_ip;
     delete user.email_confirmation_code;

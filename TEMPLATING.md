@@ -22,7 +22,7 @@ Those boolean properties are:
 - *Embedded*: Denotes if the field should always be detailed.
 - *Searchable*: Denotes if we can filter by this field.
 - *Sortable*: Denotes if we can sort by this field.
-- *Private*: Denotes if the field is readable by a user. This field is written *Hidden* to avoid conflict with reserved keywords.
+- *Hidden*: Denotes if the field is readable by a user. This field is written *Hidden* to avoid conflict with reserved keywords.
 - *Internal*: Denotes if the field is settable by a user, or this value is defined by the program.
 - *Restricted*: Denotes if the access to this field is restricted to someones.
 - *Ownership*: Denotes if the fields contains the identifier of entity's owner.
@@ -76,7 +76,7 @@ The following objects will be available in the template.
     - `embedded` - alias `im` (array): An array containing all fields flagged as `embedded`.
     - `searchable` - alias `se` (array): An array containing all fields flagged as `searchable`.
     - `sortable` - alias `so` (array): An array containing all fields flagged as `sortable`.
-    - `hidden` - alias `ip` (array): An array containing all fields flagged as `private`.
+    - `hidden` - alias `ip` (array): An array containing all fields flagged as `hidden`.
     - `internal` - alias `i` (array): An array containing all fields flagged as `internal`.
     - `restricted` - alias `rs` (array): An array containing all fields flagged as `restricted`.
     - `ownership` - alias `os` (array): An array containing all fields flagged as `ownership`.
@@ -102,14 +102,14 @@ The following objects will be available in the template.
     - `hasEmbedded` (boolean): Denotes if the model has at least one embedded field.
     - `hasSearchable` (boolean): Denotes if the model has at least one searchable field.
     - `hasSortable` (boolean): Denotes if the model has at least one sortable field.
-    - `hasHidden` (boolean): Denotes if the model has at least one private field.
+    - `hasHidden` (boolean): Denotes if the model has at least one hidden field.
     - `hasInternal` (boolean): Denotes if the model has at least one internal field.
     - `hasRestricted` (boolean): Denotes if the model has at least one restricted field.
     - `hasOwnership` (boolean): Denotes if the model has at least one ownership field.
     - `hasSearchableLabel` (boolean): Denotes if the model has at least one field marked as label and also searchable.
     - `hasDependencies` - non-deep model only (boolean): Denotes if the model has dependencies to other models or itself (through an `entity` field).
     - `isReferenced` - non-deep model only (boolean): Denotes if the model is referenced by other models.
-    - `mainlyHidden` (boolean): Denotes if most of the fields are private (strictly).
+    - `mainlyHidden` (boolean): Denotes if most of the fields are hidden (strictly).
     - `mainlyInternal` (boolean): Denotes if most of the fields are internal (strictly).
     - `isGeolocated` (boolean): Denotes if the model contains at least one latitude field and one longitude field.
     - `isGeoSearchable` (boolean): Denotes if the model contains at least one searchable latitude field and one searchable longitude field.
@@ -166,7 +166,7 @@ The following objects will be available in the template.
 - `embedded` (boolean): Indicates if the field is flagged as `embedded`.
 - `searchable` (boolean): Indicates if the field is flagged as `searchable`.
 - `sortable` (boolean): Indicates if the field is flagged as `sortable`.
-- `hidden` (boolean): Indicates if the field is flagged as `private`.
+- `hidden` (boolean): Indicates if the field is flagged as `hidden`.
 - `internal` (boolean): Indicates if the field is flagged as `internal`.
 - `restricted` (boolean): Indicates if the field is flagged as `restricted`.
 - `ownership` (boolean): Indicates if the field is flagged as `ownership`.

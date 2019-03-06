@@ -107,7 +107,7 @@ const handler = async (request, h) => {
 
 <<? F ip>>
  
-    // Delete private properties
+    // Delete hidden properties
     <<@ F ip p>>
     delete <<M aA>>.<<p a_a>>;
     <<@>>

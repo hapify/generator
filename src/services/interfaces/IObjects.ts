@@ -23,7 +23,7 @@ export interface IField {
 	searchable: boolean;
 	/** @type {boolean} Indicate whether the field is sortable or not */
 	sortable: boolean;
-	/** @type {boolean} Indicate whether the field is private (should not be exposed) */
+	/** @type {boolean} Indicate whether the field is hidden (should not be exposed) */
 	hidden: boolean;
 	/** @type {boolean} Indicate whether the field is for an internal use only (should not be defined by an user) */
 	internal: boolean;
