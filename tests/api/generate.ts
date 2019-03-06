@@ -14,7 +14,7 @@ const get = (file: string): string => {
 const models: any[] = JSON.parse(get('models.json'));
 const templates: any[] = [
 	{
-		path: 'src/routes/{model.hyphen}/create.js',
+		path: 'src/routes/{kebab}/create.js',
 		engine: 'hpf',
 		input: 'one',
 		content: get('templates/model/create.js.hpf')
@@ -111,7 +111,7 @@ lab.test('generate without models', async () => {
 lab.test('generate files without fields', async () => {
   const response = await Api.post('/generate', {
     templates: [{
-      path: 'src/routes/{model.hyphen}/no-field.js',
+      path: 'src/routes/{kebab}/no-field.js',
       engine: 'hpf',
       input: 'one',
       content: '<<@ F f>><<f a-a>><<@>>END'
@@ -138,7 +138,7 @@ lab.test('generate with empty template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [
 			{
-				path: 'src/routes/{model.hyphen}/create.js',
+				path: 'src/routes/{kebab}/create.js',
 				engine: 'hpf',
 				input: 'one',
 				content: ''

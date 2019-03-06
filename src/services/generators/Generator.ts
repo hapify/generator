@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, SentenceFormat, TemplateEngine } from '../interfaces';
+import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, TemplateEngine } from '../interfaces';
 import { JavaScriptGeneratorService, HpfGeneratorService } from './';
 import { StringService } from '../String';
 
@@ -74,15 +74,12 @@ export class GeneratorService {
 			return path;
 		}
 
-		// Apply replacements
-		path = path.replace(/{model\.hyphen}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphen));
-		path = path.replace(/{model\.hyphenUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugHyphenUpperCase));
-		path = path.replace(/{model\.underscore}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscore));
-		path = path.replace(/{model\.underscoreUpper}/g, this.stringService.format(modelName, SentenceFormat.SlugUnderscoreUpperCase));
-		path = path.replace(/{model\.oneWord}/g, this.stringService.format(modelName, SentenceFormat.SlugOneWord));
-		path = path.replace(/{model\.upperCamel}/g, this.stringService.format(modelName, SentenceFormat.UpperCamelCase));
-		path = path.replace(/{model\.lowerCamel}/g, this.stringService.format(modelName, SentenceFormat.LowerCamelCase));
-
+		const variants = this.stringService.variants(modelName);
+		const keys = Object.keys(variants);
+		for (const key of keys) {
+			path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
+		}
+		
 		return path;
 	}
 
@@ -174,11 +171,11 @@ export class GeneratorService {
 		const m: any = Object.assign({}, model);
 
 		// Convert names
-		(<any>m).names = this.stringService.formatSentences(m.name);
+		(<any>m).names = this.stringService.variants(m.name);
 
 		// Get and format fields
 		const fields = m.fields.map((f: IField) => {
-			(<any>f).names = this.stringService.formatSentences(f.name);
+			(<any>f).names = this.stringService.variants(f.name);
 			return f;
 		});
 

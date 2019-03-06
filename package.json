@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "boom": "^7.3.0",
+    "case": "^1.6.1",
     "error-stack-parser": "^2.0.2",
     "good": "^8.1.1",
     "good-console": "^7.1.0",

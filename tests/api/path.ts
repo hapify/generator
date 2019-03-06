@@ -5,7 +5,7 @@ import * as Api from '../inc/api';
 
 lab.test('convert path with name', async () => {
 	const response = await Api.post('/path', {
-		path: '/this/is/a/{model.hyphen}/test',
+		path: '/this/is/a/{kebab}/test',
 		model: 'You video'
 	});
 	expect(response.statusCode).to.equal(200);
