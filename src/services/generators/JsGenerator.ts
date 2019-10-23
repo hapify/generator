@@ -43,11 +43,11 @@ export class JavaScriptGeneratorService implements IGenerator {
 				lineOffset: -3, // 1 from final + 2 from safer-eval
 				contextCodeGeneration: {
 					strings: false,
-					wasm: false,
+					wasm: false
 				}
 			}).runInContext(final);
 		} catch (error) {
-			if  (error.message === 'Script execution timed out.') {
+			if (error.message === 'Script execution timed out.') {
 				throw new TimeoutError(`Template processing timed out (${Config.Generator.timeout}ms)`);
 			}
 			// Format error

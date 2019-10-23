@@ -1,4 +1,3 @@
-
 export class InternalError extends Error {
 	code = 2001;
 	name = 'GeneratorInternalError';

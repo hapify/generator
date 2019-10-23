@@ -6,7 +6,6 @@ import * as Case from 'case';
 
 @Service()
 export class StringService {
-
 	/**
 	 * Constructor
 	 */

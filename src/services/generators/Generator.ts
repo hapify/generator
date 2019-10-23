@@ -79,7 +79,7 @@ export class GeneratorService {
 		for (const key of keys) {
 			path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
 		}
-		
+
 		return path;
 	}
 

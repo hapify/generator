@@ -23,7 +23,7 @@ export async function init(config: IConfig): Promise<Hapi.Server> {
 		if (!response.isBoom) {
 			return h.continue;
 		}
-		
+
 		// Get status code
 		const status = response.output.statusCode;
 		const payload = response.output.payload as any;
@@ -48,7 +48,7 @@ export async function init(config: IConfig): Promise<Hapi.Server> {
 		// Add data to boom
 		payload.data = {
 			type: error.name,
-			code: error.code,
+			code: error.code
 		};
 
 		return h.continue;
