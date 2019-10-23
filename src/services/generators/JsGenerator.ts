@@ -40,7 +40,7 @@ export class JavaScriptGeneratorService implements IGenerator {
 			return new SaferEval(context, {
 				filename: 'js-generator.js',
 				timeout: Config.Generator.timeout,
-				lineOffset: -1,
+				lineOffset: -3, // 1 from final + 2 from safer-eval
 				contextCodeGeneration: {
 					strings: false,
 					wasm: false,
