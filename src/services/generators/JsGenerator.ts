@@ -36,7 +36,8 @@ export class JavaScriptGeneratorService implements IGenerator {
 	/** Run eval */
 	private eval(content: string, context: any) {
 		try {
-			const final = `(function() { \n${content}\n })()`;
+			const toHide = ['console'].map(s => `${s} = undefined; `).join('');
+			const final = `(function() {${toHide}\n${content}\n })()`;
 			return new SaferEval(context, {
 				filename: 'js-generator.js',
 				timeout: Config.Generator.timeout,

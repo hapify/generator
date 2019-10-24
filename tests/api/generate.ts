@@ -257,3 +257,18 @@ lab.test('generate with timeout js template', async () => {
 	expect(response.body.data.lineNumber).to.be.undefined();
 	expect(response.body.data.columnNumber).to.be.undefined();
 });
+
+lab.test('globals are undefined', async () => {
+	const response = await Api.post('/generate', {
+		templates: [
+			{
+				path: 'src/globals.js',
+				engine: 'js',
+				input: 'all',
+				content: get('templates/globals.js.js')
+			}
+		],
+		models: models
+	});
+	expect(response.statusCode).to.equal(200);
+});
