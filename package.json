@@ -1,6 +1,6 @@
 {
   "name": "hapify-generator",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Generator backend for Hapify server",
   "main": "dist/index.js",
   "scripts": {

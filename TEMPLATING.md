@@ -30,7 +30,7 @@ The following objects will be available in the template.
     -   `pascal` (string): The name as upper camel case. Example `OnlineItem`.
     -   `lower` (string): The name as words in lower case. Example `online item`.
     -   `capital` (string): The name as words with upper case on first letters. Example `Online Item`.
--   `fields` - alias `f` (object): An object containing all fields, grouped in different arrays.
+-   `fields` - alias `f` (object): An object containing all fields, grouped in different arrays. See *Field object* section to learn more about field's structure.
     -   `list` - alias `l` (array): An array containing all fields of the model.
     -   `primary` - alias `pr` (Field): The primary field of the model. `null` if no primary field is defined.
     -   `unique` - alias `un` (array): An array containing all fields flagged as `unique`.
@@ -77,7 +77,7 @@ The following objects will be available in the template.
     -   `mainlyInternal` (boolean): Denotes if most of the fields are internal (strictly).
     -   `isGeolocated` (boolean): Denotes if the model contains at least one latitude field and one longitude field.
     -   `isGeoSearchable` (boolean): Denotes if the model contains at least one searchable latitude field and one searchable longitude field.
--   `accesses` - alias `a` (object): An object containing all action's accesses grouped by action or restriction.
+-   `accesses` - alias `a` (object): An object containing all action's accesses grouped by action or restriction. See *Access object* section to learn more about access' structure.
     -   `list` - alias `l` (array): An array containing all action's accesses of the model.
     -   `admin` - alias `ad` (array): An array containing all action's accesses restricted to `admin`.
     -   `owner` - alias `ow` (array): An array containing all action's accesses restricted to `owner`.
