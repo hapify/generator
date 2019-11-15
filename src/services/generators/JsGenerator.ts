@@ -1,9 +1,8 @@
 import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
-const { SaferEval } = require('safer-eval');
+import { HapifyVM } from '../../../packages/hapify-vm/src';
 import { Config } from '../../config';
 import { TimeoutError, EvaluationError } from '../Errors';
-import * as ErrorStackParser from 'error-stack-parser';
 
 @Service()
 export class JavaScriptGeneratorService implements IGenerator {
@@ -34,29 +33,22 @@ export class JavaScriptGeneratorService implements IGenerator {
 		});
 	}
 	/** Run eval */
-	private eval(content: string, context: any) {
+	private eval(content: string, context: any): string {
 		try {
-			const final = `(function() {\n${content}\n })()`;
-			return new SaferEval(Object.assign(context, { console: undefined }), {
-				filename: 'js-generator.js',
-				timeout: Config.Generator.timeout,
-				lineOffset: -3, // 1 from final + 2 from safer-eval
-				contextCodeGeneration: {
-					strings: false,
-					wasm: false
-				}
-			}).runInContext(final);
+			return new HapifyVM({ timeout: Config.Generator.timeout }).run(content, context);
 		} catch (error) {
-			if (error.message === 'Script execution timed out.') {
+			if (error.code === 6003) {
 				throw new TimeoutError(`Template processing timed out (${Config.Generator.timeout}ms)`);
 			}
-			// Format error
-			const { lineNumber, columnNumber } = ErrorStackParser.parse(error)[0];
-			const evalError = new EvaluationError(error.message);
-			evalError.details = `Error: ${evalError.message}. Line: ${lineNumber}, Column: ${columnNumber}`;
-			evalError.lineNumber = lineNumber;
-			evalError.columnNumber = columnNumber;
-			throw evalError;
+			if (error.code === 6002) {
+				// Clone error
+				const evalError = new EvaluationError(error.message);
+				evalError.details = `Error: ${evalError.message}. Line: ${error.lineNumber}, Column: ${error.columnNumber}`;
+				evalError.lineNumber = error.lineNumber;
+				evalError.columnNumber = error.columnNumber;
+				throw evalError;
+			}
+			throw error;
 		}
 	}
 }
