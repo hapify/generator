@@ -1,6 +1,3 @@
-if (typeof console !== 'undefined') {
-    throw new Error('console is defined');
-}
 if (typeof process !== 'undefined') {
     throw new Error('process is defined');
 }
@@ -9,9 +6,6 @@ if (typeof module !== 'undefined') {
 }
 if (typeof exports !== 'undefined') {
     throw new Error('exports is defined');
-}
-if (typeof global !== 'undefined') {
-    throw new Error('global is defined');
 }
 
 if (typeof __dirname !== 'undefined') {
