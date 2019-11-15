@@ -44,6 +44,7 @@
     "good-squeeze": "^5.1.0",
     "hapi": "^17.8.1",
     "hapify-syntax": "file:./packages/hapify-syntax",
+    "hapify-vm": "file:./packages/hapify-vm",
     "joi": "^14.3.0",
     "reflect-metadata": "^0.1.12",
     "typedi": "^0.8.0",
