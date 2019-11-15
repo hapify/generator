@@ -33,10 +33,9 @@ export class JavaScriptGeneratorService implements IGenerator {
 		});
 	}
 	/** Run eval */
-	private eval(content: string, context: any) {
-		const script = `(function() {\n${content}\n })()`;
+	private eval(content: string, context: any): string {
 		try {
-			return new HapifyVM({ timeout: Config.Generator.timeout }).run(script, context);
+			return new HapifyVM({ timeout: Config.Generator.timeout }).run(content, context);
 		} catch (error) {
 			if (error.code === 6003) {
 				throw new TimeoutError(`Template processing timed out (${Config.Generator.timeout}ms)`);
