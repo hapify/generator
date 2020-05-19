@@ -20,7 +20,7 @@
     "backend"
   ],
   "author": "Edouard Demotes-Mainard <edouard@tractr.net>",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme",
   "devDependencies": {
     "@types/boom": "^7.2.1",
