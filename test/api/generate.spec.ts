@@ -1,7 +1,7 @@
 import { expect } from '@hapi/code';
 import 'mocha';
 import * as Fs from 'fs';
-import { Generator, TimeoutError } from '../../src';
+import { Generator } from '../../src';
 
 const path = (file: string): string => {
 	return `${process.cwd()}/test/api/files/${file}`;
