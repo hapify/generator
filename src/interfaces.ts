@@ -1,3 +1,48 @@
+// ==================================================================
+//  Fields
+// ==================================================================
+export class FieldType {
+	static Boolean = 'boolean';
+	static Number = 'number';
+	static String = 'string';
+	static DateTime = 'datetime';
+	static Entity = 'entity';
+	static Object = 'object';
+	static File = 'file';
+}
+
+export class FieldSubType {
+	static Boolean = {};
+	static Number = {
+		Integer: 'integer',
+		Float: 'float',
+		Latitude: 'latitude',
+		Longitude: 'longitude',
+	};
+	static String = {
+		Email: 'email',
+		Password: 'password',
+		Url: 'url',
+		Text: 'text',
+		RichText: 'rich',
+	};
+	static DateTime = {
+		Date: 'date',
+		Time: 'time',
+	};
+	static Entity = {};
+	static Object = {};
+	static File = {
+		Image: 'image',
+		Video: 'video',
+		Audio: 'audio',
+		Document: 'document',
+	};
+}
+
+// ==================================================================
+//  Model
+// ==================================================================
 export interface IField {
 	/** The field's name */
 	name: string;
@@ -84,4 +129,44 @@ export interface ITemplate {
 	input: string;
 	/** The template's content */
 	content: string;
+}
+
+// ==================================================================
+//  Generator
+// ==================================================================
+export interface IGenerator {
+	/**
+	 * Run generation process for one model
+	 */
+	one(model: any, template: ITemplate): Promise<string>;
+
+	/**
+	 * Run generation process for all models
+	 */
+	all(models: any[], template: ITemplate): Promise<string>;
+}
+export interface IGeneratorResult {
+	/** The file path */
+	path: string;
+	/** The file content */
+	content: string;
+}
+
+// ==================================================================
+//  Templates
+// ==================================================================
+export class TemplateEngine {
+	static Hpf = 'hpf';
+	static JavaScript = 'js';
+}
+export class TemplateInput {
+	static One = 'one';
+	static All = 'all';
+}
+
+// ==================================================================
+//  Errors
+// ==================================================================
+export interface NumberedError extends Error {
+	code: number;
 }

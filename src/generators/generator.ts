@@ -1,7 +1,7 @@
-import { Service } from 'typedi';
-import { TemplateInput, ITemplate, IModel, IField, IGeneratorResult, Access, FieldType, FieldSubType, TemplateEngine } from '../interfaces';
-import { JavaScriptGeneratorService, HpfGeneratorService } from './';
-import { StringService } from '../String';
+import { StringVariants } from '../string';
+import { HpfGenerator } from './hpf-generator';
+import { JavascriptGenerator } from './javascript-generator';
+import { IGeneratorResult, IModel, ITemplate, TemplateInput, TemplateEngine, IField, FieldType, FieldSubType, Access } from '../interfaces';
 
 /** Define the restriction for an action */
 interface IActionAccesses {
@@ -14,13 +14,11 @@ interface ICache {
 
 const CACHE_ENABLED = true;
 
-@Service()
-export class GeneratorService {
-	constructor(
-		private stringService: StringService,
-		private hpfGeneratorService: HpfGeneratorService,
-		private javaScriptGeneratorService: JavaScriptGeneratorService
-	) {}
+export class Generator {
+	private hpfGeneratorService = new HpfGenerator();
+	private javaScriptGeneratorService = new JavascriptGenerator();
+
+	constructor() {}
 
 	/**
 	 * Run generation process for one model
@@ -57,7 +55,7 @@ export class GeneratorService {
 			return path;
 		}
 
-		const variants = this.stringService.variants(modelName);
+		const variants = StringVariants(modelName);
 		const keys = Object.keys(variants);
 		for (const key of keys) {
 			path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
@@ -132,11 +130,11 @@ export class GeneratorService {
 		const m: any = Object.assign({}, model);
 
 		// Convert names
-		(<any>m).names = this.stringService.variants(m.name);
+		(<any>m).names = StringVariants(m.name);
 
 		// Get and format fields
 		const fields = m.fields.map((f: IField) => {
-			(<any>f).names = this.stringService.variants(f.name);
+			(<any>f).names = StringVariants(f.name);
 			return f;
 		});
 

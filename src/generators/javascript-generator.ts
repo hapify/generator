@@ -1,11 +1,9 @@
-import { IGenerator, ITemplate } from '../interfaces';
-import { Service } from 'typedi';
 import { HapifyVM } from 'hapify-vm';
-import { Config } from '../../config';
-import { TimeoutError, EvaluationError } from '../Errors';
+import { Config } from '../config';
+import { IGenerator, ITemplate } from '../interfaces';
+import { TimeoutError, EvaluationError } from '../errors';
 
-@Service()
-export class JavaScriptGeneratorService implements IGenerator {
+export class JavascriptGenerator implements IGenerator {
 	constructor() {}
 
 	async one(model: any, template: ITemplate): Promise<string> {

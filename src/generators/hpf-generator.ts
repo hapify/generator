@@ -1,13 +1,11 @@
-import { IGenerator, ITemplate } from '../interfaces';
-import { Service } from 'typedi';
 import { HapifySyntax } from 'hapify-syntax';
-import { Config } from '../../config';
+import { Config } from '../config';
+import { IGenerator, ITemplate } from '../interfaces';
 
 const HpfOptions = { timeout: Config.Generator.timeout };
 
-@Service()
-export class HpfGeneratorService implements IGenerator {
-	private constructor() {}
+export class HpfGenerator implements IGenerator {
+	constructor() {}
 
 	async one(model: any, template: ITemplate): Promise<string> {
 		// Create template function

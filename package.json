@@ -24,37 +24,23 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "@types/boom": "^7.2.1",
-    "@types/code": "^4.0.5",
-    "@types/hapi": "^17.8.0",
-    "@types/joi": "^14.0.0",
-    "@types/lab": "^11.1.0",
-    "@types/node": "^10.12.18",
+    "@hapi/code": "^8.0.1",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.1",
     "husky": "^4.2.5",
     "mocha": "^7.1.2",
     "npm-check": "^5.9.2",
     "nyc": "^15.0.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
-    "@types/request-promise-native": "^1.0.15",
-    "code": "^5.2.4",
-    "lab": "^15.5.0",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.5"
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3"
   },
   "dependencies": {
-    "boom": "^7.3.0",
     "case": "^1.6.1",
-    "good": "^8.1.1",
-    "good-console": "^7.1.0",
-    "good-squeeze": "^5.1.0",
-    "hapi": "^17.8.1",
     "hapify-syntax": "github:hapify/syntax#v0.5.0",
-    "hapify-vm": "github:hapify/vm#v0.3.2",
-    "joi": "^14.3.0",
-    "reflect-metadata": "^0.1.12",
-    "typedi": "^0.8.0",
-    "typescript": "^3.2.2"
+    "hapify-vm": "github:hapify/vm#v0.3.2"
   },
   "engines": {
     "node": ">=9"
