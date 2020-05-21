@@ -6,16 +6,10 @@ import * as Case from 'case';
 
 @Service()
 export class StringService {
-	/**
-	 * Constructor
-	 */
 	constructor() {}
 
 	/**
 	 * Returns the string with all formats
-	 *
-	 * @param {string} value
-	 * @returns {string}
 	 */
 	public variants(value: string): IStringVariants {
 		return {
@@ -30,7 +24,7 @@ export class StringService {
 			upper: Case.upper(value),
 			compact: Case.snake(value).replace(/_/g, ''),
 			pascal: Case.pascal(value),
-			camel: Case.camel(value)
+			camel: Case.camel(value),
 		};
 	}
 }

@@ -16,13 +16,6 @@ const CACHE_ENABLED = true;
 
 @Service()
 export class GeneratorService {
-	/**
-	 * Constructor
-	 *
-	 * @param stringService
-	 * @param hpfGeneratorService
-	 * @param javaScriptGeneratorService
-	 */
 	constructor(
 		private stringService: StringService,
 		private hpfGeneratorService: HpfGeneratorService,
@@ -31,14 +24,8 @@ export class GeneratorService {
 
 	/**
 	 * Run generation process for one model
-	 *
-	 * @param {ITemplate[]} templates
-	 * @param {IModel[]} models
-	 * @param {string[]} forIds
-	 *  A list of models ids to restrict generation to
-	 * @returns {Promise<IGeneratorResult>}
-	 * @throws {Error}
-	 *  If the template needs a model and no model is passed
+	 * "forIds": A list of models ids to restrict generation to
+	 * Throws an error if the template needs a model and no model is passed
 	 */
 	async run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]> {
 		// Create results stack
@@ -49,7 +36,7 @@ export class GeneratorService {
 		for (const template of templates) {
 			if (template.input === TemplateInput.One) {
 				for (const model of models) {
-					if (forIds && !forIds.find(id => id === model.id)) {
+					if (forIds && !forIds.find((id) => id === model.id)) {
 						continue;
 					}
 					output.push(await this._one(template, models, model, cache));
@@ -63,10 +50,6 @@ export class GeneratorService {
 
 	/**
 	 * Only process the path
-	 *
-	 * @param {string} path
-	 * @param {string} modelName
-	 * @returns {string}
 	 */
 	path(path: string, modelName?: string): string {
 		// Quick exit
@@ -85,15 +68,7 @@ export class GeneratorService {
 
 	/**
 	 * Run generation process for one model and one template
-	 *
-	 * @param {ITemplate} template
-	 * @param {IModel[]} models
-	 * @param {IModel} model
-	 * @param {ICache} cache
-	 * @returns {Promise<IGeneratorResult>}
-	 * @throws {Error}
-	 *  If the template rendering engine is unknown
-	 * @private
+	 * Throws an error if the template rendering engine is unknown
 	 */
 	private async _one(template: ITemplate, models: IModel[], model: IModel, cache: ICache): Promise<IGeneratorResult> {
 		// Compute path
@@ -113,20 +88,13 @@ export class GeneratorService {
 
 		return {
 			content,
-			path
+			path,
 		};
 	}
 
 	/**
 	 * Run generation process for all models and one template
-	 *
-	 * @param {ITemplate} template
-	 * @param {IModel[]} models
-	 * @param {ICache} cache
-	 * @returns {Promise<IGeneratorResult>}
-	 * @throws {Error}
-	 *  If the template rendering engine is unknowns
-	 * @private
+	 * Throws an error if the template rendering engine is unknown
 	 */
 	private async _all(template: ITemplate, models: IModel[], cache: ICache): Promise<IGeneratorResult> {
 		// Compute path
@@ -146,20 +114,13 @@ export class GeneratorService {
 
 		return {
 			content,
-			path
+			path,
 		};
 	}
 
 	/**
 	 * Convert the model to an object containing all its properties
-	 *
 	 * @todo Use caching for this method
-	 * @param {IModel[]} models
-	 * @param {IModel} model
-	 * @param {ICache} cache
-	 * @param {number} depth
-	 * @return {any}
-	 * @private
 	 */
 	private _explicitModel(models: IModel[], model: IModel, cache: ICache, depth = 0): any {
 		// Return cache value if any
@@ -254,7 +215,7 @@ export class GeneratorService {
 			ownership,
 			os: ownership,
 			searchableLabel,
-			sl: searchableLabel
+			sl: searchableLabel,
 		};
 
 		// Pre-compute properties
@@ -280,7 +241,7 @@ export class GeneratorService {
 				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude).length > 0,
 			isGeoSearchable:
 				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Latitude && f.searchable).length > 0 &&
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude && f.searchable).length > 0
+				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude && f.searchable).length > 0,
 		};
 
 		// ==========================================
@@ -294,7 +255,7 @@ export class GeneratorService {
 			admin: ordered.indexOf(Access.ADMIN),
 			owner: ordered.indexOf(Access.OWNER),
 			auth: ordered.indexOf(Access.AUTHENTICATED),
-			guest: ordered.indexOf(Access.GUEST)
+			guest: ordered.indexOf(Access.GUEST),
 		};
 		for (const action in model.accesses) {
 			const accessIndex = ordered.indexOf(model.accesses[action]);
@@ -313,7 +274,7 @@ export class GeneratorService {
 				lteAdmin: accessIndex <= indexes.admin,
 				lteOwner: accessIndex <= indexes.owner,
 				lteAuth: accessIndex <= indexes.auth,
-				lteGuest: accessIndex <= indexes.guest
+				lteGuest: accessIndex <= indexes.guest,
 			};
 			accesses.push(description);
 		}
@@ -355,7 +316,7 @@ export class GeneratorService {
 			hasAdmin: admin.length > 0,
 			hasOwner: owner.length > 0,
 			hasAuth: auth.length > 0,
-			hasGuest: guest.length > 0
+			hasGuest: guest.length > 0,
 		};
 
 		// Create filter function
@@ -390,7 +351,7 @@ export class GeneratorService {
 			search: actionSearch,
 			s: actionSearch,
 			count: actionCount,
-			n: actionCount
+			n: actionCount,
 		};
 
 		// Add references and dependencies on first level
@@ -461,7 +422,7 @@ export class GeneratorService {
 				filter: dependencies,
 				f: dependencies,
 				self: selfDependency,
-				s: selfDependency
+				s: selfDependency,
 			};
 			m.d = m.dependencies;
 			m.properties.hasDependencies = allDependencies.length > 0;
@@ -503,11 +464,6 @@ export class GeneratorService {
 
 	/**
 	 * Convert all the models to an array of objects containing all its properties
-	 *
-	 * @param {IModel[]} models
-	 * @param {ICache} cache
-	 * @return {any[]}
-	 * @private
 	 */
 	private _explicitAllModels(models: IModel[], cache: ICache): any[] {
 		return models.map((mod: IModel) => this._explicitModel(models, mod, cache));

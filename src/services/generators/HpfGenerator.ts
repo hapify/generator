@@ -1,20 +1,14 @@
 import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
-import HapifySyntax from 'hapify-syntax';
+import { HapifySyntax } from 'hapify-syntax';
 import { Config } from '../../config';
 
 const HpfOptions = { timeout: Config.Generator.timeout };
 
 @Service()
 export class HpfGeneratorService implements IGenerator {
-	/**
-	 * Constructor
-	 */
-	constructor() {}
+	private constructor() {}
 
-	/**
-	 * @inheritDoc
-	 */
 	async one(model: any, template: ITemplate): Promise<string> {
 		// Create template function
 		const cleanedContent = await this._preProcess(template.content);
@@ -22,9 +16,6 @@ export class HpfGeneratorService implements IGenerator {
 		return await this._postProcess(content);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	async all(models: any[], template: ITemplate): Promise<string> {
 		// Create template function
 		const cleanedContent = await this._preProcess(template.content);
@@ -34,10 +25,6 @@ export class HpfGeneratorService implements IGenerator {
 
 	/**
 	 * Cleanup code before process
-	 *
-	 * @param {string} template
-	 * @return {Promise<string>}
-	 * @private
 	 */
 	private async _preProcess(template: string) {
 		const indentConditions = /^ +<<(\?|@|#)([\s\S]*?)>>/gm;
@@ -46,10 +33,6 @@ export class HpfGeneratorService implements IGenerator {
 
 	/**
 	 * Cleanup code after process
-	 *
-	 * @param {string} code
-	 * @return {Promise<string>}
-	 * @private
 	 */
 	private async _postProcess(code: string) {
 		const doubleLine = /\r?\n\r?\n/g;

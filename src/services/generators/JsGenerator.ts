@@ -1,37 +1,29 @@
 import { IGenerator, ITemplate } from '../interfaces';
 import { Service } from 'typedi';
-import { HapifyVM } from '../../../packages/hapify-vm/src';
+import { HapifyVM } from 'hapify-vm';
 import { Config } from '../../config';
 import { TimeoutError, EvaluationError } from '../Errors';
 
 @Service()
 export class JavaScriptGeneratorService implements IGenerator {
-	/**
-	 * Constructor
-	 */
 	constructor() {}
 
-	/**
-	 * @inheritDoc
-	 */
 	async one(model: any, template: ITemplate): Promise<string> {
 		// Eval template content
 		return this.eval(template.content, {
 			model: model,
-			m: model
+			m: model,
 		});
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	async all(models: any[], template: ITemplate): Promise<string> {
 		// Create template function
 		return this.eval(template.content, {
 			models: models,
-			m: models
+			m: models,
 		});
 	}
+
 	/** Run eval */
 	private eval(content: string, context: any): string {
 		try {

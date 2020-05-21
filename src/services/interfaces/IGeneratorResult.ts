@@ -1,6 +1,6 @@
 export interface IGeneratorResult {
-	/** @type {string} The file path */
+	/** The file path */
 	path: string;
-	/** @type {string} The file content */
+	/** The file content */
 	content: string;
 }
