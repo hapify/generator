@@ -1,8 +1,8 @@
-import { IGenerator, ITemplate } from "../interfaces";
-export declare class JavascriptGenerator implements IGenerator {
+import { GeneratorWorker, Template } from '../interfaces';
+export declare class JavascriptGenerator implements GeneratorWorker {
     constructor();
-    one(model: any, template: ITemplate): Promise<string>;
-    all(models: any[], template: ITemplate): Promise<string>;
+    one(model: any, template: Template): Promise<string>;
+    all(models: any[], template: Template): Promise<string>;
     /** Run eval */
     private eval;
 }

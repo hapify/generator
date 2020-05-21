@@ -2,6 +2,7 @@ import { expect } from '@hapi/code';
 import 'mocha';
 import * as Fs from 'fs';
 import { Generator } from '../../src';
+import { Model, Template } from '../../src/interfaces';
 
 const path = (file: string): string => {
 	return `${process.cwd()}/test/api/files/${file}`;
@@ -10,8 +11,8 @@ const get = (file: string): string => {
 	return Fs.readFileSync(path(file), { encoding: 'utf8' });
 };
 
-const models: any[] = JSON.parse(get('models.json'));
-const templates: any[] = [
+const models: Model[] = JSON.parse(get('models.json'));
+const templates: Template[] = [
 	{
 		path: 'src/routes/{kebab}/create.js',
 		engine: 'hpf',
@@ -138,8 +139,7 @@ describe('generate', () => {
 					return clone;
 				})
 			)
-		).to.reject();
-		expect(error.code).to.equal(1004);
+		).to.reject('Cannot convert undefined or null to object'); // generator.ts:258
 	});
 
 	it('generate with broken hpf template', async () => {

@@ -1,14 +1,10 @@
 import { StringVariants } from '../string';
 import { HpfGenerator } from './hpf-generator';
 import { JavascriptGenerator } from './javascript-generator';
-import { IGeneratorResult, IModel, ITemplate, TemplateInput, TemplateEngine, IField, FieldType, FieldSubType, Access } from '../interfaces';
+import { GeneratorResult, Model, Template, Field, Access, Action, ActionAccesses } from '../interfaces';
 
-/** Define the restriction for an action */
-interface IActionAccesses {
-	[s: string]: boolean | string;
-}
 /** Define the cache structure */
-interface ICache {
+interface Cache {
 	[s: string]: any;
 }
 
@@ -25,14 +21,14 @@ export class Generator {
 	 * "forIds": A list of models ids to restrict generation to
 	 * Throws an error if the template needs a model and no model is passed
 	 */
-	async run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]> {
+	async run(templates: Template[], models: Model[], forIds?: string[]): Promise<GeneratorResult[]> {
 		// Create results stack
-		const output: IGeneratorResult[] = [];
+		const output: GeneratorResult[] = [];
 		// Create a new cache context
-		const cache: ICache = {};
+		const cache: Cache = {};
 		// For each template, run sub process
 		for (const template of templates) {
-			if (template.input === TemplateInput.One) {
+			if (template.input === 'one') {
 				for (const model of models) {
 					if (forIds && !forIds.find((id) => id === model.id)) {
 						continue;
@@ -68,7 +64,7 @@ export class Generator {
 	 * Run generation process for one model and one template
 	 * Throws an error if the template rendering engine is unknown
 	 */
-	private async _one(template: ITemplate, models: IModel[], model: IModel, cache: ICache): Promise<IGeneratorResult> {
+	private async _one(template: Template, models: Model[], model: Model, cache: Cache): Promise<GeneratorResult> {
 		// Compute path
 		const path = this.path(template.path, model.name);
 		// Get full model description
@@ -76,9 +72,9 @@ export class Generator {
 
 		// Compute content
 		let content;
-		if (template.engine === TemplateEngine.Hpf) {
+		if (template.engine === 'hpf') {
 			content = await this.hpfGeneratorService.one(input, template);
-		} else if (template.engine === TemplateEngine.JavaScript) {
+		} else if (template.engine === 'js') {
 			content = await this.javaScriptGeneratorService.one(input, template);
 		} else {
 			throw new Error('Unknown engine');
@@ -94,7 +90,7 @@ export class Generator {
 	 * Run generation process for all models and one template
 	 * Throws an error if the template rendering engine is unknown
 	 */
-	private async _all(template: ITemplate, models: IModel[], cache: ICache): Promise<IGeneratorResult> {
+	private async _all(template: Template, models: Model[], cache: Cache): Promise<GeneratorResult> {
 		// Compute path
 		const path = this.path(template.path);
 		// Get full models description
@@ -102,9 +98,9 @@ export class Generator {
 
 		// Compute content
 		let content;
-		if (template.engine === TemplateEngine.Hpf) {
+		if (template.engine === 'hpf') {
 			content = await this.hpfGeneratorService.all(input, template);
-		} else if (template.engine === TemplateEngine.JavaScript) {
+		} else if (template.engine === 'js') {
 			content = await this.javaScriptGeneratorService.all(input, template);
 		} else {
 			throw new Error('Unknown engine');
@@ -120,7 +116,7 @@ export class Generator {
 	 * Convert the model to an object containing all its properties
 	 * @todo Use caching for this method
 	 */
-	private _explicitModel(models: IModel[], model: IModel, cache: ICache, depth = 0): any {
+	private _explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): any {
 		// Return cache value if any
 		if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
 			return cache[model.id];
@@ -133,52 +129,52 @@ export class Generator {
 		(<any>m).names = StringVariants(m.name);
 
 		// Get and format fields
-		const fields = m.fields.map((f: IField) => {
+		const fields = m.fields.map((f: Field) => {
 			(<any>f).names = StringVariants(f.name);
 			return f;
 		});
 
 		// Get primary field
-		const primary = fields.find((f: IField) => f.primary);
+		const primary = fields.find((f: Field) => f.primary);
 
 		// Get unique fields
-		const unique = fields.filter((f: IField) => f.unique);
+		const unique = fields.filter((f: Field) => f.unique);
 
 		// Get label fields
-		const label = fields.filter((f: IField) => f.label);
+		const label = fields.filter((f: Field) => f.label);
 
 		// Get label and searchable fields
-		const searchableLabel = fields.filter((f: IField) => f.label && f.searchable);
+		const searchableLabel = fields.filter((f: Field) => f.label && f.searchable);
 
 		// Get nullable fields
-		const nullable = fields.filter((f: IField) => f.nullable);
+		const nullable = fields.filter((f: Field) => f.nullable);
 
 		// Get multiple fields
-		const multiple = fields.filter((f: IField) => f.multiple);
+		const multiple = fields.filter((f: Field) => f.multiple);
 
 		// Get embedded fields
-		const embedded = fields.filter((f: IField) => f.embedded);
+		const embedded = fields.filter((f: Field) => f.embedded);
 
 		// Get searchable fields
-		const searchable = fields.filter((f: IField) => f.searchable);
+		const searchable = fields.filter((f: Field) => f.searchable);
 
 		// Get sortable fields
-		const sortable = fields.filter((f: IField) => f.sortable);
+		const sortable = fields.filter((f: Field) => f.sortable);
 
 		// Get hidden fields
-		const hidden = fields.filter((f: IField) => f.hidden);
+		const hidden = fields.filter((f: Field) => f.hidden);
 
 		// Get internal fields
-		const internal = fields.filter((f: IField) => f.internal);
+		const internal = fields.filter((f: Field) => f.internal);
 
 		// Get restricted fields
-		const restricted = fields.filter((f: IField) => f.restricted);
+		const restricted = fields.filter((f: Field) => f.restricted);
 
 		// Get ownership fields
-		const ownership = fields.filter((f: IField) => f.ownership);
+		const ownership = fields.filter((f: Field) => f.ownership);
 
 		// Create filter function
-		const filter = (func: (f: IField) => boolean = null) => {
+		const filter = (func: (f: Field) => boolean = null) => {
 			return typeof func === 'function' ? fields.filter(func) : fields;
 		};
 
@@ -235,11 +231,11 @@ export class Generator {
 			mainlyHidden: fields.length < 2 * hidden.length,
 			mainlyInternal: fields.length < 2 * internal.length,
 			isGeolocated:
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Latitude).length > 0 &&
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude).length > 0,
+				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
+				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude').length > 0,
 			isGeoSearchable:
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Latitude && f.searchable).length > 0 &&
-				fields.filter((f: IField) => f.type === FieldType.Number && f.subtype === FieldSubType.Number.Longitude && f.searchable).length > 0,
+				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
+				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
 		};
 
 		// ==========================================
@@ -247,17 +243,18 @@ export class Generator {
 		// ==========================================
 		// Compute accesses sub-object for each action
 		// For each action, add a boolean for each access that denote if the access type is granted
-		const accesses: IActionAccesses[] = [];
-		const ordered = Access.list();
+		const accesses: ActionAccesses[] = [];
+		const ordered: Access[] = ['admin', 'owner', 'auth', 'guest'];
 		const indexes = {
-			admin: ordered.indexOf(Access.ADMIN),
-			owner: ordered.indexOf(Access.OWNER),
-			auth: ordered.indexOf(Access.AUTHENTICATED),
-			guest: ordered.indexOf(Access.GUEST),
+			admin: ordered.indexOf('admin'),
+			owner: ordered.indexOf('owner'),
+			auth: ordered.indexOf('auth'),
+			guest: ordered.indexOf('guest'),
 		};
-		for (const action in model.accesses) {
+		const actions = Object.keys(model.accesses) as Action[];
+		for (const action of actions) {
 			const accessIndex = ordered.indexOf(model.accesses[action]);
-			const description: IActionAccesses = {
+			const description: ActionAccesses = {
 				action: action,
 				admin: accessIndex === indexes.admin,
 				owner: accessIndex === indexes.owner,
@@ -278,24 +275,24 @@ export class Generator {
 		}
 
 		// Get admin actions
-		const admin = accesses.filter((a: IActionAccesses) => a.admin);
+		const admin = accesses.filter((a) => a.admin);
 
 		// Get owner actions
-		const owner = accesses.filter((a: IActionAccesses) => a.owner);
+		const owner = accesses.filter((a) => a.owner);
 
 		// Get auth actions
-		const auth = accesses.filter((a: IActionAccesses) => a.auth);
+		const auth = accesses.filter((a) => a.auth);
 
 		// Get guest actions
-		const guest = accesses.filter((a: IActionAccesses) => a.guest);
+		const guest = accesses.filter((a) => a.guest);
 
 		// Get actions
-		const actionCreate = accesses.find((a: IActionAccesses) => a.action === 'create');
-		const actionRead = accesses.find((a: IActionAccesses) => a.action === 'read');
-		const actionUpdate = accesses.find((a: IActionAccesses) => a.action === 'update');
-		const actionRemove = accesses.find((a: IActionAccesses) => a.action === 'remove');
-		const actionSearch = accesses.find((a: IActionAccesses) => a.action === 'search');
-		const actionCount = accesses.find((a: IActionAccesses) => a.action === 'count');
+		const actionCreate = accesses.find((a) => a.action === 'create');
+		const actionRead = accesses.find((a) => a.action === 'read');
+		const actionUpdate = accesses.find((a) => a.action === 'update');
+		const actionRemove = accesses.find((a) => a.action === 'remove');
+		const actionSearch = accesses.find((a) => a.action === 'search');
+		const actionCount = accesses.find((a) => a.action === 'count');
 
 		// Pre-computed properties
 		const propertiesAccess = {
@@ -318,7 +315,7 @@ export class Generator {
 		};
 
 		// Create filter function
-		const filterAccess = (func: (a: IActionAccesses) => boolean = null) => {
+		const filterAccess = (func: (a: ActionAccesses) => boolean = null) => {
 			return typeof func === 'function' ? accesses.filter(func) : accesses;
 		};
 		m.accesses = {
@@ -360,9 +357,9 @@ export class Generator {
 			// Get reference fields
 			// Then explicit the reference. If no reference is found returns null (it will be filtered after)
 			const references = fields
-				.filter((f: IField) => f.type === FieldType.Entity && f.reference)
+				.filter((f: Field) => f.type === 'entity' && f.reference)
 				.map((field: any) => {
-					const reference = models.find((m: IModel) => m.id === field.reference);
+					const reference = models.find((m: Model) => m.id === field.reference);
 
 					// Nothing found
 					if (!reference) {
@@ -429,10 +426,10 @@ export class Generator {
 			// REFERENCED IN
 			// ==========================================
 			// Filter referencing models
-			const extractReferencingFields = (f: IField) => f.type === FieldType.Entity && f.reference === model.id;
+			const extractReferencingFields = (f: Field) => f.type === 'entity' && f.reference === model.id;
 			const referencedIn = models
-				.filter((m: IModel) => !!m.fields.find(extractReferencingFields))
-				.map((m: IModel) => {
+				.filter((m: Model) => !!m.fields.find(extractReferencingFields))
+				.map((m: Model) => {
 					// Get model description (first level) and remove non referencing fields
 					const explicited = this._explicitModel(models, m, cache, depth + 1);
 					explicited.fields = explicited.fields.list.filter(extractReferencingFields);
@@ -463,7 +460,7 @@ export class Generator {
 	/**
 	 * Convert all the models to an array of objects containing all its properties
 	 */
-	private _explicitAllModels(models: IModel[], cache: ICache): any[] {
-		return models.map((mod: IModel) => this._explicitModel(models, mod, cache));
+	private _explicitAllModels(models: Model[], cache: Cache): any[] {
+		return models.map((mod: Model) => this._explicitModel(models, mod, cache));
 	}
 }

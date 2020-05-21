@@ -1,4 +1,4 @@
-import { IGeneratorResult, IModel, ITemplate } from '../interfaces';
+import { GeneratorResult, Model, Template } from '../interfaces';
 export declare class Generator {
     private hpfGeneratorService;
     private javaScriptGeneratorService;
@@ -8,7 +8,7 @@ export declare class Generator {
      * "forIds": A list of models ids to restrict generation to
      * Throws an error if the template needs a model and no model is passed
      */
-    run(templates: ITemplate[], models: IModel[], forIds?: string[]): Promise<IGeneratorResult[]>;
+    run(templates: Template[], models: Model[], forIds?: string[]): Promise<GeneratorResult[]>;
     /**
      * Only process the path
      */

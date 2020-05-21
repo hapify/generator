@@ -1,55 +1,34 @@
 // ==================================================================
 //  Fields
 // ==================================================================
-export class FieldType {
-	static Boolean = 'boolean';
-	static Number = 'number';
-	static String = 'string';
-	static DateTime = 'datetime';
-	static Entity = 'entity';
-	static Object = 'object';
-	static File = 'file';
-}
-
-export class FieldSubType {
-	static Boolean = {};
-	static Number = {
-		Integer: 'integer',
-		Float: 'float',
-		Latitude: 'latitude',
-		Longitude: 'longitude',
-	};
-	static String = {
-		Email: 'email',
-		Password: 'password',
-		Url: 'url',
-		Text: 'text',
-		RichText: 'rich',
-	};
-	static DateTime = {
-		Date: 'date',
-		Time: 'time',
-	};
-	static Entity = {};
-	static Object = {};
-	static File = {
-		Image: 'image',
-		Video: 'video',
-		Audio: 'audio',
-		Document: 'document',
-	};
-}
+export type FieldType = 'boolean' | 'number' | 'string' | 'datetime' | 'entity' | 'object' | 'file';
+export type FieldSubType =
+	| 'integer'
+	| 'float'
+	| 'latitude'
+	| 'longitude'
+	| 'email'
+	| 'password'
+	| 'url'
+	| 'text'
+	| 'rich'
+	| 'date'
+	| 'time'
+	| 'image'
+	| 'video'
+	| 'audio'
+	| 'document';
 
 // ==================================================================
 //  Model
 // ==================================================================
-export interface IField {
+export interface Field {
 	/** The field's name */
 	name: string;
 	/** The field's type */
-	type: string;
+	type: FieldType;
 	/** The field's subtype */
-	subtype: string | null;
+	subtype: FieldSubType | null;
 	/** The field's reference if the type is entity. The GUID string of the targeted model */
 	reference: string | null;
 	/** Should be used as a primary key or not */
@@ -85,48 +64,57 @@ export interface IField {
  *  - authenticated (Denotes if the access is restricted to authenticated users)
  *  - guest (Denotes if the access is not restricted)
  */
-export class Access {
-	static GUEST = 'guest';
-	static AUTHENTICATED = 'auth';
-	static OWNER = 'owner';
-	static ADMIN = 'admin';
-	/**
-	 * Returns the list of permissions ordered by restriction
-	 */
-	static list(): string[] {
-		return [Access.ADMIN, Access.OWNER, Access.AUTHENTICATED, Access.GUEST];
-	}
-}
+export type Access = 'admin' | 'owner' | 'auth' | 'guest';
 
 /** Define the access for each available action */
-export interface IAccesses {
-	create: string;
-	read: string;
-	update: string;
-	remove: string;
-	search: string;
-	count: string;
-	[s: string]: string;
+export interface Accesses {
+	create: Access;
+	read: Access;
+	update: Access;
+	remove: Access;
+	search: Access;
+	count: Access;
+}
+/** Possible actions */
+export type Action = keyof Accesses;
+/** Define the restriction for an action */
+export interface ActionAccesses {
+	action: Action;
+	admin: boolean;
+	owner: boolean;
+	auth: boolean;
+	guest: boolean;
+
+	gteAdmin: boolean;
+	gteOwner: boolean;
+	gteAuth: boolean;
+	gteGuest: boolean;
+
+	lteAdmin: boolean;
+	lteOwner: boolean;
+	lteAuth: boolean;
+	lteGuest: boolean;
 }
 
-export interface IModel {
+export interface Model {
 	/** The model's unique id */
 	id: string;
 	/** The model's name */
 	name: string;
 	/** The fields of the model */
-	fields: IField[];
+	fields: Field[];
 	/** The model privacy access */
-	accesses: IAccesses;
+	accesses: Accesses;
 }
-
-export interface ITemplate {
+export type Engine = 'hpf' | 'js';
+export type Input = 'one' | 'all';
+export interface Template {
 	/** The template's path */
 	path: string;
 	/** The template's type */
-	engine: string;
+	engine: Engine;
 	/** Denotes if the template has to to be ran for one or all models */
-	input: string;
+	input: Input;
 	/** The template's content */
 	content: string;
 }
@@ -134,34 +122,17 @@ export interface ITemplate {
 // ==================================================================
 //  Generator
 // ==================================================================
-export interface IGenerator {
-	/**
-	 * Run generation process for one model
-	 */
-	one(model: any, template: ITemplate): Promise<string>;
-
-	/**
-	 * Run generation process for all models
-	 */
-	all(models: any[], template: ITemplate): Promise<string>;
+export interface GeneratorWorker {
+	/** Run generation process for one model */
+	one(model: any, template: Template): Promise<string>;
+	/** Run generation process for all models */
+	all(models: any[], template: Template): Promise<string>;
 }
-export interface IGeneratorResult {
+export interface GeneratorResult {
 	/** The file path */
 	path: string;
 	/** The file content */
 	content: string;
-}
-
-// ==================================================================
-//  Templates
-// ==================================================================
-export class TemplateEngine {
-	static Hpf = 'hpf';
-	static JavaScript = 'js';
-}
-export class TemplateInput {
-	static One = 'one';
-	static All = 'all';
 }
 
 // ==================================================================

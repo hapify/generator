@@ -13,7 +13,6 @@ exports.Generator = void 0;
 const string_1 = require("../string");
 const hpf_generator_1 = require("./hpf-generator");
 const javascript_generator_1 = require("./javascript-generator");
-const interfaces_1 = require("../interfaces");
 const CACHE_ENABLED = true;
 class Generator {
     constructor() {
@@ -33,7 +32,7 @@ class Generator {
             const cache = {};
             // For each template, run sub process
             for (const template of templates) {
-                if (template.input === interfaces_1.TemplateInput.One) {
+                if (template.input === 'one') {
                     for (const model of models) {
                         if (forIds && !forIds.find((id) => id === model.id)) {
                             continue;
@@ -75,10 +74,10 @@ class Generator {
             const input = this._explicitModel(models, model, cache);
             // Compute content
             let content;
-            if (template.engine === interfaces_1.TemplateEngine.Hpf) {
+            if (template.engine === 'hpf') {
                 content = yield this.hpfGeneratorService.one(input, template);
             }
-            else if (template.engine === interfaces_1.TemplateEngine.JavaScript) {
+            else if (template.engine === 'js') {
                 content = yield this.javaScriptGeneratorService.one(input, template);
             }
             else {
@@ -102,10 +101,10 @@ class Generator {
             const input = this._explicitAllModels(models, cache);
             // Compute content
             let content;
-            if (template.engine === interfaces_1.TemplateEngine.Hpf) {
+            if (template.engine === 'hpf') {
                 content = yield this.hpfGeneratorService.all(input, template);
             }
-            else if (template.engine === interfaces_1.TemplateEngine.JavaScript) {
+            else if (template.engine === 'js') {
                 content = yield this.javaScriptGeneratorService.all(input, template);
             }
             else {
@@ -216,10 +215,10 @@ class Generator {
             hasSearchableLabel: searchableLabel.length > 0,
             mainlyHidden: fields.length < 2 * hidden.length,
             mainlyInternal: fields.length < 2 * internal.length,
-            isGeolocated: fields.filter((f) => f.type === interfaces_1.FieldType.Number && f.subtype === interfaces_1.FieldSubType.Number.Latitude).length > 0 &&
-                fields.filter((f) => f.type === interfaces_1.FieldType.Number && f.subtype === interfaces_1.FieldSubType.Number.Longitude).length > 0,
-            isGeoSearchable: fields.filter((f) => f.type === interfaces_1.FieldType.Number && f.subtype === interfaces_1.FieldSubType.Number.Latitude && f.searchable).length > 0 &&
-                fields.filter((f) => f.type === interfaces_1.FieldType.Number && f.subtype === interfaces_1.FieldSubType.Number.Longitude && f.searchable).length > 0,
+            isGeolocated: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
+                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude').length > 0,
+            isGeoSearchable: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
+                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
         };
         // ==========================================
         // ACCESSES
@@ -227,14 +226,15 @@ class Generator {
         // Compute accesses sub-object for each action
         // For each action, add a boolean for each access that denote if the access type is granted
         const accesses = [];
-        const ordered = interfaces_1.Access.list();
+        const ordered = ['admin', 'owner', 'auth', 'guest'];
         const indexes = {
-            admin: ordered.indexOf(interfaces_1.Access.ADMIN),
-            owner: ordered.indexOf(interfaces_1.Access.OWNER),
-            auth: ordered.indexOf(interfaces_1.Access.AUTHENTICATED),
-            guest: ordered.indexOf(interfaces_1.Access.GUEST),
+            admin: ordered.indexOf('admin'),
+            owner: ordered.indexOf('owner'),
+            auth: ordered.indexOf('auth'),
+            guest: ordered.indexOf('guest'),
         };
-        for (const action in model.accesses) {
+        const actions = Object.keys(model.accesses);
+        for (const action of actions) {
             const accessIndex = ordered.indexOf(model.accesses[action]);
             const description = {
                 action: action,
@@ -254,20 +254,20 @@ class Generator {
             accesses.push(description);
         }
         // Get admin actions
-        const admin = accesses.filter((a) => a.admin);
+        const admin = accesses.filter(a => a.admin);
         // Get owner actions
-        const owner = accesses.filter((a) => a.owner);
+        const owner = accesses.filter(a => a.owner);
         // Get auth actions
-        const auth = accesses.filter((a) => a.auth);
+        const auth = accesses.filter(a => a.auth);
         // Get guest actions
-        const guest = accesses.filter((a) => a.guest);
+        const guest = accesses.filter(a => a.guest);
         // Get actions
-        const actionCreate = accesses.find((a) => a.action === 'create');
-        const actionRead = accesses.find((a) => a.action === 'read');
-        const actionUpdate = accesses.find((a) => a.action === 'update');
-        const actionRemove = accesses.find((a) => a.action === 'remove');
-        const actionSearch = accesses.find((a) => a.action === 'search');
-        const actionCount = accesses.find((a) => a.action === 'count');
+        const actionCreate = accesses.find(a => a.action === 'create');
+        const actionRead = accesses.find(a => a.action === 'read');
+        const actionUpdate = accesses.find(a => a.action === 'update');
+        const actionRemove = accesses.find(a => a.action === 'remove');
+        const actionSearch = accesses.find(a => a.action === 'search');
+        const actionCount = accesses.find(a => a.action === 'count');
         // Pre-computed properties
         const propertiesAccess = {
             onlyAdmin: admin.length === accesses.length,
@@ -329,7 +329,7 @@ class Generator {
             // Get reference fields
             // Then explicit the reference. If no reference is found returns null (it will be filtered after)
             const references = fields
-                .filter((f) => f.type === interfaces_1.FieldType.Entity && f.reference)
+                .filter((f) => f.type === 'entity' && f.reference)
                 .map((field) => {
                 const reference = models.find((m) => m.id === field.reference);
                 // Nothing found
@@ -389,7 +389,7 @@ class Generator {
             // REFERENCED IN
             // ==========================================
             // Filter referencing models
-            const extractReferencingFields = (f) => f.type === interfaces_1.FieldType.Entity && f.reference === model.id;
+            const extractReferencingFields = (f) => f.type === 'entity' && f.reference === model.id;
             const referencedIn = models
                 .filter((m) => !!m.fields.find(extractReferencingFields))
                 .map((m) => {
