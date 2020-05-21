@@ -33,10 +33,10 @@ export class Generator {
 					if (forIds && !forIds.find((id) => id === model.id)) {
 						continue;
 					}
-					output.push(await this._one(template, models, model, cache));
+					output.push(await this.one(template, models, model, cache));
 				}
 			} else {
-				output.push(await this._all(template, models, cache));
+				output.push(await this.all(template, models, cache));
 			}
 		}
 		return output;
@@ -64,11 +64,11 @@ export class Generator {
 	 * Run generation process for one model and one template
 	 * Throws an error if the template rendering engine is unknown
 	 */
-	private async _one(template: Template, models: Model[], model: Model, cache: Cache): Promise<GeneratorResult> {
+	private async one(template: Template, models: Model[], model: Model, cache: Cache): Promise<GeneratorResult> {
 		// Compute path
 		const path = this.path(template.path, model.name);
 		// Get full model description
-		const input = this._explicitModel(models, model, cache);
+		const input = this.explicitModel(models, model, cache);
 
 		// Compute content
 		let content;
@@ -90,11 +90,11 @@ export class Generator {
 	 * Run generation process for all models and one template
 	 * Throws an error if the template rendering engine is unknown
 	 */
-	private async _all(template: Template, models: Model[], cache: Cache): Promise<GeneratorResult> {
+	private async all(template: Template, models: Model[], cache: Cache): Promise<GeneratorResult> {
 		// Compute path
 		const path = this.path(template.path);
 		// Get full models description
-		const input = this._explicitAllModels(models, cache);
+		const input = this.explicitAllModels(models, cache);
 
 		// Compute content
 		let content;
@@ -114,9 +114,8 @@ export class Generator {
 
 	/**
 	 * Convert the model to an object containing all its properties
-	 * @todo Use caching for this method
 	 */
-	private _explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): any {
+	private explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): any {
 		// Return cache value if any
 		if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
 			return cache[model.id];
@@ -366,7 +365,7 @@ export class Generator {
 						return null;
 					}
 					// Add reference to object
-					const subField = this._explicitModel(models, reference, cache, depth + 1);
+					const subField = this.explicitModel(models, reference, cache, depth + 1);
 					field.model = subField;
 					field.m = subField;
 
@@ -431,7 +430,7 @@ export class Generator {
 				.filter((m: Model) => !!m.fields.find(extractReferencingFields))
 				.map((m: Model) => {
 					// Get model description (first level) and remove non referencing fields
-					const explicited = this._explicitModel(models, m, cache, depth + 1);
+					const explicited = this.explicitModel(models, m, cache, depth + 1);
 					explicited.fields = explicited.fields.list.filter(extractReferencingFields);
 					explicited.fields.f = explicited.fields.filter;
 					explicited.f = explicited.fields;
@@ -460,7 +459,7 @@ export class Generator {
 	/**
 	 * Convert all the models to an array of objects containing all its properties
 	 */
-	private _explicitAllModels(models: Model[], cache: Cache): any[] {
-		return models.map((mod: Model) => this._explicitModel(models, mod, cache));
+	private explicitAllModels(models: Model[], cache: Cache): any[] {
+		return models.map((mod: Model) => this.explicitModel(models, mod, cache));
 	}
 }

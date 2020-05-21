@@ -9,22 +9,22 @@ export class HpfGenerator implements GeneratorWorker {
 
 	async one(model: any, template: Template): Promise<string> {
 		// Create template function
-		const cleanedContent = await this._preProcess(template.content);
+		const cleanedContent = await this.preProcess(template.content);
 		const content = HapifySyntax.run(cleanedContent, model, HpfOptions);
-		return await this._postProcess(content);
+		return await this.postProcess(content);
 	}
 
 	async all(models: any[], template: Template): Promise<string> {
 		// Create template function
-		const cleanedContent = await this._preProcess(template.content);
+		const cleanedContent = await this.preProcess(template.content);
 		const content = HapifySyntax.run(cleanedContent, models, HpfOptions);
-		return await this._postProcess(content);
+		return await this.postProcess(content);
 	}
 
 	/**
 	 * Cleanup code before process
 	 */
-	private async _preProcess(template: string) {
+	private async preProcess(template: string) {
 		const indentConditions = /^ +<<(\?|@|#)([\s\S]*?)>>/gm;
 		return template.replace(indentConditions, '<<$1$2>>');
 	}
@@ -32,7 +32,7 @@ export class HpfGenerator implements GeneratorWorker {
 	/**
 	 * Cleanup code after process
 	 */
-	private async _postProcess(code: string) {
+	private async postProcess(code: string) {
 		const doubleLine = /\r?\n\r?\n/g;
 		while (code.match(doubleLine)) {
 			code = code.replace(doubleLine, '\n');
