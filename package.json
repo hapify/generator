@@ -3,36 +3,42 @@
   "version": "0.4.4",
   "description": "Generator backend for Hapify server",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "start": "node dist/src/index.js",
-    "watch": "rm -rf dist && tsc -w",
-    "build": "rm -rf dist && ./node_modules/.bin/tsc -p .",
-    "test": "./node_modules/.bin/lab dist/tests/api",
-    "lint": "./node_modules/.bin/prettier --write '**/*{.js,.ts}'"
+    "update": "npm-check -u",
+    "test": "nyc mocha",
+    "lint": "prettier --write '**/*.ts'",
+    "build": "rimraf dist && tsc -p ."
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/tractrs/hapify-generator.git"
+    "url": "git+ssh://git@github.com:hapify/generator.git"
   },
   "keywords": [
     "hapify",
-    "generator",
-    "backend"
+    "generator"
   ],
   "author": "Edouard Demotes-Mainard <edouard@tractr.net>",
   "license": "MIT",
-  "homepage": "https://bitbucket.org/tractrs/hapify-generator#readme",
+  "homepage": "https://github.com/hapify/generator#readme",
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
     "@types/boom": "^7.2.1",
     "@types/code": "^4.0.5",
     "@types/hapi": "^17.8.0",
     "@types/joi": "^14.0.0",
     "@types/lab": "^11.1.0",
     "@types/node": "^10.12.18",
+    "husky": "^4.2.5",
+    "mocha": "^7.1.2",
+    "npm-check": "^5.9.2",
+    "nyc": "^15.0.1",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
     "@types/request-promise-native": "^1.0.15",
     "code": "^5.2.4",
     "lab": "^15.5.0",
-    "prettier": "^1.15.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5"
   },
@@ -43,14 +49,20 @@
     "good-console": "^7.1.0",
     "good-squeeze": "^5.1.0",
     "hapi": "^17.8.1",
-    "hapify-syntax": "file:./packages/hapify-syntax",
-    "hapify-vm": "file:./packages/hapify-vm",
+    "hapify-syntax": "github:hapify/syntax#v0.5.0",
+    "hapify-vm": "github:hapify/vm#v0.3.2",
     "joi": "^14.3.0",
     "reflect-metadata": "^0.1.12",
     "typedi": "^0.8.0",
     "typescript": "^3.2.2"
   },
   "engines": {
-    "node": ">=9.2.0"
+    "node": ">=9"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "pretty-quick --staged --pattern \"**/*.ts\""
+    }
   }
 }

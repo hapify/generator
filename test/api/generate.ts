@@ -17,26 +17,26 @@ const templates: any[] = [
 		path: 'src/routes/{kebab}/create.js',
 		engine: 'hpf',
 		input: 'one',
-		content: get('templates/model/create.js.hpf')
+		content: get('templates/model/create.js.hpf'),
 	},
 	{
 		path: 'src/routes/index.js',
 		engine: 'hpf',
 		input: 'all',
-		content: get('templates/index.js.hpf')
+		content: get('templates/index.js.hpf'),
 	},
 	{
 		path: 'src/list.json',
 		engine: 'js',
 		input: 'all',
-		content: get('templates/list.json.js')
-	}
+		content: get('templates/list.json.js'),
+	},
 ];
 
 lab.test('generate files', async () => {
 	const response = await Api.post('/generate', {
 		templates: templates,
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -78,7 +78,7 @@ lab.test('generate one file for one model', async () => {
 	const response = await Api.post('/generate', {
 		templates: [templates[0]],
 		models: models,
-		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
+		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1'],
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -97,7 +97,7 @@ lab.test('generate one file for one model', async () => {
 
 lab.test('generate without models', async () => {
 	const response = await Api.post('/generate', {
-		templates: templates
+		templates: templates,
 	});
 	expect(response.statusCode).to.equal(400);
 	expect(response.body.error).to.equal('Bad Request');
@@ -115,11 +115,11 @@ lab.test('generate files without fields', async () => {
 				path: 'src/routes/{kebab}/no-field.js',
 				engine: 'hpf',
 				input: 'one',
-				content: '<<@ F f>><<f a-a>><<@>>END'
-			}
+				content: '<<@ F f>><<f a-a>><<@>>END',
+			},
 		],
 		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1'],
-		models: models.map(m => Object.assign({}, m, { fields: [] }))
+		models: models.map((m) => Object.assign({}, m, { fields: [] })),
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -143,11 +143,11 @@ lab.test('generate with empty template', async () => {
 				path: 'src/routes/{kebab}/create.js',
 				engine: 'hpf',
 				input: 'one',
-				content: ''
-			}
+				content: '',
+			},
 		],
 		models: models,
-		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1']
+		ids: ['0cf80d75-abcd-f8c7-41f6-ed41c6425aa1'],
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -167,11 +167,11 @@ lab.test('generate with empty template', async () => {
 lab.test('generate with malformed models', async () => {
 	const response = await Api.post('/generate', {
 		templates: templates,
-		models: models.map(m => {
+		models: models.map((m) => {
 			const clone = Object.assign({}, m);
 			delete clone.accesses;
 			return clone;
-		})
+		}),
 	});
 	expect(response.statusCode).to.equal(400);
 	expect(response.body.error).to.equal('Bad Request');
@@ -185,7 +185,7 @@ lab.test('generate with malformed models', async () => {
 lab.test('generate with broken hpf template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [Object.assign({}, templates[0], { content: get('templates/error.js.hpf') })],
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(422);
 	expect(response.body.error).to.equal('Unprocessable Entity');
@@ -204,7 +204,7 @@ lab.test('generate with broken hpf template', async () => {
 lab.test('generate with broken js template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [Object.assign({}, templates[2], { content: get('templates/error.js.js') })],
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(422);
 	expect(response.body.error).to.equal('Unprocessable Entity');
@@ -223,7 +223,7 @@ lab.test('generate with broken js template', async () => {
 lab.test('generate with timeout hpf template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [Object.assign({}, templates[1], { content: '<<< while(true) {} >>>' })],
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(422);
 	expect(response.body.error).to.equal('Unprocessable Entity');
@@ -242,7 +242,7 @@ lab.test('generate with timeout hpf template', async () => {
 lab.test('generate with timeout js template', async () => {
 	const response = await Api.post('/generate', {
 		templates: [Object.assign({}, templates[2], { content: 'while(true) {}' })],
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(422);
 	expect(response.body.error).to.equal('Unprocessable Entity');
@@ -265,10 +265,10 @@ lab.test('globals are undefined', async () => {
 				path: 'src/globals.js',
 				engine: 'js',
 				input: 'all',
-				content: get('templates/globals.js.js')
-			}
+				content: get('templates/globals.js.js'),
+			},
 		],
-		models: models
+		models: models,
 	});
 	expect(response.statusCode).to.equal(200);
 });

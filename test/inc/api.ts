@@ -46,7 +46,7 @@ const call = async (
 		json,
 		resolveWithFullResponse: true,
 		jar: _jar,
-		qsStringifyOptions: { arrayFormat: 'repeat' }
+		qsStringifyOptions: { arrayFormat: 'repeat' },
 	};
 
 	if (payload) {
@@ -66,7 +66,7 @@ const call = async (
 	return {
 		statusCode: response.statusCode,
 		body: response.body,
-		headers: response.headers
+		headers: response.headers,
 	};
 };
 /**
@@ -157,7 +157,7 @@ const Api = {
 	 *
 	 * @return {number}
 	 */
-	countErrors500: (): number => _errors500
+	countErrors500: (): number => _errors500,
 };
 
 export = Api;

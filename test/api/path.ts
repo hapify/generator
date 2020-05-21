@@ -6,7 +6,7 @@ import * as Api from '../inc/api';
 lab.test('convert path with name', async () => {
 	const response = await Api.post('/path', {
 		path: '/this/is/a/{kebab}/test',
-		model: 'You video'
+		model: 'You video',
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -17,7 +17,7 @@ lab.test('convert path with name', async () => {
 
 lab.test('convert path without name', async () => {
 	const response = await Api.post('/path', {
-		path: '/this/is/a/test'
+		path: '/this/is/a/test',
 	});
 	expect(response.statusCode).to.equal(200);
 	expect(response.body).to.be.an.object();
@@ -28,7 +28,7 @@ lab.test('convert path without name', async () => {
 
 lab.test('convert path without name', async () => {
 	const response = await Api.post('/path', {
-		paths: '/this/is/a/test'
+		paths: '/this/is/a/test',
 	});
 	expect(response.statusCode).to.equal(400);
 	expect(response.body.error).to.equal('Bad Request');
