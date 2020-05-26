@@ -1,11 +1,28 @@
 import { StringVariants } from '../string';
 import { HpfGenerator } from './hpf-generator';
 import { JavascriptGenerator } from './javascript-generator';
-import { GeneratorResult, Model, Template, Field, Access, Action, ActionAccesses } from '../interfaces';
+import {
+	GeneratorResult,
+	Model,
+	Template,
+	Field,
+	Access,
+	Action,
+	ExplicitAccesses,
+	ExplicitModelAccessProperties,
+	ExplicitModelAccesses,
+	ExplicitModel,
+	ExplicitField,
+	StringVariationType,
+	ExplicitModelFieldsReferenceArray,
+	ExplicitFieldsFilterFunction,
+	ExplicitModelDependenciesFilter,
+	ExplicitReferenceModel
+} from '../interfaces';
 
 /** Define the cache structure */
 interface Cache {
-	[s: string]: any;
+	[key: string]: ExplicitModel;
 }
 
 const CACHE_ENABLED = true;
@@ -52,7 +69,7 @@ export class Generator {
 		}
 
 		const variants = StringVariants(modelName);
-		const keys = Object.keys(variants);
+		const keys = Object.keys(variants) as StringVariationType[];
 		for (const key of keys) {
 			path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
 		}
@@ -115,74 +132,53 @@ export class Generator {
 	/**
 	 * Convert the model to an object containing all its properties
 	 */
-	private explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): any {
+	private explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): ExplicitModel {
 		// Return cache value if any
 		if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
 			return cache[model.id];
 		}
 
-		// Create object
-		const m: any = Object.assign({}, model);
-
-		// Convert names
-		(<any>m).names = StringVariants(m.name);
+		// Create explicit model
+		const m: Partial<ExplicitModel> = {
+			id: model.id,
+			name: model.name,
+			names: StringVariants(model.name)
+		};
 
 		// Get and format fields
-		const fields = m.fields.map((f: Field) => {
-			(<any>f).names = StringVariants(f.name);
-			return f;
+		const fields = model.fields.map(f => {
+			const explicitField: ExplicitField = Object.assign({
+				names: StringVariants(f.name),
+			}, f);
+			return explicitField;
 		});
 
-		// Get primary field
-		const primary = fields.find((f: Field) => f.primary);
-
-		// Get unique fields
-		const unique = fields.filter((f: Field) => f.unique);
-
-		// Get label fields
-		const label = fields.filter((f: Field) => f.label);
-
-		// Get label and searchable fields
-		const searchableLabel = fields.filter((f: Field) => f.label && f.searchable);
-
-		// Get nullable fields
-		const nullable = fields.filter((f: Field) => f.nullable);
-
-		// Get multiple fields
-		const multiple = fields.filter((f: Field) => f.multiple);
-
-		// Get embedded fields
-		const embedded = fields.filter((f: Field) => f.embedded);
-
-		// Get searchable fields
-		const searchable = fields.filter((f: Field) => f.searchable);
-
-		// Get sortable fields
-		const sortable = fields.filter((f: Field) => f.sortable);
-
-		// Get hidden fields
-		const hidden = fields.filter((f: Field) => f.hidden);
-
-		// Get internal fields
-		const internal = fields.filter((f: Field) => f.internal);
-
-		// Get restricted fields
-		const restricted = fields.filter((f: Field) => f.restricted);
-
-		// Get ownership fields
-		const ownership = fields.filter((f: Field) => f.ownership);
+		// Create explicit field groups
+		const primary = fields.find(f => f.primary);
+		const unique = fields.filter(f => f.unique);
+		const label = fields.filter(f => f.label);
+		const searchableLabel = fields.filter(f => f.label && f.searchable);
+		const nullable = fields.filter(f => f.nullable);
+		const multiple = fields.filter(f => f.multiple);
+		const embedded = fields.filter(f => f.embedded);
+		const searchable = fields.filter(f => f.searchable);
+		const sortable = fields.filter(f => f.sortable);
+		const hidden = fields.filter(f => f.hidden);
+		const internal = fields.filter(f => f.internal);
+		const restricted = fields.filter(f => f.restricted);
+		const ownership = fields.filter(f => f.names);
 
 		// Create filter function
-		const filter = (func: (f: Field) => boolean = null) => {
-			return typeof func === 'function' ? fields.filter(func) : fields;
+		const filter: ExplicitFieldsFilterFunction = (callback: ((value: ExplicitField, index: number, array: ExplicitField[]) => boolean) | null = null) => {
+			return typeof callback === 'function' ? fields.filter(callback) : fields;
 		};
 
 		// Set fields to model
 		m.fields = {
 			list: fields,
 			l: fields,
-			f: filter,
 			filter,
+			f: filter,
 			primary,
 			pr: primary,
 			unique,
@@ -242,9 +238,9 @@ export class Generator {
 		// ==========================================
 		// Compute accesses sub-object for each action
 		// For each action, add a boolean for each access that denote if the access type is granted
-		const accesses: ActionAccesses[] = [];
+		const accesses: ExplicitAccesses[] = [];
 		const ordered: Access[] = ['admin', 'owner', 'auth', 'guest'];
-		const indexes = {
+		const indexes: { [key in Access]: number } = {
 			admin: ordered.indexOf('admin'),
 			owner: ordered.indexOf('owner'),
 			auth: ordered.indexOf('auth'),
@@ -253,18 +249,16 @@ export class Generator {
 		const actions = Object.keys(model.accesses) as Action[];
 		for (const action of actions) {
 			const accessIndex = ordered.indexOf(model.accesses[action]);
-			const description: ActionAccesses = {
+			const description: ExplicitAccesses = {
 				action: action,
 				admin: accessIndex === indexes.admin,
 				owner: accessIndex === indexes.owner,
 				auth: accessIndex === indexes.auth,
 				guest: accessIndex === indexes.guest,
-
 				gteAdmin: accessIndex >= indexes.admin,
 				gteOwner: accessIndex >= indexes.owner,
 				gteAuth: accessIndex >= indexes.auth,
 				gteGuest: accessIndex >= indexes.guest,
-
 				lteAdmin: accessIndex <= indexes.admin,
 				lteOwner: accessIndex <= indexes.owner,
 				lteAuth: accessIndex <= indexes.auth,
@@ -294,7 +288,7 @@ export class Generator {
 		const actionCount = accesses.find((a) => a.action === 'count');
 
 		// Pre-computed properties
-		const propertiesAccess = {
+		const accessProperties: ExplicitModelAccessProperties = {
 			onlyAdmin: admin.length === accesses.length,
 			onlyOwner: owner.length === accesses.length,
 			onlyAuth: auth.length === accesses.length,
@@ -314,7 +308,7 @@ export class Generator {
 		};
 
 		// Create filter function
-		const filterAccess = (func: (a: ActionAccesses) => boolean = null) => {
+		const filterAccess = (func: (a: ExplicitAccesses) => boolean = null) => {
 			return typeof func === 'function' ? accesses.filter(func) : accesses;
 		};
 		m.accesses = {
@@ -322,8 +316,8 @@ export class Generator {
 			l: accesses,
 			filter: filterAccess,
 			f: filterAccess,
-			properties: propertiesAccess,
-			p: propertiesAccess,
+			properties: accessProperties,
+			p: accessProperties,
 			// By access
 			admin,
 			ad: admin,
@@ -356,9 +350,9 @@ export class Generator {
 			// Get reference fields
 			// Then explicit the reference. If no reference is found returns null (it will be filtered after)
 			const references = fields
-				.filter((f: Field) => f.type === 'entity' && f.reference)
-				.map((field: any) => {
-					const reference = models.find((m: Model) => m.id === field.reference);
+				.filter(f => f.type === 'entity' && f.reference)
+				.map(field => {
+					const reference = models.find(m => m.id === field.reference);
 
 					// Nothing found
 					if (!reference) {
@@ -371,13 +365,12 @@ export class Generator {
 
 					return field;
 				})
-				.filter((f: any) => f);
+				.filter(f => !!f) as ExplicitModelFieldsReferenceArray;
 
 			// Add to object
+			references.f = references.filter;
 			m.fields.references = references;
-			m.fields.references.f = m.fields.references.filter;
 			m.fields.r = references;
-			m.fields.r.f = m.fields.r.filter;
 
 			// ==========================================
 			// DEPENDENCIES
@@ -385,16 +378,16 @@ export class Generator {
 			// Create method to reduce references to dependencies
 			// A custom filter can be passed
 			// If the second argument is false, keep the self dependency
-			const dependencies = (customFilter = (f: any) => f, removeSelf: boolean = true) => {
-				const duplicates: any = {};
+			const dependencies: ExplicitModelDependenciesFilter = (filter = f => !!f, excludeSelf = true) => {
+				const duplicates: { [key: string]: boolean } = {};
 				return (
 					references
 						// Apply custom filter
-						.filter(customFilter)
+						.filter(filter)
 						// Remove self
-						.filter((ref: any) => (removeSelf ? ref.model.id !== model.id : true))
+						.filter(ref => (excludeSelf ? ref.model.id !== model.id : true))
 						// Remove duplicates
-						.filter((ref: any) => {
+						.filter(ref => {
 							if (duplicates[ref.reference] === true) {
 								return false;
 							}
@@ -402,12 +395,12 @@ export class Generator {
 							return true;
 						})
 						// Extract models
-						.map((ref: any) => ref.model)
+						.map(ref => ref.model)
 				);
 			};
 
 			// A boolean to determine if the model has a self dependency
-			const selfDependency = !!references.find((ref: any) => ref.model.id === model.id);
+			const selfDependency = references.some(ref => ref.model.id === model.id);
 
 			const allDependencies = dependencies();
 			m.dependencies = {
@@ -427,14 +420,14 @@ export class Generator {
 			// Filter referencing models
 			const extractReferencingFields = (f: Field) => f.type === 'entity' && f.reference === model.id;
 			const referencedIn = models
-				.filter((m: Model) => !!m.fields.find(extractReferencingFields))
-				.map((m: Model) => {
+				.filter(m => m.fields.some(extractReferencingFields))
+				.map(m => {
 					// Get model description (first level) and remove non referencing fields
-					const explicited = this.explicitModel(models, m, cache, depth + 1);
-					explicited.fields = explicited.fields.list.filter(extractReferencingFields);
-					explicited.fields.f = explicited.fields.filter;
-					explicited.f = explicited.fields;
-					return explicited;
+					const explicit = this.explicitModel(models, m, cache, depth + 1);
+					explicit.fields = explicit.fields.list.filter(extractReferencingFields);
+					explicit.fields.f = explicit.fields.filter;
+					explicit.f = explicit.fields;
+					return explicit as ExplicitReferenceModel;
 				});
 			// Get all results
 			m.referencedIn = referencedIn;
@@ -450,10 +443,10 @@ export class Generator {
 
 		// Store cache
 		if (CACHE_ENABLED && depth === 0) {
-			cache[model.id] = m;
+			cache[model.id] = m as ExplicitModel;
 		}
 
-		return m;
+		return m as ExplicitModel;
 	}
 
 	/**

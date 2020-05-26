@@ -1,22 +1,9 @@
 import * as Case from 'case';
+import { StringVariations } from './interfaces';
 
-interface IStringVariants {
-	raw: string;
-	kebab: string;
-	snake: string;
-	header: string;
-	constant: string;
-	capital: string;
-	lower: string;
-	upper: string;
-	compact: string;
-	pascal: string;
-	camel: string;
-	[key: string]: string;
-}
 
 /** Convert a string to camel case, pascal case, etc... */
-export function StringVariants(value: string): IStringVariants {
+export function StringVariants(value: string): StringVariations {
 	return {
 		raw: value,
 		kebab: Case.kebab(value),

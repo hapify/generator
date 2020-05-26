@@ -122,6 +122,7 @@ The following objects will be available in the template.
     -   `camel` (string): The name as lower camel case. Example `firstName`.
     -   `pascal` (string): The name as upper camel case. Example `FirstName`.
     -   `lower` (string): The name as words in lower case. Example `first name`.
+    -   `upper` (string): The name as words in upper case. Example `FIRST NAME`.
     -   `capital` (string): The name as words with upper case on first letters. Example `First Name`.
 -   `primary` (boolean): Indicates if the field is flagged as `primary`.
 -   `unique` (boolean): Indicates if the field is flagged as `unique`.
