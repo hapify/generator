@@ -1,6 +1,6 @@
 import { expect } from '@hapi/code';
 import 'mocha';
-import { Generator } from '../../src';
+import { Generator } from '../src';
 
 describe('path', () => {
 	it('convert path with name', async () => {

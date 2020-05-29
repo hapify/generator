@@ -1,11 +1,11 @@
 import { expect } from '@hapi/code';
 import 'mocha';
 import * as Fs from 'fs';
-import { Generator } from '../../src';
-import { Model, Template } from '../../src/interfaces';
+import { Generator } from '../src';
+import { Model, Template } from '../src/interfaces';
 
 const path = (file: string): string => {
-	return `${process.cwd()}/test/api/files/${file}`;
+	return `${process.cwd()}/test/files/${file}`;
 };
 const get = (file: string): string => {
 	return Fs.readFileSync(path(file), { encoding: 'utf8' });
