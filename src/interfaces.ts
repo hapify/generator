@@ -1,8 +1,7 @@
+
 // ==================================================================
 //  Fields
 // ==================================================================
-import exp from "constants";
-
 export type FieldType = 'boolean' | 'number' | 'string' | 'datetime' | 'entity' | 'object' | 'file';
 export type FieldSubType =
 	| 'integer'
@@ -106,6 +105,10 @@ export interface Template {
 // ==================================================================
 //  Explicit model
 // ==================================================================
+export interface AliasedArray<T> extends Array<T> {
+	/** Alias of `filter` */
+	f(callback: (value: T, index: number, array: T[]) => value is T, thisArg?: any): T[];
+}
 interface BaseExplicitModel {
 	/** An unique id */
 	id: string;
@@ -114,9 +117,9 @@ interface BaseExplicitModel {
 	/** All names computed from the `name` property */
 	names: StringVariations;
 	/** An object containing pre-computed properties from fields */
-	properties: ExplicitModelProperties;
+	properties: ExplicitDeepModelProperties;
 	/** Alias of `p` */
-	p: ExplicitModelProperties;
+	p: ExplicitDeepModelProperties;
 	/** An object containing all action's accesses grouped by action or restriction */
 	accesses: ExplicitModelAccesses;
 	/** Alias of `accesses` */
@@ -127,36 +130,42 @@ export interface ExplicitModel extends BaseExplicitModel {
 	fields: ExplicitModelFields;
 	/** Alias of `fields` */
 	f: ExplicitModelFields;
+	/** An object containing pre-computed properties from fields */
+	properties: ExplicitModelProperties;
+	/** Alias of `p` */
+	p: ExplicitModelProperties;
 	/**  Non-deep model only. An object containing dependencies (to other models) of this model. A model has a dependency if one of this field is of type `entity` */
-	dependencies?: ExplicitModelDependencies;
+	dependencies: ExplicitModelDependencies;
 	/** Alias of `dependencies` */
-	d?: ExplicitModelDependencies;
+	d: ExplicitModelDependencies;
 	/** Non-deep model only. An array containing models that refer to this one. These models are added as "deep models" */
-	referencedIn?: ExplicitModelReferencedInArray;
+	referencedIn: AliasedArray<ExplicitReferenceModel>;
 	/** Alias of `referencedIn` */
-	ri?: ExplicitModelReferencedInArray;
+	ri: AliasedArray<ExplicitReferenceModel>;
 }
 export interface ExplicitDeepModel extends BaseExplicitModel {
 	/** An object containing all fields, grouped in different arrays */
-	fields: ExplicitModelFields;
+	fields: ExplicitDeepModelFields;
 	/** Alias of `fields` */
-	f: ExplicitModelFields;
+	f: ExplicitDeepModelFields;
 }
 export interface ExplicitReferenceModel extends BaseExplicitModel {
 	/** An array containing fields referencing the parent the model */
-	fields: ExplicitField[];
+	fields: AliasedArray<ExplicitField>;
 	/** Alias of `fields` */
-	f: ExplicitField[];
+	f: AliasedArray<ExplicitField>;
 }
 export interface ExplicitField extends Field {
 	/** All names computed from the `name` property. As for the field object */
 	names: StringVariations;
-	/** The target model object if the field is of type `entity` */
-	model?: ExplicitDeepModel;
-	/** Alias of `model` */
-	m?: ExplicitDeepModel;
 }
-export interface ExplicitModelFields {
+export interface ExplicitReferenceField extends ExplicitField {
+	/** The target model object if the field is of type `entity` */
+	model: ExplicitDeepModel;
+	/** Alias of `model` */
+	m: ExplicitDeepModel;
+}
+export interface ExplicitDeepModelFields {
 	/** An array containing all fields of the model */
 	list: ExplicitField[];
 	/** Alias of `list` */
@@ -217,16 +226,14 @@ export interface ExplicitModelFields {
 	filter: ExplicitFieldsFilterFunction;
 	/** Alias of `filter` */
 	f: ExplicitFieldsFilterFunction;
+}
+export interface ExplicitModelFields extends ExplicitDeepModelFields {
 	/** Non-deep model only. An array containing all fields of type `entity`. */
-	references?: ExplicitModelFieldsReferenceArray;
+	references: AliasedArray<ExplicitReferenceField>;
 	/** Alias of `references` */
-	r?: ExplicitModelFieldsReferenceArray;
+	r: AliasedArray<ExplicitReferenceField>;
 }
 export type ExplicitFieldsFilterFunction = (callback: ((value: ExplicitField, index: number, array: ExplicitField[]) => boolean) | null) => ExplicitField[];
-export interface ExplicitModelFieldsReferenceArray extends Array<ExplicitField> {
-	/** Alias of `filter` */
-	f(callback: (value: ExplicitField, index: number, array: ExplicitField[]) => value is ExplicitField, thisArg?: any): ExplicitField[];
-}
 export interface ExplicitModelDependencies {
 	/** An array containing all dependency models, but self. These models are added as "deep models" */
 	list: ExplicitDeepModel[];
@@ -246,11 +253,7 @@ export interface ExplicitModelDependencies {
  * Second argument (boolean - default `true`): A boolean indicating if we should exclude the self dependency.
  */
 export type ExplicitModelDependenciesFilter = (filter?: (field: ExplicitField) => boolean, excludeSelf?: boolean) => ExplicitDeepModel[];
-export interface ExplicitModelReferencedInArray extends Array<ExplicitDeepModel> {
-	/** Alias of `filter` */
-	f(callback: (value: ExplicitDeepModel, index: number, array: ExplicitDeepModel[]) => value is ExplicitDeepModel, thisArg?: any): ExplicitDeepModel[];
-}
-export interface ExplicitModelProperties {
+export interface ExplicitDeepModelProperties {
     /** The number of fields contained in the model */
 	fieldsCount: number;
     /** Denotes if the model has a primary field */
@@ -279,10 +282,6 @@ export interface ExplicitModelProperties {
 	hasOwnership: boolean;
     /** Denotes if the model has at least one field marked as label and also searchable */
 	hasSearchableLabel: boolean;
-    /** Denotes if the model has dependencies to other models or itself (through an `entity` field) */
-	hasDependencies?: boolean;
-    /** Denotes if the model is referenced by other models */
-	isReferenced?: boolean;
     /** Denotes if most of the fields are hidden (strictly) */
 	mainlyHidden: boolean;
     /** Denotes if most of the fields are internal (strictly) */
@@ -291,6 +290,12 @@ export interface ExplicitModelProperties {
 	isGeolocated: boolean;
     /** Denotes if the model contains at least one searchable latitude field and one searchable longitude field */
 	isGeoSearchable: boolean;
+}
+export interface ExplicitModelProperties extends ExplicitDeepModelProperties {
+	/** Denotes if the model has dependencies to other models or itself (through an `entity` field) */
+	hasDependencies: boolean;
+	/** Denotes if the model is referenced by other models */
+	isReferenced: boolean;
 }
 export interface ExplicitAccesses {
 	/** The name of the action */
@@ -446,9 +451,9 @@ export type StringVariationType = keyof StringVariations;
 // ==================================================================
 export interface GeneratorWorker {
 	/** Run generation process for one model */
-	one(model: any, template: Template): Promise<string>;
+	one(model: ExplicitModel, template: Template): Promise<string>;
 	/** Run generation process for all models */
-	all(models: any[], template: Template): Promise<string>;
+	all(models: ExplicitModel[], template: Template): Promise<string>;
 }
 export interface GeneratorResult {
 	/** The file path */

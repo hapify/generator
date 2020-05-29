@@ -1,20 +1,20 @@
 import { HapifySyntax } from 'hapify-syntax';
 import { Config } from '../config';
-import { GeneratorWorker, Template } from '../interfaces';
+import {ExplicitModel, GeneratorWorker, Template} from '../interfaces';
 
 const HpfOptions = { timeout: Config.Generator.timeout };
 
 export class HpfGenerator implements GeneratorWorker {
 	constructor() {}
 
-	async one(model: any, template: Template): Promise<string> {
+	async one(model: ExplicitModel, template: Template): Promise<string> {
 		// Create template function
 		const cleanedContent = await this.preProcess(template.content);
 		const content = HapifySyntax.run(cleanedContent, model, HpfOptions);
 		return await this.postProcess(content);
 	}
 
-	async all(models: any[], template: Template): Promise<string> {
+	async all(models: ExplicitModel[], template: Template): Promise<string> {
 		// Create template function
 		const cleanedContent = await this.preProcess(template.content);
 		const content = HapifySyntax.run(cleanedContent, models, HpfOptions);

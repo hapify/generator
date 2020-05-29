@@ -1,23 +1,29 @@
-import { StringVariants } from '../string';
-import { HpfGenerator } from './hpf-generator';
-import { JavascriptGenerator } from './javascript-generator';
+import {StringVariants} from '../string';
+import {HpfGenerator} from './hpf-generator';
+import {JavascriptGenerator} from './javascript-generator';
 import {
-	GeneratorResult,
-	Model,
-	Template,
-	Field,
 	Access,
 	Action,
+	AliasedArray,
 	ExplicitAccesses,
-	ExplicitModelAccessProperties,
-	ExplicitModelAccesses,
-	ExplicitModel,
+	ExplicitDeepModel,
+	ExplicitDeepModelFields,
+	ExplicitDeepModelProperties,
 	ExplicitField,
-	StringVariationType,
-	ExplicitModelFieldsReferenceArray,
 	ExplicitFieldsFilterFunction,
+	ExplicitModel,
+	ExplicitModelAccesses,
+	ExplicitModelAccessProperties,
+	ExplicitModelDependencies,
 	ExplicitModelDependenciesFilter,
-	ExplicitReferenceModel
+	ExplicitModelFields,
+	ExplicitModelProperties, ExplicitReferenceField,
+	ExplicitReferenceModel,
+	Field,
+	GeneratorResult,
+	Model,
+	StringVariationType,
+	Template
 } from '../interfaces';
 
 /** Define the cache structure */
@@ -59,9 +65,7 @@ export class Generator {
 		return output;
 	}
 
-	/**
-	 * Only process the path
-	 */
+	/** Only process the path */
 	path(path: string, modelName?: string): string {
 		// Quick exit
 		if (!modelName) {
@@ -129,22 +133,173 @@ export class Generator {
 		};
 	}
 
-	/**
-	 * Convert the model to an object containing all its properties
-	 */
+	/** Convert the model to an object containing all its properties */
 	private explicitModel(models: Model[], model: Model, cache: Cache, depth = 0): ExplicitModel {
 		// Return cache value if any
 		if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
 			return cache[model.id];
 		}
 
+		const deepFields = this.explicitFields(model);
+		const accesses = this.explicitAccesses(model);
+
+		const references = this.explicitReferences(models, deepFields.list);
+		const fields: ExplicitModelFields = Object.assign(deepFields, {
+			references,
+			r: references
+		});
+		const dependencies = this.explicitDependencies(model, fields.references);
+		const referencedIn = this.explicitReferencedIn(models, model);
+
+		const properties: ExplicitModelProperties = Object.assign(this.explicitProperties(deepFields), {
+			hasDependencies: dependencies.list.length > 0,
+			isReferenced: referencedIn.length > 0
+		});
+
 		// Create explicit model
-		const m: Partial<ExplicitModel> = {
+		const m: ExplicitModel = {
 			id: model.id,
 			name: model.name,
-			names: StringVariants(model.name)
+			names: StringVariants(model.name),
+			fields,
+			f: fields,
+			properties,
+			p: properties,
+			accesses,
+			a: accesses,
+			dependencies,
+			d: dependencies,
+			referencedIn,
+			ri: referencedIn
 		};
 
+		// Store cache
+		if (CACHE_ENABLED && depth === 0) {
+			cache[model.id] = m;
+		}
+
+		return m as ExplicitModel;
+	}
+
+	/** Convert the model to an object containing all its properties unless references and dependencies */
+	private explicitDeepModel(model: Model): ExplicitDeepModel {
+		const fields = this.explicitFields(model);
+		const properties = this.explicitProperties(fields);
+		const accesses = this.explicitAccesses(model);
+		return {
+			id: model.id,
+			name: model.name,
+			names: StringVariants(model.name),
+			fields,
+			f: fields,
+			properties,
+			p: properties,
+			accesses,
+			a: accesses
+		};
+	}
+
+	/** Convert the model used for a reference. Get model description (first level) and remove non referencing fields */
+	private explicitReferenceModel(model: Model, filter: (f: Field) => boolean): ExplicitReferenceModel {
+		const fields = this.explicitFields(model);
+		const properties = this.explicitProperties(fields);
+		const accesses = this.explicitAccesses(model);
+		const filteredFields = fields.list.filter(filter) as AliasedArray<ExplicitField>;
+		filteredFields.f = filteredFields.filter;
+		return {
+			id: model.id,
+			name: model.name,
+			names: StringVariants(model.name),
+			fields: filteredFields,
+			f: filteredFields,
+			properties,
+			p: properties,
+			accesses,
+			a: accesses
+		};
+	}
+
+	/** Return all dependent models as deep models */
+	private explicitDependencies(model: Model, references: AliasedArray<ExplicitReferenceField>): ExplicitModelDependencies {
+		// Create method to reduce references to dependencies
+		// A custom filter can be passed
+		// If the second argument is false, keep the self dependency
+		const dependencies: ExplicitModelDependenciesFilter = (filter = f => !!f, excludeSelf = true) => {
+			const duplicates: { [key: string]: boolean } = {};
+			return (
+				references
+					// Apply custom filter
+					.filter(filter)
+					// Remove self
+					.filter(ref => (excludeSelf ? ref.model.id !== model.id : true))
+					// Remove duplicates
+					.filter(ref => {
+						if (duplicates[ref.reference] === true) {
+							return false;
+						}
+						duplicates[ref.reference] = true;
+						return true;
+					})
+					// Extract models
+					.map(ref => ref.model)
+			);
+		};
+
+		// A boolean to determine if the model has a self dependency
+		const selfDependency = references.some(ref => ref.model.id === model.id);
+
+		const allDependencies = dependencies();
+		return {
+			list: allDependencies,
+			l: allDependencies,
+			filter: dependencies,
+			f: dependencies,
+			self: selfDependency,
+			s: selfDependency,
+		};
+	}
+
+	/** Map entity fields to target models */
+	private explicitReferences(models: Model[], fields: ExplicitField[]): AliasedArray<ExplicitReferenceField> {
+		// Get reference fields
+		// Then explicit the reference. If no reference is found returns null (it will be filtered after)
+		const references = fields
+			.filter(f => f.type === 'entity' && f.reference)
+			.map((field: ExplicitReferenceField) => {
+				const reference = models.find(m => m.id === field.reference);
+
+				// Nothing found
+				if (!reference) {
+					return null;
+				}
+				// Add reference to object
+				const subField = this.explicitDeepModel(reference);
+				field.model = subField;
+				field.m = subField;
+
+				return field;
+			})
+			.filter(f => !!f) as AliasedArray<ExplicitReferenceField>;
+
+		// Add to object
+		references.f = references.filter;
+
+		return references;
+	}
+
+	/** Get models using this model */
+	private explicitReferencedIn(models: Model[], model: Model): AliasedArray<ExplicitReferenceModel> {
+		// Filter referencing models
+		const extractReferencingFields = (f: Field) => f.type === 'entity' && f.reference === model.id;
+		const referencedIn: AliasedArray<ExplicitReferenceModel> = models
+			.filter(m => m.fields.some(extractReferencingFields))
+			.map(m => this.explicitReferenceModel(m, extractReferencingFields)) as AliasedArray<ExplicitReferenceModel>;
+		referencedIn.f = referencedIn.filter;
+		return referencedIn;
+	}
+
+	/** Extract and process fields from model */
+	private explicitFields(model: Model): ExplicitDeepModelFields {
 		// Get and format fields
 		const fields = model.fields.map(f => {
 			const explicitField: ExplicitField = Object.assign({
@@ -173,8 +328,7 @@ export class Generator {
 			return typeof callback === 'function' ? fields.filter(callback) : fields;
 		};
 
-		// Set fields to model
-		m.fields = {
+		return {
 			list: fields,
 			l: fields,
 			filter,
@@ -206,36 +360,10 @@ export class Generator {
 			searchableLabel,
 			sl: searchableLabel,
 		};
+	}
 
-		// Pre-compute properties
-		m.properties = {
-			fieldsCount: fields.length,
-			hasPrimary: !!primary,
-			hasUnique: unique.length > 0,
-			hasLabel: label.length > 0,
-			hasNullable: nullable.length > 0,
-			hasMultiple: multiple.length > 0,
-			hasEmbedded: embedded.length > 0,
-			hasSearchable: searchable.length > 0,
-			hasSortable: sortable.length > 0,
-			hasHidden: hidden.length > 0,
-			hasInternal: internal.length > 0,
-			hasRestricted: restricted.length > 0,
-			hasOwnership: ownership.length > 0,
-			hasSearchableLabel: searchableLabel.length > 0,
-			mainlyHidden: fields.length < 2 * hidden.length,
-			mainlyInternal: fields.length < 2 * internal.length,
-			isGeolocated:
-				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
-				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude').length > 0,
-			isGeoSearchable:
-				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
-				fields.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
-		};
-
-		// ==========================================
-		// ACCESSES
-		// ==========================================
+	/** Extract and process accesses from model */
+	private explicitAccesses(model: Model): ExplicitModelAccesses {
 		// Compute accesses sub-object for each action
 		// For each action, add a boolean for each access that denote if the access type is granted
 		const accesses: ExplicitAccesses[] = [];
@@ -311,7 +439,7 @@ export class Generator {
 		const filterAccess = (func: (a: ExplicitAccesses) => boolean = null) => {
 			return typeof func === 'function' ? accesses.filter(func) : accesses;
 		};
-		m.accesses = {
+		return {
 			list: accesses,
 			l: accesses,
 			filter: filterAccess,
@@ -341,118 +469,38 @@ export class Generator {
 			count: actionCount,
 			n: actionCount,
 		};
-
-		// Add references and dependencies on first level
-		if (depth === 0) {
-			// ==========================================
-			// REFERENCES
-			// ==========================================
-			// Get reference fields
-			// Then explicit the reference. If no reference is found returns null (it will be filtered after)
-			const references = fields
-				.filter(f => f.type === 'entity' && f.reference)
-				.map(field => {
-					const reference = models.find(m => m.id === field.reference);
-
-					// Nothing found
-					if (!reference) {
-						return null;
-					}
-					// Add reference to object
-					const subField = this.explicitModel(models, reference, cache, depth + 1);
-					field.model = subField;
-					field.m = subField;
-
-					return field;
-				})
-				.filter(f => !!f) as ExplicitModelFieldsReferenceArray;
-
-			// Add to object
-			references.f = references.filter;
-			m.fields.references = references;
-			m.fields.r = references;
-
-			// ==========================================
-			// DEPENDENCIES
-			// ==========================================
-			// Create method to reduce references to dependencies
-			// A custom filter can be passed
-			// If the second argument is false, keep the self dependency
-			const dependencies: ExplicitModelDependenciesFilter = (filter = f => !!f, excludeSelf = true) => {
-				const duplicates: { [key: string]: boolean } = {};
-				return (
-					references
-						// Apply custom filter
-						.filter(filter)
-						// Remove self
-						.filter(ref => (excludeSelf ? ref.model.id !== model.id : true))
-						// Remove duplicates
-						.filter(ref => {
-							if (duplicates[ref.reference] === true) {
-								return false;
-							}
-							duplicates[ref.reference] = true;
-							return true;
-						})
-						// Extract models
-						.map(ref => ref.model)
-				);
-			};
-
-			// A boolean to determine if the model has a self dependency
-			const selfDependency = references.some(ref => ref.model.id === model.id);
-
-			const allDependencies = dependencies();
-			m.dependencies = {
-				list: allDependencies,
-				l: allDependencies,
-				filter: dependencies,
-				f: dependencies,
-				self: selfDependency,
-				s: selfDependency,
-			};
-			m.d = m.dependencies;
-			m.properties.hasDependencies = allDependencies.length > 0;
-
-			// ==========================================
-			// REFERENCED IN
-			// ==========================================
-			// Filter referencing models
-			const extractReferencingFields = (f: Field) => f.type === 'entity' && f.reference === model.id;
-			const referencedIn = models
-				.filter(m => m.fields.some(extractReferencingFields))
-				.map(m => {
-					// Get model description (first level) and remove non referencing fields
-					const explicit = this.explicitModel(models, m, cache, depth + 1);
-					explicit.fields = explicit.fields.list.filter(extractReferencingFields);
-					explicit.fields.f = explicit.fields.filter;
-					explicit.f = explicit.fields;
-					return explicit as ExplicitReferenceModel;
-				});
-			// Get all results
-			m.referencedIn = referencedIn;
-			m.referencedIn.f = m.referencedIn.filter;
-			m.ri = referencedIn;
-			m.properties.isReferenced = referencedIn.length > 0;
-		}
-
-		// Add short name
-		m.f = m.fields;
-		m.p = m.properties;
-		m.a = m.accesses;
-
-		// Store cache
-		if (CACHE_ENABLED && depth === 0) {
-			cache[model.id] = m as ExplicitModel;
-		}
-
-		return m as ExplicitModel;
 	}
 
-	/**
-	 * Convert all the models to an array of objects containing all its properties
-	 */
-	private explicitAllModels(models: Model[], cache: Cache): any[] {
+	/** Compute models properties from fields */
+	private explicitProperties(fields: ExplicitDeepModelFields): ExplicitDeepModelProperties {
+		return {
+			fieldsCount: fields.list.length,
+			hasPrimary: !!fields.primary,
+			hasUnique: fields.unique.length > 0,
+			hasLabel: fields.label.length > 0,
+			hasNullable: fields.nullable.length > 0,
+			hasMultiple: fields.multiple.length > 0,
+			hasEmbedded: fields.embedded.length > 0,
+			hasSearchable: fields.searchable.length > 0,
+			hasSortable: fields.sortable.length > 0,
+			hasHidden: fields.hidden.length > 0,
+			hasInternal: fields.internal.length > 0,
+			hasRestricted: fields.restricted.length > 0,
+			hasOwnership: fields.ownership.length > 0,
+			hasSearchableLabel: fields.searchableLabel.length > 0,
+			mainlyHidden: fields.list.length < 2 * fields.hidden.length,
+			mainlyInternal: fields.list.length < 2 * fields.internal.length,
+			isGeolocated:
+				fields.list.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
+				fields.list.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude').length > 0,
+			isGeoSearchable:
+				fields.list.filter((f: Field) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
+				fields.list.filter((f: Field) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
+		};
+	}
+
+	/** Convert all the models to an array of objects containing all its properties */
+	private explicitAllModels(models: Model[], cache: Cache): ExplicitModel[] {
 		return models.map((mod: Model) => this.explicitModel(models, mod, cache));
 	}
 }

@@ -1,12 +1,20 @@
 import { HapifyVM } from 'hapify-vm';
 import { Config } from '../config';
-import { GeneratorWorker, Template } from '../interfaces';
+import {ExplicitModel, GeneratorWorker, Template} from '../interfaces';
 import { TimeoutError, EvaluationError } from '../errors';
+
+type Context = {
+	m: ExplicitModel,
+	model: ExplicitModel
+} | {
+	m: ExplicitModel[],
+	models: ExplicitModel[]
+}
 
 export class JavascriptGenerator implements GeneratorWorker {
 	constructor() {}
 
-	async one(model: any, template: Template): Promise<string> {
+	async one(model: ExplicitModel, template: Template): Promise<string> {
 		// Eval template content
 		return this.eval(template.content, {
 			model: model,
@@ -14,7 +22,7 @@ export class JavascriptGenerator implements GeneratorWorker {
 		});
 	}
 
-	async all(models: any[], template: Template): Promise<string> {
+	async all(models: ExplicitModel[], template: Template): Promise<string> {
 		// Create template function
 		return this.eval(template.content, {
 			models: models,
@@ -23,7 +31,7 @@ export class JavascriptGenerator implements GeneratorWorker {
 	}
 
 	/** Run eval */
-	private eval(content: string, context: any): string {
+	private eval(content: string, context: Context): string {
 		try {
 			return new HapifyVM({ timeout: Config.Generator.timeout }).run(content, context);
 		} catch (error) {

@@ -37,19 +37,17 @@ class Generator {
                         if (forIds && !forIds.find((id) => id === model.id)) {
                             continue;
                         }
-                        output.push(yield this._one(template, models, model, cache));
+                        output.push(yield this.one(template, models, model, cache));
                     }
                 }
                 else {
-                    output.push(yield this._all(template, models, cache));
+                    output.push(yield this.all(template, models, cache));
                 }
             }
             return output;
         });
     }
-    /**
-     * Only process the path
-     */
+    /** Only process the path */
     path(path, modelName) {
         // Quick exit
         if (!modelName) {
@@ -66,12 +64,12 @@ class Generator {
      * Run generation process for one model and one template
      * Throws an error if the template rendering engine is unknown
      */
-    _one(template, models, model, cache) {
+    one(template, models, model, cache) {
         return __awaiter(this, void 0, void 0, function* () {
             // Compute path
             const path = this.path(template.path, model.name);
             // Get full model description
-            const input = this._explicitModel(models, model, cache);
+            const input = this.explicitModel(models, model, cache);
             // Compute content
             let content;
             if (template.engine === 'hpf') {
@@ -93,12 +91,12 @@ class Generator {
      * Run generation process for all models and one template
      * Throws an error if the template rendering engine is unknown
      */
-    _all(template, models, cache) {
+    all(template, models, cache) {
         return __awaiter(this, void 0, void 0, function* () {
             // Compute path
             const path = this.path(template.path);
             // Get full models description
-            const input = this._explicitAllModels(models, cache);
+            const input = this.explicitAllModels(models, cache);
             // Compute content
             let content;
             if (template.engine === 'hpf') {
@@ -116,60 +114,183 @@ class Generator {
             };
         });
     }
-    /**
-     * Convert the model to an object containing all its properties
-     * @todo Use caching for this method
-     */
-    _explicitModel(models, model, cache, depth = 0) {
+    /** Convert the model to an object containing all its properties */
+    explicitModel(models, model, cache, depth = 0) {
         // Return cache value if any
         if (CACHE_ENABLED && depth === 0 && cache[model.id]) {
             return cache[model.id];
         }
-        // Create object
-        const m = Object.assign({}, model);
-        // Convert names
-        m.names = string_1.StringVariants(m.name);
-        // Get and format fields
-        const fields = m.fields.map((f) => {
-            f.names = string_1.StringVariants(f.name);
-            return f;
+        const deepFields = this.explicitFields(model);
+        const accesses = this.explicitAccesses(model);
+        const references = this.explicitReferences(models, deepFields.list);
+        const fields = Object.assign(deepFields, {
+            references,
+            r: references
         });
-        // Get primary field
-        const primary = fields.find((f) => f.primary);
-        // Get unique fields
-        const unique = fields.filter((f) => f.unique);
-        // Get label fields
-        const label = fields.filter((f) => f.label);
-        // Get label and searchable fields
-        const searchableLabel = fields.filter((f) => f.label && f.searchable);
-        // Get nullable fields
-        const nullable = fields.filter((f) => f.nullable);
-        // Get multiple fields
-        const multiple = fields.filter((f) => f.multiple);
-        // Get embedded fields
-        const embedded = fields.filter((f) => f.embedded);
-        // Get searchable fields
-        const searchable = fields.filter((f) => f.searchable);
-        // Get sortable fields
-        const sortable = fields.filter((f) => f.sortable);
-        // Get hidden fields
-        const hidden = fields.filter((f) => f.hidden);
-        // Get internal fields
-        const internal = fields.filter((f) => f.internal);
-        // Get restricted fields
-        const restricted = fields.filter((f) => f.restricted);
-        // Get ownership fields
-        const ownership = fields.filter((f) => f.ownership);
-        // Create filter function
-        const filter = (func = null) => {
-            return typeof func === 'function' ? fields.filter(func) : fields;
+        const dependencies = this.explicitDependencies(model, fields.references);
+        const referencedIn = this.explicitReferencedIn(models, model);
+        const properties = Object.assign(this.explicitProperties(deepFields), {
+            hasDependencies: dependencies.list.length > 0,
+            isReferenced: referencedIn.length > 0
+        });
+        // Create explicit model
+        const m = {
+            id: model.id,
+            name: model.name,
+            names: string_1.StringVariants(model.name),
+            fields,
+            f: fields,
+            properties,
+            p: properties,
+            accesses,
+            a: accesses,
+            dependencies,
+            d: dependencies,
+            referencedIn,
+            ri: referencedIn
         };
-        // Set fields to model
-        m.fields = {
+        // Store cache
+        if (CACHE_ENABLED && depth === 0) {
+            cache[model.id] = m;
+        }
+        return m;
+    }
+    /** Convert the model to an object containing all its properties unless references and dependencies */
+    explicitDeepModel(model) {
+        const fields = this.explicitFields(model);
+        const properties = this.explicitProperties(fields);
+        const accesses = this.explicitAccesses(model);
+        return {
+            id: model.id,
+            name: model.name,
+            names: string_1.StringVariants(model.name),
+            fields,
+            f: fields,
+            properties,
+            p: properties,
+            accesses,
+            a: accesses
+        };
+    }
+    /** Convert the model used for a reference. Get model description (first level) and remove non referencing fields */
+    explicitReferenceModel(model, filter) {
+        const fields = this.explicitFields(model);
+        const properties = this.explicitProperties(fields);
+        const accesses = this.explicitAccesses(model);
+        const filteredFields = fields.list.filter(filter);
+        filteredFields.f = filteredFields.filter;
+        return {
+            id: model.id,
+            name: model.name,
+            names: string_1.StringVariants(model.name),
+            fields: filteredFields,
+            f: filteredFields,
+            properties,
+            p: properties,
+            accesses,
+            a: accesses
+        };
+    }
+    /** Return all dependent models as deep models */
+    explicitDependencies(model, references) {
+        // Create method to reduce references to dependencies
+        // A custom filter can be passed
+        // If the second argument is false, keep the self dependency
+        const dependencies = (filter = f => !!f, excludeSelf = true) => {
+            const duplicates = {};
+            return (references
+                // Apply custom filter
+                .filter(filter)
+                // Remove self
+                .filter(ref => (excludeSelf ? ref.model.id !== model.id : true))
+                // Remove duplicates
+                .filter(ref => {
+                if (duplicates[ref.reference] === true) {
+                    return false;
+                }
+                duplicates[ref.reference] = true;
+                return true;
+            })
+                // Extract models
+                .map(ref => ref.model));
+        };
+        // A boolean to determine if the model has a self dependency
+        const selfDependency = references.some(ref => ref.model.id === model.id);
+        const allDependencies = dependencies();
+        return {
+            list: allDependencies,
+            l: allDependencies,
+            filter: dependencies,
+            f: dependencies,
+            self: selfDependency,
+            s: selfDependency,
+        };
+    }
+    /** Map entity fields to target models */
+    explicitReferences(models, fields) {
+        // Get reference fields
+        // Then explicit the reference. If no reference is found returns null (it will be filtered after)
+        const references = fields
+            .filter(f => f.type === 'entity' && f.reference)
+            .map((field) => {
+            const reference = models.find(m => m.id === field.reference);
+            // Nothing found
+            if (!reference) {
+                return null;
+            }
+            // Add reference to object
+            const subField = this.explicitDeepModel(reference);
+            field.model = subField;
+            field.m = subField;
+            return field;
+        })
+            .filter(f => !!f);
+        // Add to object
+        references.f = references.filter;
+        return references;
+    }
+    /** Get models using this model */
+    explicitReferencedIn(models, model) {
+        // Filter referencing models
+        const extractReferencingFields = (f) => f.type === 'entity' && f.reference === model.id;
+        const referencedIn = models
+            .filter(m => m.fields.some(extractReferencingFields))
+            .map(m => this.explicitReferenceModel(m, extractReferencingFields));
+        referencedIn.f = referencedIn.filter;
+        return referencedIn;
+    }
+    /** Extract and process fields from model */
+    explicitFields(model) {
+        // Get and format fields
+        const fields = model.fields.map(f => {
+            const explicitField = Object.assign({
+                names: string_1.StringVariants(f.name),
+            }, f);
+            return explicitField;
+        });
+        // Create explicit field groups
+        const primary = fields.find(f => f.primary);
+        const unique = fields.filter(f => f.unique);
+        const label = fields.filter(f => f.label);
+        const searchableLabel = fields.filter(f => f.label && f.searchable);
+        const nullable = fields.filter(f => f.nullable);
+        const multiple = fields.filter(f => f.multiple);
+        const embedded = fields.filter(f => f.embedded);
+        const searchable = fields.filter(f => f.searchable);
+        const sortable = fields.filter(f => f.sortable);
+        const hidden = fields.filter(f => f.hidden);
+        const internal = fields.filter(f => f.internal);
+        const restricted = fields.filter(f => f.restricted);
+        const ownership = fields.filter(f => f.names);
+        // Create filter function
+        const filter = (callback = null) => {
+            return typeof callback === 'function' ? fields.filter(callback) : fields;
+        };
+        return {
             list: fields,
             l: fields,
-            f: filter,
             filter,
+            f: filter,
             primary,
             pr: primary,
             unique,
@@ -197,32 +318,9 @@ class Generator {
             searchableLabel,
             sl: searchableLabel,
         };
-        // Pre-compute properties
-        m.properties = {
-            fieldsCount: fields.length,
-            hasPrimary: !!primary,
-            hasUnique: unique.length > 0,
-            hasLabel: label.length > 0,
-            hasNullable: nullable.length > 0,
-            hasMultiple: multiple.length > 0,
-            hasEmbedded: embedded.length > 0,
-            hasSearchable: searchable.length > 0,
-            hasSortable: sortable.length > 0,
-            hasHidden: hidden.length > 0,
-            hasInternal: internal.length > 0,
-            hasRestricted: restricted.length > 0,
-            hasOwnership: ownership.length > 0,
-            hasSearchableLabel: searchableLabel.length > 0,
-            mainlyHidden: fields.length < 2 * hidden.length,
-            mainlyInternal: fields.length < 2 * internal.length,
-            isGeolocated: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
-                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude').length > 0,
-            isGeoSearchable: fields.filter((f) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
-                fields.filter((f) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
-        };
-        // ==========================================
-        // ACCESSES
-        // ==========================================
+    }
+    /** Extract and process accesses from model */
+    explicitAccesses(model) {
         // Compute accesses sub-object for each action
         // For each action, add a boolean for each access that denote if the access type is granted
         const accesses = [];
@@ -254,22 +352,22 @@ class Generator {
             accesses.push(description);
         }
         // Get admin actions
-        const admin = accesses.filter(a => a.admin);
+        const admin = accesses.filter((a) => a.admin);
         // Get owner actions
-        const owner = accesses.filter(a => a.owner);
+        const owner = accesses.filter((a) => a.owner);
         // Get auth actions
-        const auth = accesses.filter(a => a.auth);
+        const auth = accesses.filter((a) => a.auth);
         // Get guest actions
-        const guest = accesses.filter(a => a.guest);
+        const guest = accesses.filter((a) => a.guest);
         // Get actions
-        const actionCreate = accesses.find(a => a.action === 'create');
-        const actionRead = accesses.find(a => a.action === 'read');
-        const actionUpdate = accesses.find(a => a.action === 'update');
-        const actionRemove = accesses.find(a => a.action === 'remove');
-        const actionSearch = accesses.find(a => a.action === 'search');
-        const actionCount = accesses.find(a => a.action === 'count');
+        const actionCreate = accesses.find((a) => a.action === 'create');
+        const actionRead = accesses.find((a) => a.action === 'read');
+        const actionUpdate = accesses.find((a) => a.action === 'update');
+        const actionRemove = accesses.find((a) => a.action === 'remove');
+        const actionSearch = accesses.find((a) => a.action === 'search');
+        const actionCount = accesses.find((a) => a.action === 'count');
         // Pre-computed properties
-        const propertiesAccess = {
+        const accessProperties = {
             onlyAdmin: admin.length === accesses.length,
             onlyOwner: owner.length === accesses.length,
             onlyAuth: auth.length === accesses.length,
@@ -291,13 +389,13 @@ class Generator {
         const filterAccess = (func = null) => {
             return typeof func === 'function' ? accesses.filter(func) : accesses;
         };
-        m.accesses = {
+        return {
             list: accesses,
             l: accesses,
             filter: filterAccess,
             f: filterAccess,
-            properties: propertiesAccess,
-            p: propertiesAccess,
+            properties: accessProperties,
+            p: accessProperties,
             // By access
             admin,
             ad: admin,
@@ -321,106 +419,35 @@ class Generator {
             count: actionCount,
             n: actionCount,
         };
-        // Add references and dependencies on first level
-        if (depth === 0) {
-            // ==========================================
-            // REFERENCES
-            // ==========================================
-            // Get reference fields
-            // Then explicit the reference. If no reference is found returns null (it will be filtered after)
-            const references = fields
-                .filter((f) => f.type === 'entity' && f.reference)
-                .map((field) => {
-                const reference = models.find((m) => m.id === field.reference);
-                // Nothing found
-                if (!reference) {
-                    return null;
-                }
-                // Add reference to object
-                const subField = this._explicitModel(models, reference, cache, depth + 1);
-                field.model = subField;
-                field.m = subField;
-                return field;
-            })
-                .filter((f) => f);
-            // Add to object
-            m.fields.references = references;
-            m.fields.references.f = m.fields.references.filter;
-            m.fields.r = references;
-            m.fields.r.f = m.fields.r.filter;
-            // ==========================================
-            // DEPENDENCIES
-            // ==========================================
-            // Create method to reduce references to dependencies
-            // A custom filter can be passed
-            // If the second argument is false, keep the self dependency
-            const dependencies = (customFilter = (f) => f, removeSelf = true) => {
-                const duplicates = {};
-                return (references
-                    // Apply custom filter
-                    .filter(customFilter)
-                    // Remove self
-                    .filter((ref) => (removeSelf ? ref.model.id !== model.id : true))
-                    // Remove duplicates
-                    .filter((ref) => {
-                    if (duplicates[ref.reference] === true) {
-                        return false;
-                    }
-                    duplicates[ref.reference] = true;
-                    return true;
-                })
-                    // Extract models
-                    .map((ref) => ref.model));
-            };
-            // A boolean to determine if the model has a self dependency
-            const selfDependency = !!references.find((ref) => ref.model.id === model.id);
-            const allDependencies = dependencies();
-            m.dependencies = {
-                list: allDependencies,
-                l: allDependencies,
-                filter: dependencies,
-                f: dependencies,
-                self: selfDependency,
-                s: selfDependency,
-            };
-            m.d = m.dependencies;
-            m.properties.hasDependencies = allDependencies.length > 0;
-            // ==========================================
-            // REFERENCED IN
-            // ==========================================
-            // Filter referencing models
-            const extractReferencingFields = (f) => f.type === 'entity' && f.reference === model.id;
-            const referencedIn = models
-                .filter((m) => !!m.fields.find(extractReferencingFields))
-                .map((m) => {
-                // Get model description (first level) and remove non referencing fields
-                const explicited = this._explicitModel(models, m, cache, depth + 1);
-                explicited.fields = explicited.fields.list.filter(extractReferencingFields);
-                explicited.fields.f = explicited.fields.filter;
-                explicited.f = explicited.fields;
-                return explicited;
-            });
-            // Get all results
-            m.referencedIn = referencedIn;
-            m.referencedIn.f = m.referencedIn.filter;
-            m.ri = referencedIn;
-            m.properties.isReferenced = referencedIn.length > 0;
-        }
-        // Add short name
-        m.f = m.fields;
-        m.p = m.properties;
-        m.a = m.accesses;
-        // Store cache
-        if (CACHE_ENABLED && depth === 0) {
-            cache[model.id] = m;
-        }
-        return m;
     }
-    /**
-     * Convert all the models to an array of objects containing all its properties
-     */
-    _explicitAllModels(models, cache) {
-        return models.map((mod) => this._explicitModel(models, mod, cache));
+    /** Compute models properties from fields */
+    explicitProperties(fields) {
+        return {
+            fieldsCount: fields.list.length,
+            hasPrimary: !!fields.primary,
+            hasUnique: fields.unique.length > 0,
+            hasLabel: fields.label.length > 0,
+            hasNullable: fields.nullable.length > 0,
+            hasMultiple: fields.multiple.length > 0,
+            hasEmbedded: fields.embedded.length > 0,
+            hasSearchable: fields.searchable.length > 0,
+            hasSortable: fields.sortable.length > 0,
+            hasHidden: fields.hidden.length > 0,
+            hasInternal: fields.internal.length > 0,
+            hasRestricted: fields.restricted.length > 0,
+            hasOwnership: fields.ownership.length > 0,
+            hasSearchableLabel: fields.searchableLabel.length > 0,
+            mainlyHidden: fields.list.length < 2 * fields.hidden.length,
+            mainlyInternal: fields.list.length < 2 * fields.internal.length,
+            isGeolocated: fields.list.filter((f) => f.type === 'number' && f.subtype === 'latitude').length > 0 &&
+                fields.list.filter((f) => f.type === 'number' && f.subtype === 'longitude').length > 0,
+            isGeoSearchable: fields.list.filter((f) => f.type === 'number' && f.subtype === 'latitude' && f.searchable).length > 0 &&
+                fields.list.filter((f) => f.type === 'number' && f.subtype === 'longitude' && f.searchable).length > 0,
+        };
+    }
+    /** Convert all the models to an array of objects containing all its properties */
+    explicitAllModels(models, cache) {
+        return models.map((mod) => this.explicitModel(models, mod, cache));
     }
 }
 exports.Generator = Generator;

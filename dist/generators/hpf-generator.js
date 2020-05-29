@@ -18,23 +18,23 @@ class HpfGenerator {
     one(model, template) {
         return __awaiter(this, void 0, void 0, function* () {
             // Create template function
-            const cleanedContent = yield this._preProcess(template.content);
+            const cleanedContent = yield this.preProcess(template.content);
             const content = hapify_syntax_1.HapifySyntax.run(cleanedContent, model, HpfOptions);
-            return yield this._postProcess(content);
+            return yield this.postProcess(content);
         });
     }
     all(models, template) {
         return __awaiter(this, void 0, void 0, function* () {
             // Create template function
-            const cleanedContent = yield this._preProcess(template.content);
+            const cleanedContent = yield this.preProcess(template.content);
             const content = hapify_syntax_1.HapifySyntax.run(cleanedContent, models, HpfOptions);
-            return yield this._postProcess(content);
+            return yield this.postProcess(content);
         });
     }
     /**
      * Cleanup code before process
      */
-    _preProcess(template) {
+    preProcess(template) {
         return __awaiter(this, void 0, void 0, function* () {
             const indentConditions = /^ +<<(\?|@|#)([\s\S]*?)>>/gm;
             return template.replace(indentConditions, '<<$1$2>>');
@@ -43,7 +43,7 @@ class HpfGenerator {
     /**
      * Cleanup code after process
      */
-    _postProcess(code) {
+    postProcess(code) {
         return __awaiter(this, void 0, void 0, function* () {
             const doubleLine = /\r?\n\r?\n/g;
             while (code.match(doubleLine)) {

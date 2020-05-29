@@ -1,17 +1,3 @@
-interface IStringVariants {
-    raw: string;
-    kebab: string;
-    snake: string;
-    header: string;
-    constant: string;
-    capital: string;
-    lower: string;
-    upper: string;
-    compact: string;
-    pascal: string;
-    camel: string;
-    [key: string]: string;
-}
+import { StringVariations } from './interfaces';
 /** Convert a string to camel case, pascal case, etc... */
-export declare function StringVariants(value: string): IStringVariants;
-export {};
+export declare function StringVariants(value: string): StringVariations;
