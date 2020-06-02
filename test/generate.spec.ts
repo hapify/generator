@@ -130,7 +130,7 @@ describe('generate', () => {
 	});
 
 	it('generate with malformed models', async () => {
-		const error: any = await expect(
+		await expect(
 			Generator.run(
 				templates,
 				models.map((m) => {

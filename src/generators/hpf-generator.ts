@@ -1,6 +1,6 @@
 import { HapifySyntax } from 'hapify-syntax';
 import { Config } from '../config';
-import {ExplicitModel, GeneratorWorker, Template} from '../interfaces';
+import { ExplicitModel, GeneratorWorker, Template } from '../interfaces';
 
 const HpfOptions = { timeout: Config.Generator.timeout };
 

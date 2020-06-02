@@ -1,15 +1,17 @@
 import { HapifyVM } from 'hapify-vm';
 import { Config } from '../config';
-import {ExplicitModel, GeneratorWorker, Template} from '../interfaces';
+import { ExplicitModel, GeneratorWorker, Template } from '../interfaces';
 import { TimeoutError, EvaluationError } from '../errors';
 
-type Context = {
-	m: ExplicitModel,
-	model: ExplicitModel
-} | {
-	m: ExplicitModel[],
-	models: ExplicitModel[]
-}
+type Context =
+	| {
+			m: ExplicitModel;
+			model: ExplicitModel;
+	  }
+	| {
+			m: ExplicitModel[];
+			models: ExplicitModel[];
+	  };
 
 export class JavascriptGenerator implements GeneratorWorker {
 	constructor() {}

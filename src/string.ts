@@ -1,7 +1,6 @@
 import * as Case from 'case';
 import { StringVariations } from './interfaces';
 
-
 /** Convert a string to camel case, pascal case, etc... */
 export function StringVariants(value: string): StringVariations {
 	return {

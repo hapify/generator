@@ -1,4 +1,3 @@
-
 // ==================================================================
 //  Fields
 // ==================================================================
@@ -171,9 +170,9 @@ export interface ExplicitDeepModelFields {
 	/** Alias of `list` */
 	l: ExplicitField[];
 	/** The primary field of the model. `null` if no primary field is defined. */
-	primary: ExplicitField | null;
+	primary: ExplicitField | undefined;
 	/** Alias of `primary` */
-	pr: ExplicitField;
+	pr: ExplicitField | undefined;
 	/** An array containing all fields flagged as `unique` */
 	unique: ExplicitField[];
 	/** Alias of `unique` */
@@ -254,41 +253,41 @@ export interface ExplicitModelDependencies {
  */
 export type ExplicitModelDependenciesFilter = (filter?: (field: ExplicitField) => boolean, excludeSelf?: boolean) => ExplicitDeepModel[];
 export interface ExplicitDeepModelProperties {
-    /** The number of fields contained in the model */
+	/** The number of fields contained in the model */
 	fieldsCount: number;
-    /** Denotes if the model has a primary field */
+	/** Denotes if the model has a primary field */
 	hasPrimary: boolean;
-    /** Denotes if the model has at least one unique field */
+	/** Denotes if the model has at least one unique field */
 	hasUnique: boolean;
-    /** Denotes if the model has at least one label field */
+	/** Denotes if the model has at least one label field */
 	hasLabel: boolean;
-    /** Denotes if the model has at least one nullable field */
+	/** Denotes if the model has at least one nullable field */
 	hasNullable: boolean;
-    /** Denotes if the model has at least one multiple field */
+	/** Denotes if the model has at least one multiple field */
 	hasMultiple: boolean;
-    /** Denotes if the model has at least one embedded field */
+	/** Denotes if the model has at least one embedded field */
 	hasEmbedded: boolean;
-    /** Denotes if the model has at least one searchable field */
+	/** Denotes if the model has at least one searchable field */
 	hasSearchable: boolean;
-    /** Denotes if the model has at least one sortable field */
+	/** Denotes if the model has at least one sortable field */
 	hasSortable: boolean;
-    /** Denotes if the model has at least one hidden field */
+	/** Denotes if the model has at least one hidden field */
 	hasHidden: boolean;
-    /** Denotes if the model has at least one internal field */
+	/** Denotes if the model has at least one internal field */
 	hasInternal: boolean;
-    /** Denotes if the model has at least one restricted field */
+	/** Denotes if the model has at least one restricted field */
 	hasRestricted: boolean;
-    /** Denotes if the model has at least one ownership field */
+	/** Denotes if the model has at least one ownership field */
 	hasOwnership: boolean;
-    /** Denotes if the model has at least one field marked as label and also searchable */
+	/** Denotes if the model has at least one field marked as label and also searchable */
 	hasSearchableLabel: boolean;
-    /** Denotes if most of the fields are hidden (strictly) */
+	/** Denotes if most of the fields are hidden (strictly) */
 	mainlyHidden: boolean;
-    /** Denotes if most of the fields are internal (strictly) */
+	/** Denotes if most of the fields are internal (strictly) */
 	mainlyInternal: boolean;
-    /** Denotes if the model contains at least one latitude field and one longitude field */
+	/** Denotes if the model contains at least one latitude field and one longitude field */
 	isGeolocated: boolean;
-    /** Denotes if the model contains at least one searchable latitude field and one searchable longitude field */
+	/** Denotes if the model contains at least one searchable latitude field and one searchable longitude field */
 	isGeoSearchable: boolean;
 }
 export interface ExplicitModelProperties extends ExplicitDeepModelProperties {
