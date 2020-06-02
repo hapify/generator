@@ -1,7 +1,7 @@
 import { expect } from '@hapi/code';
 import 'mocha';
 import { Generator } from '../src';
-import { Model, Template, Field, Accesses } from '../src/interfaces';
+import { Model, Template, Field, Accesses, StringVariations, ExplicitDeepModelFields, ExplicitDeepModelProperties } from '../src/interfaces';
 
 const getModels = (fieldsOverrides: Partial<Field>[] = [{}], accessesOverrides: Partial<Accesses> = {}): Model[] => {
 	const names = ['name', 'price', 'created at', 'forbidden', 'visible', 'closed at', 'description'];
@@ -62,8 +62,67 @@ const getTemplates = (content: string = ''): Template[] => {
 	];
 };
 
+describe('model names', () => {
+	const variations: { name: keyof StringVariations; value: string }[] = [
+		{ name: 'raw', value: 'User profile' },
+		{ name: 'kebab', value: 'user-profile' },
+		{ name: 'snake', value: 'user_profile' },
+		{ name: 'header', value: 'User-Profile' },
+		{ name: 'constant', value: 'USER_PROFILE' },
+		{ name: 'big', value: 'USER-PROFILE' },
+		{ name: 'capital', value: 'User Profile' },
+		{ name: 'lower', value: 'user profile' },
+		{ name: 'upper', value: 'USER PROFILE' },
+		{ name: 'compact', value: 'userprofile' },
+		{ name: 'pascal', value: 'UserProfile' },
+		{ name: 'camel', value: 'userProfile' },
+	];
+
+	for (const variation of variations) {
+		it(variation.name, async () => {
+			const templates = getTemplates(`return model.names.${variation.name};`);
+			const response1 = await Generator.run(templates, getModels());
+			expect(response1.length).to.equal(1);
+			expect(response1[0].content).to.equal(variation.value);
+		});
+	}
+
+	it('model.name', async () => {
+		const templates = getTemplates(`return model.name;`);
+		const response1 = await Generator.run(templates, getModels());
+		expect(response1.length).to.equal(1);
+		expect(response1[0].content).to.equal('User profile');
+	});
+});
+
+describe('field names', () => {
+	const variations: { name: keyof StringVariations; value: string }[] = [
+		{ name: 'raw', value: 'Created at' },
+		{ name: 'kebab', value: 'created-at' },
+		{ name: 'snake', value: 'created_at' },
+		{ name: 'header', value: 'Created-At' },
+		{ name: 'constant', value: 'CREATED_AT' },
+		{ name: 'big', value: 'CREATED-AT' },
+		{ name: 'capital', value: 'Created At' },
+		{ name: 'lower', value: 'created at' },
+		{ name: 'upper', value: 'CREATED AT' },
+		{ name: 'compact', value: 'createdat' },
+		{ name: 'pascal', value: 'CreatedAt' },
+		{ name: 'camel', value: 'createdAt' },
+	];
+
+	for (const variation of variations) {
+		it(variation.name, async () => {
+			const templates = getTemplates(`return model.fields.list[0].names.${variation.name};`);
+			const response1 = await Generator.run(templates, getModels([{ name: 'Created at' }]));
+			expect(response1.length).to.equal(1);
+			expect(response1[0].content).to.equal(variation.value);
+		});
+	}
+});
+
 describe('fields list', () => {
-	const types = [
+	const types: { name: keyof ExplicitDeepModelFields; short: keyof ExplicitDeepModelFields }[] = [
 		{ name: 'primary', short: 'pr' },
 		{ name: 'unique', short: 'un' },
 		{ name: 'label', short: 'lb' },
@@ -152,7 +211,7 @@ describe('model properties', () => {
 		expect(response1[0].content).to.equal('3');
 	});
 
-	const types = [
+	const types: { name: keyof ExplicitDeepModelFields; prop: keyof ExplicitDeepModelProperties }[] = [
 		{ name: 'primary', prop: 'hasPrimary' },
 		{ name: 'unique', prop: 'hasUnique' },
 		{ name: 'label', prop: 'hasLabel' },
