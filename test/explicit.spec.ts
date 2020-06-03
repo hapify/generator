@@ -1,7 +1,19 @@
 import { expect } from '@hapi/code';
 import 'mocha';
 import { Generator } from '../src';
-import { Model, Template, Field, Accesses, StringVariations, ExplicitDeepModelFields, ExplicitDeepModelProperties } from '../src/interfaces';
+import {
+	Model,
+	Template,
+	Field,
+	Accesses,
+	StringVariations,
+	ExplicitDeepModelFields,
+	ExplicitDeepModelProperties,
+	ExplicitAccesses,
+	Access,
+	Action,
+	ExplicitModelAccessProperties,
+} from '../src/interfaces';
 
 const getModels = (fieldsOverrides: Partial<Field>[] = [{}], accessesOverrides: Partial<Accesses> = {}): Model[] => {
 	const names = ['name', 'price', 'created at', 'forbidden', 'visible', 'closed at', 'description'];
@@ -311,4 +323,244 @@ describe('model properties', () => {
 		expect(response2.length).to.equal(1);
 		expect(response2[0].content).to.equal('no');
 	});
+});
+
+describe('model accesses', () => {
+	// By action
+	const actions: Action[] = ['create', 'read', 'update', 'remove', 'search', 'count'];
+	const expectedExplicitAccesses: { access: Access; expected: { [key in keyof ExplicitAccesses]?: boolean } }[] = [
+		{
+			access: 'guest',
+			expected: {
+				admin: false,
+				owner: false,
+				auth: false,
+				guest: true,
+				gteAdmin: true,
+				gteOwner: true,
+				gteAuth: true,
+				gteGuest: true,
+				lteAdmin: false,
+				lteOwner: false,
+				lteAuth: false,
+				lteGuest: true,
+			},
+		},
+		{
+			access: 'auth',
+			expected: {
+				admin: false,
+				owner: false,
+				auth: true,
+				guest: false,
+				gteAdmin: true,
+				gteOwner: true,
+				gteAuth: true,
+				gteGuest: false,
+				lteAdmin: false,
+				lteOwner: false,
+				lteAuth: true,
+				lteGuest: true,
+			},
+		},
+		{
+			access: 'owner',
+			expected: {
+				admin: false,
+				owner: true,
+				auth: false,
+				guest: false,
+				gteAdmin: true,
+				gteOwner: true,
+				gteAuth: false,
+				gteGuest: false,
+				lteAdmin: false,
+				lteOwner: true,
+				lteAuth: true,
+				lteGuest: true,
+			},
+		},
+		{
+			access: 'admin',
+			expected: {
+				admin: true,
+				owner: false,
+				auth: false,
+				guest: false,
+				gteAdmin: true,
+				gteOwner: false,
+				gteAuth: false,
+				gteGuest: false,
+				lteAdmin: true,
+				lteOwner: true,
+				lteAuth: true,
+				lteGuest: true,
+			},
+		},
+	];
+
+	for (const action of actions) {
+		for (const access of expectedExplicitAccesses) {
+			for (const key of Object.keys(access.expected) as (keyof ExplicitAccesses)[]) {
+				it(`value ${key} for access ${access.access} in ${action}`, async () => {
+					const response = await Generator.run(
+						getTemplates(`return model.accesses.${action}.${key} ? 'yes': 'no';`),
+						getModels([{}], { [action]: access.access })
+					);
+					expect(response.length).to.equal(1);
+					expect(response[0].content).to.equal(access.expected[key] ? 'yes' : 'no');
+				});
+			}
+		}
+	}
+
+	// By access
+	const actionsForAccessModels = getModels([{}], {
+		create: 'admin',
+		read: 'auth',
+		update: 'owner',
+		remove: 'guest',
+		search: 'guest',
+		count: 'guest',
+	});
+	const actionsForAccesses: { [key in Access]: Action[] } = {
+		admin: ['create'],
+		auth: ['read'],
+		owner: ['update'],
+		guest: ['remove', 'search', 'count'],
+	};
+
+	for (const key of Object.keys(actionsForAccesses) as Access[]) {
+		it(`filtered actions for ${key}`, async () => {
+			const response = await Generator.run(getTemplates(`return model.accesses.${key}.map(a => a.action).join('-');`), actionsForAccessModels);
+			expect(response.length).to.equal(1);
+			expect(response[0].content).to.equal(actionsForAccesses[key].join('-'));
+		});
+	}
+
+	// List
+	it(`complete list & filter`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.accesses.list.map(a => a.action).join('-');`), getModels());
+		expect(response.length).to.equal(1);
+		expect(response[0].content).to.equal(actions.join('-'));
+
+		response = await Generator.run(getTemplates(`return model.accesses.filter().map(a => a.action).join('-');`), getModels());
+		expect(response.length).to.equal(1);
+		expect(response[0].content).to.equal(actions.join('-'));
+
+		response = await Generator.run(
+			getTemplates(`return model.accesses.filter(a => a.admin).map(a => a.action).join('-');`),
+			getModels([{}], { search: 'admin', count: 'admin' })
+		);
+		expect(response.length).to.equal(1);
+		expect(response[0].content).to.equal('search-count');
+	});
+
+	const expectedAccessesProperties: { access: Access; expected: { [key in keyof ExplicitModelAccessProperties]?: boolean } }[] = [
+		{
+			access: 'guest',
+			expected: {
+				onlyAdmin: false,
+				onlyOwner: false,
+				onlyAuth: false,
+				onlyGuest: true,
+				maxAdmin: false,
+				maxOwner: false,
+				maxAuth: false,
+				maxGuest: true,
+				noAdmin: true,
+				noOwner: true,
+				noAuth: true,
+				noGuest: false,
+				hasAdmin: false,
+				hasOwner: false,
+				hasAuth: false,
+				hasGuest: true,
+			},
+		},
+		{
+			access: 'auth',
+			expected: {
+				onlyAdmin: false,
+				onlyOwner: false,
+				onlyAuth: true,
+				onlyGuest: false,
+				maxAdmin: false,
+				maxOwner: false,
+				maxAuth: true,
+				maxGuest: false,
+				noAdmin: true,
+				noOwner: true,
+				noAuth: false,
+				noGuest: true,
+				hasAdmin: false,
+				hasOwner: false,
+				hasAuth: true,
+				hasGuest: false,
+			},
+		},
+		{
+			access: 'owner',
+			expected: {
+				onlyAdmin: false,
+				onlyOwner: true,
+				onlyAuth: false,
+				onlyGuest: false,
+				maxAdmin: false,
+				maxOwner: true,
+				maxAuth: false,
+				maxGuest: false,
+				noAdmin: true,
+				noOwner: false,
+				noAuth: true,
+				noGuest: true,
+				hasAdmin: false,
+				hasOwner: true,
+				hasAuth: false,
+				hasGuest: false,
+			},
+		},
+		{
+			access: 'admin',
+			expected: {
+				onlyAdmin: true,
+				onlyOwner: false,
+				onlyAuth: false,
+				onlyGuest: false,
+				maxAdmin: true,
+				maxOwner: false,
+				maxAuth: false,
+				maxGuest: false,
+				noAdmin: false,
+				noOwner: true,
+				noAuth: true,
+				noGuest: true,
+				hasAdmin: true,
+				hasOwner: false,
+				hasAuth: false,
+				hasGuest: false,
+			},
+		},
+	];
+	for (const access of expectedAccessesProperties) {
+		for (const key of Object.keys(access.expected) as (keyof ExplicitModelAccessProperties)[]) {
+			it(`prop ${key} for access ${access.access}`, async () => {
+				const response = await Generator.run(
+					getTemplates(`return model.accesses.properties.${key} ? 'yes': 'no';`),
+					getModels([{}], {
+						create: access.access,
+						read: access.access,
+						update: access.access,
+						remove: access.access,
+						search: access.access,
+						count: access.access,
+					})
+				);
+				expect(response.length).to.equal(1);
+				expect(response[0].content).to.equal(access.expected[key] ? 'yes' : 'no');
+			});
+		}
+	}
 });
