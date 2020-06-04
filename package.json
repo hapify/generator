@@ -1,7 +1,7 @@
 {
   "name": "hapify-generator",
   "version": "0.4.4",
-  "description": "Generator backend for Hapify server",
+  "description": "Generator for Hapify templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
