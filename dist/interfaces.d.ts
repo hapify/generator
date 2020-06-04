@@ -141,9 +141,9 @@ export interface ExplicitDeepModelFields {
     /** Alias of `list` */
     l: ExplicitField[];
     /** The primary field of the model. `null` if no primary field is defined. */
-    primary: ExplicitField | null;
+    primary: ExplicitField | undefined;
     /** Alias of `primary` */
-    pr: ExplicitField;
+    pr: ExplicitField | undefined;
     /** An array containing all fields flagged as `unique` */
     unique: ExplicitField[];
     /** Alias of `unique` */
