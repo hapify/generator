@@ -251,7 +251,7 @@ describe('model properties', () => {
 		});
 	}
 
-	it('searchableLabel', async () => {
+	it('hasSearchableLabel', async () => {
 		const templates = getTemplates(`return model.properties.hasSearchableLabel ? 'yes': 'no';`);
 		const response1 = await Generator.run(templates, getModels([{ label: true, searchable: true }]));
 		expect(response1.length).to.equal(1);
@@ -563,4 +563,106 @@ describe('model accesses', () => {
 			});
 		}
 	}
+});
+
+describe('model dependencies & references', () => {
+	const model1 = getModels()[0];
+	const model2 = getModels([
+		{
+			type: 'entity',
+			reference: 'dependency1',
+		},
+	])[0];
+	const model3 = getModels()[0];
+	model1.id = 'no-deps';
+	model2.id = 'dependency1';
+	model3.id = 'dependency2';
+
+	const model4 = getModels([
+		{ type: 'entity', reference: 'dependency1', hidden: true },
+		{ type: 'entity', reference: 'dependency2' },
+		{ type: 'entity', reference: 'dependency2' }, // Test no duplicate
+	])[0];
+	model4.id = 'dependent';
+	const models = [model1, model2, model3, model4];
+
+	it(`dependencies list & filter`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.dependencies.list.map(m => m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('');
+		expect(response[2].content).to.equal('');
+		expect(response[3].content).to.equal('dependency1 dependency2');
+
+		response = await Generator.run(getTemplates(`return model.dependencies.filter().map(m => m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('');
+		expect(response[2].content).to.equal('');
+		expect(response[3].content).to.equal('dependency1 dependency2');
+
+		response = await Generator.run(getTemplates(`return model.dependencies.filter(f => f.hidden).map(m => m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('');
+		expect(response[2].content).to.equal('');
+		expect(response[3].content).to.equal('dependency1');
+	});
+
+	it(`self dependency`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.dependencies.self ? 'yes': 'no';`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('no');
+		expect(response[1].content).to.equal('yes');
+		expect(response[2].content).to.equal('no');
+		expect(response[3].content).to.equal('no');
+	});
+
+	it(`referenced in`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.referencedIn.map(m => m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('dependency1 dependent');
+		expect(response[2].content).to.equal('dependent');
+		expect(response[3].content).to.equal('');
+	});
+
+	it(`referenced in filter`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.ri.f(m => m.id !== 'dependent').map(m => m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('dependency1');
+		expect(response[2].content).to.equal('');
+		expect(response[3].content).to.equal('');
+	});
+
+	it(`referenced in fields`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.referencedIn.map(m => m.f.length).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('1 1');
+		expect(response[2].content).to.equal('2');
+		expect(response[3].content).to.equal('');
+	});
+
+	it(`reference fields`, async () => {
+		let response;
+
+		response = await Generator.run(getTemplates(`return model.f.r.map(f => f.m.id).join(' ');`), models);
+		expect(response.length).to.equal(4);
+		expect(response[0].content).to.equal('');
+		expect(response[1].content).to.equal('dependency1');
+		expect(response[2].content).to.equal('');
+		expect(response[3].content).to.equal('dependency1 dependency2 dependency2');
+	});
 });
