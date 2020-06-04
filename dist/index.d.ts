@@ -1,4 +1,3 @@
 import { Generator as Service } from './generators/generator';
-
 export * from './Errors';
-export const Generator = new Service();
+export declare const Generator: Service;
