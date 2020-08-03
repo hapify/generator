@@ -1,6 +1,10 @@
 # Hapify Generator
 
+## Description
+
 This package allows to generate code using Hapify models and Hapify or JavaScript code templates.
+
+[![Build Status](https://travis-ci.org/hapify/generator.svg?branch=master)](https://travis-ci.org/hapify/generator) [![codecov](https://codecov.io/gh/hapify/generator/branch/master/graph/badge.svg)](https://codecov.io/gh/hapify/generator)
 
 ## Hapify Syntax
 
