@@ -1,4 +1,4 @@
-import { HapifySyntax } from 'hapify-syntax';
+import { HapifySyntax } from '@hapify/syntax';
 import { Config } from '../config';
 import { ExplicitModel, GeneratorWorker, Template } from '../interfaces';
 

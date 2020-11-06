@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JavascriptGenerator = void 0;
-const hapify_vm_1 = require("hapify-vm");
+const vm_1 = require("@hapify/vm");
 const config_1 = require("../config");
 const errors_1 = require("../errors");
 class JavascriptGenerator {
@@ -36,7 +36,7 @@ class JavascriptGenerator {
     /** Run eval */
     eval(content, context) {
         try {
-            return new hapify_vm_1.HapifyVM({ timeout: config_1.Config.Generator.timeout }).run(content, context);
+            return new vm_1.HapifyVM({ timeout: config_1.Config.Generator.timeout }).run(content, context);
         }
         catch (error) {
             if (error.code === 6003) {

@@ -1,4 +1,4 @@
-import { HapifyVM } from 'hapify-vm';
+import { HapifyVM } from '@hapify/vm';
 import { Config } from '../config';
 import { ExplicitModel, GeneratorWorker, Template } from '../interfaces';
 import { TimeoutError, EvaluationError } from '../errors';

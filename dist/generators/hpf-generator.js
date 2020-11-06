@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HpfGenerator = void 0;
-const hapify_syntax_1 = require("hapify-syntax");
+const syntax_1 = require("@hapify/syntax");
 const config_1 = require("../config");
 const HpfOptions = { timeout: config_1.Config.Generator.timeout };
 class HpfGenerator {
@@ -19,7 +19,7 @@ class HpfGenerator {
         return __awaiter(this, void 0, void 0, function* () {
             // Create template function
             const cleanedContent = yield this.preProcess(template.content);
-            const content = hapify_syntax_1.HapifySyntax.run(cleanedContent, model, HpfOptions);
+            const content = syntax_1.HapifySyntax.run(cleanedContent, model, HpfOptions);
             return yield this.postProcess(content);
         });
     }
@@ -27,7 +27,7 @@ class HpfGenerator {
         return __awaiter(this, void 0, void 0, function* () {
             // Create template function
             const cleanedContent = yield this.preProcess(template.content);
-            const content = hapify_syntax_1.HapifySyntax.run(cleanedContent, models, HpfOptions);
+            const content = syntax_1.HapifySyntax.run(cleanedContent, models, HpfOptions);
             return yield this.postProcess(content);
         });
     }
