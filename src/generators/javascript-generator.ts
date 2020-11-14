@@ -17,19 +17,34 @@ export class JavascriptGenerator implements GeneratorWorker {
 	constructor() {}
 
 	async one(model: ExplicitModel, template: Template): Promise<string> {
-		// Eval template content
-		return this.eval(template.content, {
-			model: model,
-			m: model,
-		});
+		try {
+			return this.eval(template.content, {
+				model: model,
+				m: model,
+			});
+		} catch (error) {
+			throw this.appendFileName(error, template);
+		}
 	}
 
 	async all(models: ExplicitModel[], template: Template): Promise<string> {
-		// Create template function
-		return this.eval(template.content, {
-			models: models,
-			m: models,
-		});
+		try {
+			return this.eval(template.content, {
+				models: models,
+				m: models,
+			});
+		} catch (error) {
+			throw this.appendFileName(error, template);
+		}
+	}
+
+	/** Append file name to error details if applicable */
+	private appendFileName(error: Error, template: Template): Error {
+		if (typeof (<EvaluationError>error).lineNumber !== 'undefined') {
+			// Append file name
+			(<EvaluationError>error).details += `, File: ${template.path}`;
+		}
+		return error;
 	}
 
 	/** Run eval */

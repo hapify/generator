@@ -153,15 +153,22 @@ describe('generate', () => {
 			expect(e.code).to.equal(1004);
 			expect(e.lineNumber).to.be.a.number();
 			expect(e.columnNumber).to.be.a.number();
-			expect(e.details).to.be.a.string();
+			expect(e.details).to.contains('File: src/routes/');
 		}
 	});
 
 	it('generate with broken js template', async () => {
-		const error: any = await expect(Generator.run([Object.assign({}, templates[2], { content: get('templates/error.js.js') })], models)).to.reject(
-			'unknown is not defined'
-		);
-		expect(error.code).to.equal(2004);
+		try {
+			await Generator.run([Object.assign({}, templates[2], { content: get('templates/error.js.js') })], models);
+			fail('Should throw an error');
+		} catch (error: unknown) {
+			const e = error as EvaluationError;
+			expect(e.message).to.equal('unknown is not defined');
+			expect(e.code).to.equal(2004);
+			expect(e.lineNumber).to.be.a.number();
+			expect(e.columnNumber).to.be.a.number();
+			expect(e.details).to.contains('File: src/list.json');
+		}
 	});
 
 	it('generate with timeout hpf template', async () => {

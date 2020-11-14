@@ -17,13 +17,31 @@ class HpfGenerator {
     constructor() { }
     one(model, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            return syntax_1.HapifySyntax.run(template.content, model, HpfOptions);
+            try {
+                return syntax_1.HapifySyntax.run(template.content, model, HpfOptions);
+            }
+            catch (error) {
+                throw this.appendFileName(error, template);
+            }
         });
     }
     all(models, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            return syntax_1.HapifySyntax.run(template.content, models, HpfOptions);
+            try {
+                return syntax_1.HapifySyntax.run(template.content, models, HpfOptions);
+            }
+            catch (error) {
+                throw this.appendFileName(error, template);
+            }
         });
+    }
+    /** Append file name to error details if applicable */
+    appendFileName(error, template) {
+        if (typeof error.lineNumber !== 'undefined') {
+            // Append file name
+            error.details += `, File: ${template.path}`;
+        }
+        return error;
     }
 }
 exports.HpfGenerator = HpfGenerator;
