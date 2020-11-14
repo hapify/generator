@@ -11,6 +11,8 @@ export declare class Generator {
     run(templates: Template[], models: Model[], forIds?: string[]): Promise<GeneratorResult[]>;
     /** Only process the path */
     path(path: string, modelName?: string): string;
+    /** Ensure error has a code and returns it */
+    private formatError;
     /**
      * Run generation process for one model and one template
      * Throws an error if the template rendering engine is unknown
