@@ -23,9 +23,11 @@ import {
 	Field,
 	GeneratorResult,
 	Model,
+	NumberedError,
 	StringVariationType,
 	Template,
 } from '../interfaces';
+import { InternalError } from '../errors';
 
 /** Define the cache structure */
 interface Cache {
@@ -46,40 +48,59 @@ export class Generator {
 	 * Throws an error if the template needs a model and no model is passed
 	 */
 	async run(templates: Template[], models: Model[], forIds?: string[]): Promise<GeneratorResult[]> {
-		// Create results stack
-		const output: GeneratorResult[] = [];
-		// Create a new cache context
-		const cache: Cache = {};
-		// For each template, run sub process
-		for (const template of templates) {
-			if (template.input === 'one') {
-				for (const model of models) {
-					if (forIds && !forIds.find((id) => id === model.id)) {
-						continue;
+		try {
+			// Create results stack
+			const output: GeneratorResult[] = [];
+			// Create a new cache context
+			const cache: Cache = {};
+			// For each template, run sub process
+			for (const template of templates) {
+				if (template.input === 'one') {
+					for (const model of models) {
+						if (forIds && !forIds.find((id) => id === model.id)) {
+							continue;
+						}
+						output.push(await this.one(template, models, model, cache));
 					}
-					output.push(await this.one(template, models, model, cache));
+				} else {
+					output.push(await this.all(template, models, cache));
 				}
-			} else {
-				output.push(await this.all(template, models, cache));
 			}
+			return output;
+		} catch (error) {
+			throw this.formatError(error);
 		}
-		return output;
 	}
 
 	/** Only process the path */
 	path(path: string, modelName?: string): string {
-		// Quick exit
-		if (!modelName) {
+		try {
+			// Quick exit
+			if (!modelName) {
+				return path;
+			}
+
+			const variants = StringVariants(modelName);
+			const keys = Object.keys(variants) as StringVariationType[];
+			for (const key of keys) {
+				path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
+			}
+
 			return path;
+		} catch (error) {
+			throw this.formatError(error);
 		}
+	}
 
-		const variants = StringVariants(modelName);
-		const keys = Object.keys(variants) as StringVariationType[];
-		for (const key of keys) {
-			path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
+	/** Ensure error has a code and returns it */
+	private formatError(error: Error): NumberedError {
+		// Error is already formatted ?
+		if (typeof (<NumberedError>error).code === 'undefined') {
+			const newError = new InternalError(error.message);
+			newError.stack = error.stack;
+			return newError;
 		}
-
-		return path;
+		return error as NumberedError;
 	}
 
 	/**
