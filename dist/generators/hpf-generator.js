@@ -17,42 +17,12 @@ class HpfGenerator {
     constructor() { }
     one(model, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Create template function
-            const cleanedContent = yield this.preProcess(template.content);
-            const content = syntax_1.HapifySyntax.run(cleanedContent, model, HpfOptions);
-            return yield this.postProcess(content);
+            return syntax_1.HapifySyntax.run(template.content, model, HpfOptions);
         });
     }
     all(models, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Create template function
-            const cleanedContent = yield this.preProcess(template.content);
-            const content = syntax_1.HapifySyntax.run(cleanedContent, models, HpfOptions);
-            return yield this.postProcess(content);
-        });
-    }
-    /**
-     * Cleanup code before process
-     */
-    preProcess(template) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const indentConditions = /^ +<<(\?|@|#)([\s\S]*?)>>/gm;
-            return template.replace(indentConditions, '<<$1$2>>');
-        });
-    }
-    /**
-     * Cleanup code after process
-     */
-    postProcess(code) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const doubleLine = /\r?\n\r?\n/g;
-            while (code.match(doubleLine)) {
-                code = code.replace(doubleLine, '\n');
-            }
-            const doubleLineWithSpace = /\r?\n *\r?\n/g;
-            code = code.replace(doubleLineWithSpace, '\n\n');
-            code = code.replace(doubleLineWithSpace, '\n\n');
-            return code;
+            return syntax_1.HapifySyntax.run(template.content, models, HpfOptions);
         });
     }
 }

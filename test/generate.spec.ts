@@ -1,8 +1,9 @@
-import { expect } from '@hapi/code';
+import { expect, fail } from '@hapi/code';
 import 'mocha';
 import * as Fs from 'fs';
 import { Generator } from '../src';
 import { Model, Template } from '../src/interfaces';
+import { EvaluationError } from '@hapify/syntax/dist/errors';
 
 const path = (file: string): string => {
 	return `${process.cwd()}/test/files/${file}`;
@@ -143,10 +144,17 @@ describe('generate', () => {
 	});
 
 	it('generate with broken hpf template', async () => {
-		const error: any = await expect(Generator.run([Object.assign({}, templates[0], { content: get('templates/error.js.hpf') })], models)).to.reject(
-			'S is not defined'
-		);
-		expect(error.code).to.equal(1004);
+		try {
+			await Generator.run([Object.assign({}, templates[0], { content: get('templates/error.js.hpf') })], models);
+			fail('Should throw an error');
+		} catch (error: unknown) {
+			const e = error as EvaluationError;
+			expect(e.message).to.equal('S is not defined');
+			expect(e.code).to.equal(1004);
+			expect(e.lineNumber).to.be.a.number();
+			expect(e.columnNumber).to.be.a.number();
+			expect(e.details).to.be.a.string();
+		}
 	});
 
 	it('generate with broken js template', async () => {
