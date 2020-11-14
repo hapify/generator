@@ -13,6 +13,7 @@ exports.Generator = void 0;
 const string_1 = require("../string");
 const hpf_generator_1 = require("./hpf-generator");
 const javascript_generator_1 = require("./javascript-generator");
+const errors_1 = require("../errors");
 const CACHE_ENABLED = true;
 class Generator {
     constructor() {
@@ -26,39 +27,59 @@ class Generator {
      */
     run(templates, models, forIds) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Create results stack
-            const output = [];
-            // Create a new cache context
-            const cache = {};
-            // For each template, run sub process
-            for (const template of templates) {
-                if (template.input === 'one') {
-                    for (const model of models) {
-                        if (forIds && !forIds.find((id) => id === model.id)) {
-                            continue;
+            try {
+                // Create results stack
+                const output = [];
+                // Create a new cache context
+                const cache = {};
+                // For each template, run sub process
+                for (const template of templates) {
+                    if (template.input === 'one') {
+                        for (const model of models) {
+                            if (forIds && !forIds.find((id) => id === model.id)) {
+                                continue;
+                            }
+                            output.push(yield this.one(template, models, model, cache));
                         }
-                        output.push(yield this.one(template, models, model, cache));
+                    }
+                    else {
+                        output.push(yield this.all(template, models, cache));
                     }
                 }
-                else {
-                    output.push(yield this.all(template, models, cache));
-                }
+                return output;
             }
-            return output;
+            catch (error) {
+                throw this.formatError(error);
+            }
         });
     }
     /** Only process the path */
     path(path, modelName) {
-        // Quick exit
-        if (!modelName) {
+        try {
+            // Quick exit
+            if (!modelName) {
+                return path;
+            }
+            const variants = string_1.StringVariants(modelName);
+            const keys = Object.keys(variants);
+            for (const key of keys) {
+                path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
+            }
             return path;
         }
-        const variants = string_1.StringVariants(modelName);
-        const keys = Object.keys(variants);
-        for (const key of keys) {
-            path = path.replace(new RegExp(`{${key}}`, 'g'), variants[key]);
+        catch (error) {
+            throw this.formatError(error);
         }
-        return path;
+    }
+    /** Ensure error has a code and returns it */
+    formatError(error) {
+        // Error is already formatted ?
+        if (typeof error.code === 'undefined') {
+            const newError = new errors_1.InternalError(error.message);
+            newError.stack = error.stack;
+            return newError;
+        }
+        return error;
     }
     /**
      * Run generation process for one model and one template
