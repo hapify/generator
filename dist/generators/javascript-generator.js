@@ -17,21 +17,37 @@ class JavascriptGenerator {
     constructor() { }
     one(model, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Eval template content
-            return this.eval(template.content, {
-                model: model,
-                m: model,
-            });
+            try {
+                return this.eval(template.content, {
+                    model: model,
+                    m: model,
+                });
+            }
+            catch (error) {
+                throw this.appendFileName(error, template);
+            }
         });
     }
     all(models, template) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Create template function
-            return this.eval(template.content, {
-                models: models,
-                m: models,
-            });
+            try {
+                return this.eval(template.content, {
+                    models: models,
+                    m: models,
+                });
+            }
+            catch (error) {
+                throw this.appendFileName(error, template);
+            }
         });
+    }
+    /** Append file name to error details if applicable */
+    appendFileName(error, template) {
+        if (typeof error.lineNumber !== 'undefined') {
+            // Append file name
+            error.details += `, File: ${template.path}`;
+        }
+        return error;
     }
     /** Run eval */
     eval(content, context) {

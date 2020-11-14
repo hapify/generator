@@ -25,7 +25,7 @@ export class HpfGenerator implements GeneratorWorker {
 	}
 
 	/** Append file name to error details if applicable */
-	protected appendFileName(error: Error, template: Template): Error {
+	private appendFileName(error: Error, template: Template): Error {
 		if (typeof (<EvaluationError>error).lineNumber !== 'undefined') {
 			// Append file name
 			(<EvaluationError>error).details += `, File: ${template.path}`;
