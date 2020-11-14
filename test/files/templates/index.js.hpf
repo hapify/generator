@@ -5,7 +5,7 @@
  */
  
 module.exports = {
-<<for Models m>>
+    <<for Models m>>
     <<m AA>>: require('./<<m kebab>>'),
 <<endfor>>
 };
