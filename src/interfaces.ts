@@ -1,7 +1,16 @@
 // ==================================================================
+//  Names
+// ==================================================================
+export interface NameInterpolable {
+	/** The name of the object, as the user entered it */
+	name: string;
+	/** All names computed from the `name` property */
+	names: StringVariations;
+}
+// ==================================================================
 //  Fields
 // ==================================================================
-export type FieldType = 'boolean' | 'number' | 'string' | 'datetime' | 'entity' | 'object' | 'file';
+export type FieldType = 'boolean' | 'number' | 'string' | 'enum' | 'datetime' | 'entity' | 'object' | 'file';
 export type FieldSubType =
 	| 'integer'
 	| 'float'
@@ -22,15 +31,20 @@ export type FieldSubType =
 // ==================================================================
 //  Model
 // ==================================================================
-export interface Field {
+type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
+export interface Field<T extends FieldType = FieldType> {
 	/** The field's name */
 	name: string;
 	/** The field's type */
-	type: FieldType;
+	type: T;
 	/** The field's subtype */
 	subtype: FieldSubType | null;
-	/** The field's reference if the type is entity. The GUID string of the targeted model */
-	reference: string | null;
+	/**
+	 * Value of the fields. Used if the type is entity or enum.
+	 *  - Entity: The UUID string of the targeted model
+	 *  - Enum: list of enum values
+	 */
+	value: FieldValueType<T>;
 	/** Should be used as a primary key or not */
 	primary: boolean;
 	/** Should be used as a unique key or not */
@@ -108,13 +122,9 @@ export interface AliasedArray<T> extends Array<T> {
 	/** Alias of `filter` */
 	f(callback: (value: T, index: number, array: T[]) => value is T, thisArg?: any): T[];
 }
-interface BaseExplicitModel {
+interface BaseExplicitModel extends NameInterpolable {
 	/** An unique id */
 	id: string;
-	/** The name of the model, as the user entered it */
-	name: string;
-	/** All names computed from the `name` property */
-	names: StringVariations;
 	/** An object containing pre-computed properties from fields */
 	properties: ExplicitDeepModelProperties;
 	/** Alias of `p` */
@@ -154,15 +164,19 @@ export interface ExplicitReferenceModel extends BaseExplicitModel {
 	/** Alias of `fields` */
 	f: AliasedArray<ExplicitField>;
 }
-export interface ExplicitField extends Field {
-	/** All names computed from the `name` property. As for the field object */
-	names: StringVariations;
-}
-export interface ExplicitReferenceField extends ExplicitField {
+export interface ExplicitEnum extends NameInterpolable {}
+export interface ExplicitField<T extends FieldType = FieldType> extends Field<T>, NameInterpolable {}
+export interface ExplicitReferenceField extends ExplicitField<'entity'> {
 	/** The target model object if the field is of type `entity` */
 	model: ExplicitDeepModel;
 	/** Alias of `model` */
 	m: ExplicitDeepModel;
+}
+export interface ExplicitEnumField extends ExplicitField<'enum'> {
+	/** The list of string variations for the enum */
+	enum: AliasedArray<ExplicitEnum>;
+	/** Alias of `enum` */
+	e: AliasedArray<ExplicitEnum>;
 }
 export interface ExplicitDeepModelFields {
 	/** An array containing all fields of the model */
