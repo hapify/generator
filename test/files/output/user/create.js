@@ -17,7 +17,7 @@ const schemaObjectPublic = {
     birthdate: Joi.number().required(),
 };
 const schemaObjectAdmin = Object.assign({
-    role: Joi.string().trim().required(),
+    role: Joi.string().trim().valid(['super_admin', 'admin', 'user', 'visitor']).required(),
     banned: Joi.boolean().required(),
     premium_forced: Joi.boolean().required(),
 }, schemaObjectPublic);

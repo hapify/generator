@@ -163,10 +163,8 @@ function defaultValue(f) {
     }
     else if (f.multiple) v = "[]";
     else if (f.type === "boolean") v = "false";
-    else if (f.type === "string") {
-        if (f.names.snake === 'role') v = "'user'";
-        else v = "''";
-    }
+    else if ((f.type === "string" || f.type === "enum") && f.names.snake === 'role') v = "'user'";
+    else if (f.type === "string") v = "''";
     else if (f.type === "number") v = "0";
     else if (f.type === "datetime") v = "Date.now()";
     
@@ -181,6 +179,10 @@ function joiValidator(f) {
         if (f.subtype === "email") out += ".email().lowercase()";
         else if (f.subtype === "password") out += ".min(6)";
         out +=  ".trim()";
+    }
+    else if (f.type === "enum") {
+        const list = f.enum.map(e => `'${e.snake}'`).join(', ');
+        out +=  `string().trim().valid([${list}])`;
     }
     else if (f.type === "number" || f.type === "datetime") {
         out +=  "number()";

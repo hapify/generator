@@ -1409,9 +1409,9 @@
       },
       {
         "name": "role",
-        "type": "string",
+        "type": "enum",
         "subtype": null,
-        "value": null,
+        "value": ["super admin", "admin", "user", "visitor"],
         "primary": false,
         "unique": false,
         "label": false,
