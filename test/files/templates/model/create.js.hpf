@@ -3,6 +3,12 @@
 /**
  * Create <<M a>>.
  * Returns the created <<M a>>.
+<<? F enum>>
+ * This model has enum:
+<<for F enum f>>
+ * - <<f camel>>:<<for f.enum e>> <<e snake>><<endfor>>
+<<endfor>>
+<<?>>
  */
  
 const Joi = require('joi');
@@ -163,10 +169,8 @@ function defaultValue(f) {
     }
     else if (f.multiple) v = "[]";
     else if (f.type === "boolean") v = "false";
-    else if (f.type === "string") {
-        if (f.names.snake === 'role') v = "'user'";
-        else v = "''";
-    }
+    else if ((f.type === "string" || f.type === "enum") && f.names.snake === 'role') v = "'user'";
+    else if (f.type === "string") v = "''";
     else if (f.type === "number") v = "0";
     else if (f.type === "datetime") v = "Date.now()";
     
@@ -181,6 +185,10 @@ function joiValidator(f) {
         if (f.subtype === "email") out += ".email().lowercase()";
         else if (f.subtype === "password") out += ".min(6)";
         out +=  ".trim()";
+    }
+    else if (f.type === "enum") {
+        const list = f.enum.map(e => `'${e.names.snake}'`).join(', ');
+        out +=  `string().trim().valid([${list}])`;
     }
     else if (f.type === "number" || f.type === "datetime") {
         out +=  "number()";

@@ -3,6 +3,8 @@
 /**
  * Create user.
  * Returns the created user.
+ * This model has enum:
+ * - role: super_admin admin user visitor
  */
 
 const Joi = require('joi');
@@ -17,7 +19,7 @@ const schemaObjectPublic = {
     birthdate: Joi.number().required(),
 };
 const schemaObjectAdmin = Object.assign({
-    role: Joi.string().trim().required(),
+    role: Joi.string().trim().valid(['super_admin', 'admin', 'user', 'visitor']).required(),
     banned: Joi.boolean().required(),
     premium_forced: Joi.boolean().required(),
 }, schemaObjectPublic);
