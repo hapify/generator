@@ -289,9 +289,9 @@ class Generator {
             }, f);
             // Deal with enums
             if (f.type === 'enum' && f.value) {
-                const enumValues = f.value.map(v => ({
+                const enumValues = f.value.map((v) => ({
                     name: v,
-                    names: string_1.StringVariants(v)
+                    names: string_1.StringVariants(v),
                 }));
                 enumValues.f = enumValues.filter;
                 explicitField.enum = enumValues;
