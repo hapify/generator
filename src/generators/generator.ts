@@ -9,6 +9,7 @@ import {
 	ExplicitDeepModel,
 	ExplicitDeepModelFields,
 	ExplicitDeepModelProperties,
+	ExplicitEnum,
 	ExplicitEnumField,
 	ExplicitField,
 	ExplicitFieldsFilterFunction,
@@ -25,7 +26,6 @@ import {
 	GeneratorResult,
 	Model,
 	NumberedError,
-	StringVariations,
 	StringVariationType,
 	Template,
 } from '../interfaces';
@@ -334,7 +334,10 @@ export class Generator {
 			);
 			// Deal with enums
 			if (f.type === 'enum' && f.value) {
-				const enumValues = (<Field<'enum'>>f).value.map(StringVariants) as AliasedArray<StringVariations>;
+				const enumValues = (<Field<'enum'>>f).value.map((v) => ({
+					name: v,
+					names: StringVariants(v),
+				})) as AliasedArray<ExplicitEnum>;
 				enumValues.f = enumValues.filter;
 				(<ExplicitEnumField>explicitField).enum = enumValues;
 				(<ExplicitEnumField>explicitField).e = enumValues;

@@ -1,4 +1,13 @@
 // ==================================================================
+//  Names
+// ==================================================================
+export interface NameInterpolable {
+	/** The name of the object, as the user entered it */
+	name: string;
+	/** All names computed from the `name` property */
+	names: StringVariations;
+}
+// ==================================================================
 //  Fields
 // ==================================================================
 export type FieldType = 'boolean' | 'number' | 'string' | 'enum' | 'datetime' | 'entity' | 'object' | 'file';
@@ -113,13 +122,9 @@ export interface AliasedArray<T> extends Array<T> {
 	/** Alias of `filter` */
 	f(callback: (value: T, index: number, array: T[]) => value is T, thisArg?: any): T[];
 }
-interface BaseExplicitModel {
+interface BaseExplicitModel extends NameInterpolable {
 	/** An unique id */
 	id: string;
-	/** The name of the model, as the user entered it */
-	name: string;
-	/** All names computed from the `name` property */
-	names: StringVariations;
 	/** An object containing pre-computed properties from fields */
 	properties: ExplicitDeepModelProperties;
 	/** Alias of `p` */
@@ -159,10 +164,8 @@ export interface ExplicitReferenceModel extends BaseExplicitModel {
 	/** Alias of `fields` */
 	f: AliasedArray<ExplicitField>;
 }
-export interface ExplicitField<T extends FieldType = FieldType> extends Field<T> {
-	/** All names computed from the `name` property. As for the field object */
-	names: StringVariations;
-}
+export interface ExplicitEnum extends NameInterpolable {}
+export interface ExplicitField<T extends FieldType = FieldType> extends Field<T>, NameInterpolable {}
 export interface ExplicitReferenceField extends ExplicitField<'entity'> {
 	/** The target model object if the field is of type `entity` */
 	model: ExplicitDeepModel;
@@ -171,9 +174,9 @@ export interface ExplicitReferenceField extends ExplicitField<'entity'> {
 }
 export interface ExplicitEnumField extends ExplicitField<'enum'> {
 	/** The list of string variations for the enum */
-	enum: AliasedArray<StringVariations>;
+	enum: AliasedArray<ExplicitEnum>;
 	/** Alias of `enum` */
-	e: AliasedArray<StringVariations>;
+	e: AliasedArray<ExplicitEnum>;
 }
 export interface ExplicitDeepModelFields {
 	/** An array containing all fields of the model */

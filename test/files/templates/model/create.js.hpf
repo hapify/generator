@@ -3,6 +3,12 @@
 /**
  * Create <<M a>>.
  * Returns the created <<M a>>.
+<<? F enum>>
+ * This model has enum:
+<<for F enum f>>
+ * - <<f camel>>:<<for f.enum e>> <<e snake>><<endfor>>
+<<endfor>>
+<<?>>
  */
  
 const Joi = require('joi');
@@ -181,7 +187,7 @@ function joiValidator(f) {
         out +=  ".trim()";
     }
     else if (f.type === "enum") {
-        const list = f.enum.map(e => `'${e.snake}'`).join(', ');
+        const list = f.enum.map(e => `'${e.names.snake}'`).join(', ');
         out +=  `string().trim().valid([${list}])`;
     }
     else if (f.type === "number" || f.type === "datetime") {

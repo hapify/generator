@@ -3,6 +3,8 @@
 /**
  * Create user.
  * Returns the created user.
+ * This model has enum:
+ * - role: super_admin admin user visitor
  */
 
 const Joi = require('joi');
