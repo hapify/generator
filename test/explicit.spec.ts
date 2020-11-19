@@ -26,7 +26,7 @@ const getModels = (fieldsOverrides: Partial<Field>[] = [{}], accessesOverrides: 
 					name: names[i % names.length],
 					type: 'string',
 					subtype: null,
-					reference: null,
+					value: null,
 					primary: false,
 					unique: false,
 					label: false,
@@ -570,7 +570,7 @@ describe('model dependencies & references', () => {
 	const model2 = getModels([
 		{
 			type: 'entity',
-			reference: 'dependency1',
+			value: 'dependency1',
 		},
 	])[0];
 	const model3 = getModels()[0];
@@ -579,9 +579,9 @@ describe('model dependencies & references', () => {
 	model3.id = 'dependency2';
 
 	const model4 = getModels([
-		{ type: 'entity', reference: 'dependency1', hidden: true },
-		{ type: 'entity', reference: 'dependency2' },
-		{ type: 'entity', reference: 'dependency2' }, // Test no duplicate
+		{ type: 'entity', value: 'dependency1', hidden: true },
+		{ type: 'entity', value: 'dependency2' },
+		{ type: 'entity', value: 'dependency2' }, // Test no duplicate
 	])[0];
 	model4.id = 'dependent';
 	const models = [model1, model2, model3, model4];

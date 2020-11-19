@@ -9,6 +9,7 @@ import {
 	ExplicitDeepModel,
 	ExplicitDeepModelFields,
 	ExplicitDeepModelProperties,
+	ExplicitEnumField,
 	ExplicitField,
 	ExplicitFieldsFilterFunction,
 	ExplicitModel,
@@ -24,6 +25,7 @@ import {
 	GeneratorResult,
 	Model,
 	NumberedError,
+	StringVariations,
 	StringVariationType,
 	Template,
 } from '../interfaces';
@@ -256,10 +258,10 @@ export class Generator {
 					.filter((ref) => (excludeSelf ? ref.model.id !== model.id : true))
 					// Remove duplicates
 					.filter((ref) => {
-						if (duplicates[ref.reference] === true) {
+						if (duplicates[ref.value] === true) {
 							return false;
 						}
-						duplicates[ref.reference] = true;
+						duplicates[ref.value] = true;
 						return true;
 					})
 					// Extract models
@@ -286,9 +288,9 @@ export class Generator {
 		// Get reference fields
 		// Then explicit the reference. If no reference is found returns null (it will be filtered after)
 		const references = fields
-			.filter((f) => f.type === 'entity' && f.reference)
+			.filter((f) => f.type === 'entity' && f.value)
 			.map((field: ExplicitReferenceField) => {
-				const reference = models.find((m) => m.id === field.reference);
+				const reference = models.find((m) => m.id === field.value);
 
 				// Nothing found
 				if (!reference) {
@@ -303,7 +305,7 @@ export class Generator {
 			})
 			.filter((f) => !!f) as AliasedArray<ExplicitReferenceField>;
 
-		// Add to object
+		// Add filter alias
 		references.f = references.filter;
 
 		return references;
@@ -312,7 +314,7 @@ export class Generator {
 	/** Get models using this model */
 	private explicitReferencedIn(models: Model[], model: Model): AliasedArray<ExplicitReferenceModel> {
 		// Filter referencing models
-		const extractReferencingFields = (f: Field) => f.type === 'entity' && f.reference === model.id;
+		const extractReferencingFields = (f: Field) => f.type === 'entity' && (<Field<'entity'>>f).value === model.id;
 		const referencedIn: AliasedArray<ExplicitReferenceModel> = models
 			.filter((m) => m.fields.some(extractReferencingFields))
 			.map((m) => this.explicitReferenceModel(m, extractReferencingFields)) as AliasedArray<ExplicitReferenceModel>;
@@ -330,6 +332,14 @@ export class Generator {
 				},
 				f
 			);
+			// Deal with enums
+			if (f.type === 'enum' && f.value) {
+				const enumValues = (<Field<'enum'>>f).value.map(StringVariants) as AliasedArray<StringVariations>;
+				enumValues.f = enumValues.filter;
+				(<ExplicitEnumField>explicitField).enum = enumValues;
+				(<ExplicitEnumField>explicitField).e = enumValues;
+			}
+
 			return explicitField;
 		});
 
