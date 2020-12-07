@@ -6,7 +6,7 @@ export interface NameInterpolable {
 }
 export declare type FieldType = 'boolean' | 'number' | 'string' | 'enum' | 'datetime' | 'entity' | 'object' | 'file';
 export declare type FieldSubType = 'integer' | 'float' | 'latitude' | 'longitude' | 'email' | 'password' | 'url' | 'text' | 'rich' | 'date' | 'time' | 'image' | 'video' | 'audio' | 'document';
-declare type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
+export declare type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
 export interface Field<T extends FieldType = FieldType> {
     /** The field's name */
     name: string;
