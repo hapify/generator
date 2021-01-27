@@ -26,11 +26,11 @@ export type FieldSubType =
 	| 'image'
 	| 'video'
 	| 'audio'
-	| 'document';
+	| 'document'
+	| 'oneOne'
+	| 'oneMany'
+	| 'manyMany';
 
-// ==================================================================
-//  Model
-// ==================================================================
 export type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
 export interface Field<T extends FieldType = FieldType> {
 	/** The field's name */
@@ -71,6 +71,9 @@ export interface Field<T extends FieldType = FieldType> {
 	ownership: boolean;
 }
 
+// ==================================================================
+//  Access
+// ==================================================================
 /**
  * Possible values for actions' access:
  *  - admin (Denotes if the access is restricted to the admins)
