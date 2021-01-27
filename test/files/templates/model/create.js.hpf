@@ -62,7 +62,8 @@ const handler = async (request, h) => {
  
     // Convert reference fields
     <<@ F tE/in r>>
-        <<? r ml>>
+    // Relationship: <<? r tEoo>>one-to-one<<?? r tEom>>one-to-many<<?? r tEmm>>many-to-many<<??>>default<<?>>
+        <<? r tEom>>
     payload.<<r a_a>> = request.payload.<<r a_a>> instanceof Array ?
         request.payload.<<r a_a>>.map((i) => new MongoDB.ObjectId(i)) : <<? r os>>[request.auth.credentials._id]<<??>>null<<?>>;
         <<??>>

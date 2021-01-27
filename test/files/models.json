@@ -60,7 +60,7 @@
       {
         "name": "place",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "c4b159de-14e8-371a-4ebc-e9fe162f7141",
         "primary": false,
         "unique": false,
@@ -250,7 +250,7 @@
       {
         "name": "cover",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "bfb58704-44c4-7c5d-f296-45242aa47302",
         "primary": false,
         "unique": false,
@@ -458,7 +458,7 @@
       {
         "name": "place",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "c4b159de-14e8-371a-4ebc-e9fe162f7141",
         "primary": false,
         "unique": false,
@@ -616,7 +616,7 @@
       {
         "name": "category",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneMany",
         "value": "4431ae37-e8c3-bd5e-3f4c-a13e1ed40074",
         "primary": false,
         "unique": false,
@@ -634,7 +634,7 @@
       {
         "name": "cover",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "bfb58704-44c4-7c5d-f296-45242aa47302",
         "primary": false,
         "unique": false,
@@ -724,7 +724,7 @@
       {
         "name": "city",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "953b8c49-2747-460e-7a6f-9208b1a02d42",
         "primary": false,
         "unique": false,
@@ -778,7 +778,7 @@
       {
         "name": "services",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneMany",
         "value": "85b8bc50-efba-2f34-b7ec-d9a70c641c79",
         "primary": false,
         "unique": false,
@@ -1008,7 +1008,7 @@
       {
         "name": "offer",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "36b9bdc0-22a3-0e0f-5327-32d3f12b118f",
         "primary": false,
         "unique": false,
@@ -1026,7 +1026,7 @@
       {
         "name": "place",
         "type": "entity",
-        "subtype": null,
+        "subtype": "oneOne",
         "value": "c4b159de-14e8-371a-4ebc-e9fe162f7141",
         "primary": false,
         "unique": false,

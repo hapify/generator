@@ -5,6 +5,7 @@ import {
 	Access,
 	Action,
 	AliasedArray,
+	Engine,
 	ExplicitAccesses,
 	ExplicitDeepModel,
 	ExplicitDeepModelFields,
@@ -24,6 +25,7 @@ import {
 	ExplicitReferenceModel,
 	Field,
 	GeneratorResult,
+	GeneratorWorker,
 	Model,
 	NumberedError,
 	StringVariationType,
@@ -39,8 +41,11 @@ interface Cache {
 const CACHE_ENABLED = true;
 
 export class Generator {
-	private hpfGeneratorService = new HpfGenerator();
-	private javaScriptGeneratorService = new JavascriptGenerator();
+	/** Available generators */
+	private generators: { [key in Engine]: GeneratorWorker } = {
+		hpf: new HpfGenerator(),
+		js: new JavascriptGenerator(),
+	};
 
 	constructor() {}
 
@@ -105,6 +110,14 @@ export class Generator {
 		return error as NumberedError;
 	}
 
+	/** Get generator instance from template.engine */
+	private getGeneratorForTemplate(template: Template): GeneratorWorker {
+		if (typeof this.generators[template.engine] === 'undefined') {
+			throw new Error(`Unknown engine ${template.engine}`);
+		}
+		return this.generators[template.engine];
+	}
+
 	/**
 	 * Run generation process for one model and one template
 	 * Throws an error if the template rendering engine is unknown
@@ -116,14 +129,8 @@ export class Generator {
 		const input = this.explicitModel(models, model, cache);
 
 		// Compute content
-		let content;
-		if (template.engine === 'hpf') {
-			content = await this.hpfGeneratorService.one(input, template);
-		} else if (template.engine === 'js') {
-			content = await this.javaScriptGeneratorService.one(input, template);
-		} else {
-			throw new Error('Unknown engine');
-		}
+		const generator = this.getGeneratorForTemplate(template);
+		const content = await generator.one(input, template);
 
 		return {
 			content,
@@ -142,14 +149,8 @@ export class Generator {
 		const input = this.explicitAllModels(models, cache);
 
 		// Compute content
-		let content;
-		if (template.engine === 'hpf') {
-			content = await this.hpfGeneratorService.all(input, template);
-		} else if (template.engine === 'js') {
-			content = await this.javaScriptGeneratorService.all(input, template);
-		} else {
-			throw new Error('Unknown engine');
-		}
+		const generator = this.getGeneratorForTemplate(template);
+		const content = await generator.all(input, template);
 
 		return {
 			content,

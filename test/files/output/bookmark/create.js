@@ -29,8 +29,10 @@ const handler = async (request, h) => {
     payload.created_at = Date.now();
 
     // Convert reference fields
+    // Relationship: default
     payload.owner = typeof request.payload.owner === 'string' ?
         new MongoDB.ObjectId(request.payload.owner) : request.auth.credentials._id;
+    // Relationship: one-to-one
     payload.place = typeof request.payload.place === 'string' ?
         new MongoDB.ObjectId(request.payload.place) : null;
 
