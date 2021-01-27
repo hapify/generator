@@ -17,8 +17,11 @@ const errors_1 = require("../errors");
 const CACHE_ENABLED = true;
 class Generator {
     constructor() {
-        this.hpfGeneratorService = new hpf_generator_1.HpfGenerator();
-        this.javaScriptGeneratorService = new javascript_generator_1.JavascriptGenerator();
+        /** Available generators */
+        this.generators = {
+            hpf: new hpf_generator_1.HpfGenerator(),
+            js: new javascript_generator_1.JavascriptGenerator(),
+        };
     }
     /**
      * Run generation process for one model
@@ -81,6 +84,13 @@ class Generator {
         }
         return error;
     }
+    /** Get generator instance from template.engine */
+    getGeneratorForTemplate(template) {
+        if (typeof this.generators[template.engine] === 'undefined') {
+            throw new Error(`Unknown engine ${template.engine}`);
+        }
+        return this.generators[template.engine];
+    }
     /**
      * Run generation process for one model and one template
      * Throws an error if the template rendering engine is unknown
@@ -92,16 +102,8 @@ class Generator {
             // Get full model description
             const input = this.explicitModel(models, model, cache);
             // Compute content
-            let content;
-            if (template.engine === 'hpf') {
-                content = yield this.hpfGeneratorService.one(input, template);
-            }
-            else if (template.engine === 'js') {
-                content = yield this.javaScriptGeneratorService.one(input, template);
-            }
-            else {
-                throw new Error('Unknown engine');
-            }
+            const generator = this.getGeneratorForTemplate(template);
+            const content = yield generator.one(input, template);
             return {
                 content,
                 path,
@@ -119,16 +121,8 @@ class Generator {
             // Get full models description
             const input = this.explicitAllModels(models, cache);
             // Compute content
-            let content;
-            if (template.engine === 'hpf') {
-                content = yield this.hpfGeneratorService.all(input, template);
-            }
-            else if (template.engine === 'js') {
-                content = yield this.javaScriptGeneratorService.all(input, template);
-            }
-            else {
-                throw new Error('Unknown engine');
-            }
+            const generator = this.getGeneratorForTemplate(template);
+            const content = yield generator.all(input, template);
             return {
                 content,
                 path,

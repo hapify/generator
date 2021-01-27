@@ -1,7 +1,7 @@
 import { GeneratorResult, Model, Template } from '../interfaces';
 export declare class Generator {
-    private hpfGeneratorService;
-    private javaScriptGeneratorService;
+    /** Available generators */
+    private generators;
     constructor();
     /**
      * Run generation process for one model
@@ -13,6 +13,8 @@ export declare class Generator {
     path(path: string, modelName?: string): string;
     /** Ensure error has a code and returns it */
     private formatError;
+    /** Get generator instance from template.engine */
+    private getGeneratorForTemplate;
     /**
      * Run generation process for one model and one template
      * Throws an error if the template rendering engine is unknown
