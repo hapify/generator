@@ -1,17 +1,9 @@
 import { HapifyVM } from '@hapify/vm';
 import { Config } from '../config';
-import { ExplicitModel, GeneratorWorker, Template } from '../interfaces';
+import {ExplicitModel, GeneratorWorker, GenerationContext, Template} from '../interfaces';
 import { TimeoutError, EvaluationError } from '../errors';
 
-type Context =
-	| {
-			m: ExplicitModel;
-			model: ExplicitModel;
-	  }
-	| {
-			m: ExplicitModel[];
-			models: ExplicitModel[];
-	  };
+
 
 export class JavascriptGenerator implements GeneratorWorker {
 	constructor() {}
@@ -39,7 +31,7 @@ export class JavascriptGenerator implements GeneratorWorker {
 	}
 
 	/** Append file name to error details if applicable */
-	private appendFileName(error: Error, template: Template): Error {
+	protected appendFileName(error: Error, template: Template): Error {
 		if (typeof (<EvaluationError>error).lineNumber !== 'undefined') {
 			// Append file name
 			(<EvaluationError>error).details += `, File: ${template.path}`;
@@ -48,7 +40,7 @@ export class JavascriptGenerator implements GeneratorWorker {
 	}
 
 	/** Run eval */
-	private eval(content: string, context: Context): string {
+	protected eval(content: string, context: GenerationContext): string {
 		try {
 			return new HapifyVM({ timeout: Config.Generator.timeout }).run(content, context);
 		} catch (error) {
