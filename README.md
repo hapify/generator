@@ -30,7 +30,7 @@ const models = [
                 notes: null,
                 type: 'string',
                 subtype: null,
-                reference: null,
+                value: null,
                 primary: true,
                 unique: false,
                 label: false,
