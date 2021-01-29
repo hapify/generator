@@ -104,14 +104,30 @@ export class Generator {
 
 	/** Returns a JSON representation of the explicit model(s) */
 	dump(models: Model[], id?: string): string {
+		let toStringify;
 		if (id) {
-			const model = models.find(m => m.id === id);
-			const explicit = this.explicitModel(models, model, {});
-			return SafeStringify(explicit, null, 2);
+			const model = models.find((m) => m.id === id);
+			toStringify = this.explicitModel(models, model, {});
 		} else {
-			const explicit = this.explicitAllModels(models, {});
-			return SafeStringify(explicit, null, 2);
+			toStringify = this.explicitAllModels(models, {});
 		}
+
+		const references: { [key: string]: any } = {};
+		return SafeStringify(
+			toStringify,
+			(key, value) => {
+				if (typeof value !== 'object' || value === null) {
+					return value;
+				}
+				const cache = Object.entries(references).find(([cachedKey, cachedValue]) => value === cachedValue);
+				if (cache) {
+					return `\$${cache[0]}`;
+				}
+				references[key] = value;
+				return value;
+			},
+			2
+		);
 	}
 
 	/** Ensure error has a code and returns it */
