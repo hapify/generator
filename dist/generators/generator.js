@@ -11,8 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Generator = void 0;
 const string_1 = require("../string");
-const hpf_generator_1 = require("./hpf-generator");
-const javascript_generator_1 = require("./javascript-generator");
+const hpf_generator_1 = require("./workers/hpf-generator");
+const javascript_generator_1 = require("./workers/javascript-generator");
+const ejs_generator_1 = require("./workers/ejs-generator");
 const errors_1 = require("../errors");
 const CACHE_ENABLED = true;
 class Generator {
@@ -21,6 +22,7 @@ class Generator {
         this.generators = {
             hpf: new hpf_generator_1.HpfGenerator(),
             js: new javascript_generator_1.JavascriptGenerator(),
+            ejs: new ejs_generator_1.EJSGenerator(),
         };
     }
     /**

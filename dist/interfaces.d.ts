@@ -5,7 +5,7 @@ export interface NameInterpolable {
     names: StringVariations;
 }
 export declare type FieldType = 'boolean' | 'number' | 'string' | 'enum' | 'datetime' | 'entity' | 'object' | 'file';
-export declare type FieldSubType = 'integer' | 'float' | 'latitude' | 'longitude' | 'email' | 'password' | 'url' | 'text' | 'rich' | 'date' | 'time' | 'image' | 'video' | 'audio' | 'document' | 'oneOne' | 'oneMany' | 'manyMany';
+export declare type FieldSubType = 'integer' | 'float' | 'latitude' | 'longitude' | 'email' | 'password' | 'url' | 'text' | 'rich' | 'date' | 'time' | 'image' | 'video' | 'audio' | 'document' | 'oneOne' | 'oneMany' | 'manyOne' | 'manyMany';
 export declare type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
 export interface Field<T extends FieldType = FieldType> {
     /** The field's name */
@@ -74,7 +74,7 @@ export interface Model {
     /** The model privacy access */
     accesses: Accesses;
 }
-export declare type Engine = 'hpf' | 'js';
+export declare type Engine = 'hpf' | 'js' | 'ejs';
 export declare type Input = 'one' | 'all';
 export interface Template {
     /** The template's path */
@@ -436,6 +436,15 @@ export interface GeneratorResult {
     /** The file content */
     content: string;
 }
+export declare type SingleModelGenerationContext = {
+    m: ExplicitModel;
+    model: ExplicitModel;
+};
+export declare type MultipleModelsGenerationContext = {
+    m: ExplicitModel[];
+    models: ExplicitModel[];
+};
+export declare type GenerationContext = SingleModelGenerationContext | MultipleModelsGenerationContext;
 export interface NumberedError extends Error {
     code: number;
 }

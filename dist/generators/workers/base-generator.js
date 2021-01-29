@@ -9,16 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HpfGenerator = void 0;
-const syntax_1 = require("@hapify/syntax");
-const config_1 = require("../config");
-const HpfOptions = { timeout: config_1.Config.Generator.timeout };
-class HpfGenerator {
-    constructor() { }
+exports.BaseGenerator = void 0;
+class BaseGenerator {
     one(model, template) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return syntax_1.HapifySyntax.run(template.content, model, HpfOptions);
+                return this.eval(template.content, {
+                    model: model,
+                    m: model,
+                });
             }
             catch (error) {
                 throw this.appendFileName(error, template);
@@ -28,7 +27,10 @@ class HpfGenerator {
     all(models, template) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return syntax_1.HapifySyntax.run(template.content, models, HpfOptions);
+                return this.eval(template.content, {
+                    models: models,
+                    m: models,
+                });
             }
             catch (error) {
                 throw this.appendFileName(error, template);
@@ -39,10 +41,10 @@ class HpfGenerator {
     appendFileName(error, template) {
         if (typeof error.lineNumber !== 'undefined') {
             // Append file name
-            error.details += `, File: ${template.path}`;
+            error.details += `\nFile: ${template.path}`;
         }
         return error;
     }
 }
-exports.HpfGenerator = HpfGenerator;
-//# sourceMappingURL=hpf-generator.js.map
+exports.BaseGenerator = BaseGenerator;
+//# sourceMappingURL=base-generator.js.map

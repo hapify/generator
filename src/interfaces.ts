@@ -29,6 +29,7 @@ export type FieldSubType =
 	| 'document'
 	| 'oneOne'
 	| 'oneMany'
+	| 'manyOne'
 	| 'manyMany';
 
 export type FieldValueType<T> = T extends 'entity' ? string : T extends 'enum' ? string[] : null;
