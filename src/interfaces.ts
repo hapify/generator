@@ -105,7 +105,7 @@ export interface Model {
 	/** The model privacy access */
 	accesses: Accesses;
 }
-export type Engine = 'hpf' | 'js';
+export type Engine = 'hpf' | 'js' | 'ejs';
 export type Input = 'one' | 'all';
 export interface Template {
 	/** The template's path */
@@ -477,6 +477,15 @@ export interface GeneratorResult {
 	/** The file content */
 	content: string;
 }
+export type SingleModelGenerationContext = {
+	m: ExplicitModel;
+	model: ExplicitModel;
+};
+export type MultipleModelsGenerationContext = {
+	m: ExplicitModel[];
+	models: ExplicitModel[];
+};
+export type GenerationContext = SingleModelGenerationContext | MultipleModelsGenerationContext;
 
 // ==================================================================
 //  Errors

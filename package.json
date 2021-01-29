@@ -38,11 +38,10 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@hapify/ejs": "^0.4.1",
     "@hapify/syntax": "^0.9.0",
     "@hapify/vm": "^0.3.4",
-    "case": "^1.6.3",
-    "i": "^0.3.6",
-    "npm": "^6.14.11"
+    "case": "^1.6.3"
   },
   "engines": {
     "node": ">=9"
