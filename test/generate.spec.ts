@@ -32,6 +32,12 @@ const templates: Template[] = [
 		input: 'all',
 		content: get('templates/list.json.js'),
 	},
+	{
+		path: 'src/routes/index-ejs.js',
+		engine: 'ejs',
+		input: 'all',
+		content: get('templates/index-ejs.js.ejs'),
+	},
 ];
 
 describe('generate', () => {
@@ -40,7 +46,7 @@ describe('generate', () => {
 		expect(response).to.be.an.array();
 
 		// Test length
-		expect(response.length).to.equal(models.length + 2);
+		expect(response.length).to.equal(models.length + 3);
 
 		// Test all returned files
 		for (const output of response) {
@@ -153,6 +159,19 @@ describe('generate', () => {
 			expect(e.code).to.equal(1004);
 			expect(e.lineNumber).to.be.a.number();
 			expect(e.columnNumber).to.be.a.number();
+			expect(e.details).to.contains('File: src/routes/');
+		}
+	});
+
+	it('generate with broken ejs template', async () => {
+		try {
+			await Generator.run([Object.assign({}, templates[3], { content: get('templates/error.js.ejs') })], models);
+			fail('Should throw an error');
+		} catch (error: unknown) {
+			const e = error as EvaluationError;
+			expect(e.message).to.equal('moodels is not defined');
+			expect(e.code).to.equal(7001);
+			expect(e.lineNumber).to.be.a.number();
 			expect(e.details).to.contains('File: src/routes/');
 		}
 	});

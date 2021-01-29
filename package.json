@@ -1,6 +1,6 @@
 {
   "name": "@hapify/generator",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Generator for Hapify templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,11 +38,10 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@hapify/ejs": "^0.4.1",
     "@hapify/syntax": "^0.9.0",
-    "@hapify/vm": "^0.3.4",
-    "case": "^1.6.3",
-    "i": "^0.3.6",
-    "npm": "^6.14.11"
+    "@hapify/vm": "^0.3.6",
+    "case": "^1.6.3"
   },
   "engines": {
     "node": ">=9"
