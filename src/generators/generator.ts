@@ -33,6 +33,7 @@ import {
 	Template,
 } from '../interfaces';
 import { InternalError } from '../errors';
+import SafeStringify from 'fast-safe-stringify';
 
 /** Define the cache structure */
 interface Cache {
@@ -98,6 +99,18 @@ export class Generator {
 			return path;
 		} catch (error) {
 			throw this.formatError(error);
+		}
+	}
+
+	/** Returns a JSON representation of the explicit model(s) */
+	dump(models: Model[], id?: string): string {
+		if (id) {
+			const model = models.find(m => m.id === id);
+			const explicit = this.explicitModel(models, model, {});
+			return SafeStringify(explicit, null, 2);
+		} else {
+			const explicit = this.explicitAllModels(models, {});
+			return SafeStringify(explicit, null, 2);
 		}
 	}
 
