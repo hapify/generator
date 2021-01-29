@@ -1,10 +1,12 @@
 import { StringVariants } from '../string';
-import { HpfGenerator } from './hpf-generator';
-import { JavascriptGenerator } from './javascript-generator';
+import { HpfGenerator } from './workers/hpf-generator';
+import { JavascriptGenerator } from './workers/javascript-generator';
+import { EJSGenerator } from './workers/ejs-generator';
 import {
 	Access,
 	Action,
-	AliasedArray, Engine,
+	AliasedArray,
+	Engine,
 	ExplicitAccesses,
 	ExplicitDeepModel,
 	ExplicitDeepModelFields,
@@ -23,14 +25,14 @@ import {
 	ExplicitReferenceField,
 	ExplicitReferenceModel,
 	Field,
-	GeneratorResult, GeneratorWorker,
+	GeneratorResult,
+	GeneratorWorker,
 	Model,
 	NumberedError,
 	StringVariationType,
 	Template,
 } from '../interfaces';
 import { InternalError } from '../errors';
-import {EJSGenerator} from "./ejs-generator";
 
 /** Define the cache structure */
 interface Cache {
@@ -40,12 +42,11 @@ interface Cache {
 const CACHE_ENABLED = true;
 
 export class Generator {
-
 	/** Available generators */
 	private generators: { [key in Engine]: GeneratorWorker } = {
 		hpf: new HpfGenerator(),
 		js: new JavascriptGenerator(),
-		ejs: new EJSGenerator()
+		ejs: new EJSGenerator(),
 	};
 
 	constructor() {}

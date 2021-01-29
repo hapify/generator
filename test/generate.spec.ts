@@ -170,9 +170,8 @@ describe('generate', () => {
 		} catch (error: unknown) {
 			const e = error as EvaluationError;
 			expect(e.message).to.equal('moodels is not defined');
-			expect(e.code).to.equal(1004);
+			expect(e.code).to.equal(7001);
 			expect(e.lineNumber).to.be.a.number();
-			expect(e.columnNumber).to.be.a.number();
 			expect(e.details).to.contains('File: src/routes/');
 		}
 	});
